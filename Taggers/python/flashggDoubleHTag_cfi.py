@@ -22,17 +22,17 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    ScalingPtCuts = cms.bool(True),
                                    DoSigmaMDecorr =cms.untracked.uint32(1),#transformation of sigmaM/M
                                    SigmaMDecorrFile = cms.untracked.FileInPath("flashgg/Taggers/data/diphoMVA_sigmaMoMdecorr_split_Mgg40_180.root"),
-                                  # ApplyEGMPhotonID = cms.untracked.bool(True),
-                                   ApplyEGMPhotonID = cms.untracked.bool(False),
+                                   ApplyEGMPhotonID = cms.untracked.bool(True),
+                                  # ApplyEGMPhotonID = cms.untracked.bool(False),
                                    PhotonIDCut = cms.double(0.2),#this is loose id for 2016
                                    PhotonElectronVeto =cms.untracked.vint32(1, 1), #0: Pho1, 1: Pho2
                                   # PhotonElectronVeto =cms.untracked.vint32(0,0), #0: Pho1, 1: Pho2
 
-                                  # MinJetPt   = cms.double(20.),
-                                   MinJetPt   = cms.double(0.),
+                                   MinJetPt   = cms.double(20.),
+                                  # MinJetPt   = cms.double(0.),
                                    MaxJetEta   = cms.double(2.5),
-                                  # MJJBoundaries = cms.vdouble(70.,190.),
-                                   MJJBoundaries = cms.vdouble(0.,1000.),
+                                   MJJBoundaries = cms.vdouble(70.,190.),
+                                   #MJJBoundaries = cms.vdouble(0.,1000.),
                                   # BTagType = cms.untracked.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'), #string for btag algorithm
                                    BTagType = cms.untracked.string('pfDeepCSVJetTags:probb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),
@@ -51,7 +51,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                                         multiclassSignalIdx=cms.int32(2), # this is multiclass index for Signal
                                                         ),
 
-                                   doMVAFlattening=cms.bool(False),#do transformation of cumulative to make it flat
+                                   doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_2016_2017_20181028_common.root"),#FIXME, this should be optional, is it? 
                                    globalVariables=globalVariables
