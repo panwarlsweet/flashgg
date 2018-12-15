@@ -44,6 +44,7 @@ namespace flashgg {
         float getSigmaMOverMJets() const;
         void  setSigmaMDecorrTransf( DecorrTransform* transfEBEB, DecorrTransform* transfNotEBEB){ transfEBEB_= transfEBEB; transfNotEBEB_=transfNotEBEB;}
         LorentzVector getdiHiggsP4() const {return p4();}
+        float ttHScore_;
 
     private:
         double mva_, MX_;
