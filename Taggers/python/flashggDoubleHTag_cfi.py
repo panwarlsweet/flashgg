@@ -1,3 +1,4 @@
+import os
 import FWCore.ParameterSet.Config as cms
 
 import flashgg.Taggers.dumperConfigTools as cfgTools
@@ -45,6 +46,22 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    dottHTagger=cms.bool(True), #whether to do ttH tagger. 
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181001_DeepCSV.root"), #FIXME, this should be optional, is it? 
+                                    
+                                   ElectronTag=cms.InputTag('flashggSelectedElectrons'),
+                                   MuonTag=cms.InputTag('flashggSelectedMuons'),
+                                   VertexTag=cms.InputTag('offlineSlimmedPrimaryVertices'),
+                                   METTag=cms.InputTag('flashggMets'),
+                                   rhoTag = cms.InputTag('fixedGridRhoFastjetAll'),
+
+                                   looseLeptonPtThreshold = cms.double(10.),
+                                   muonEtaThreshold = cms.double(2.4),
+                                   muPFIsoSumRelThreshold = cms.double(0.25),
+                                   deltaRPhoElectronThreshold = cms.double(1.),
+                                   deltaRPhoMuonThreshold = cms.double(0.5),
+                                   deltaRJetLepThreshold = cms.double(0.4),
+                                   useElectronMVARecipe = cms.bool(False),
+                                   useElectronLooseID = cms.bool(True),
+                                   electronEtaThresholds=cms.vdouble(1.4442,1.566,2.5),
 
                                    ttHWeightfile= cms.untracked.string(os.environ["CMSSW_BASE"]+"/src/flashgg/Taggers/data/ttHKiller/InclusiveTTH"),
                                    # For standardization

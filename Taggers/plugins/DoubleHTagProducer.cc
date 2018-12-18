@@ -49,10 +49,12 @@ namespace flashgg {
             float EvaluateNN();
             int chooseCategory( float mva, float mx );
             bool isclose(double a, double b, double rel_tol, double abs_tol);        
+            void StandardizeInputs();
             EDGetTokenT<View<DiPhotonCandidate> > diPhotonToken_;
             std::vector<edm::EDGetTokenT<edm::View<flashgg::Jet> > > jetTokens_;
             EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
             string systLabel_;
+            std::map<std::string, float> ttHVars;
 
             double minLeadPhoPt_, minSubleadPhoPt_;
             bool scalingPtCuts_, doPhotonId_, doMVAFlattening_, doCategorization_, dottHTagger_;
@@ -74,6 +76,20 @@ namespace flashgg {
             std::string bTagType_;
             bool       useJetID_;
             string     JetIDLevel_;        
+            
+            //leptons selection
+            double leptonPtThreshold;
+            double muEtaThreshold;
+            double muPFIsoSumRelThreshold; 
+
+            double dRPhoElectronThreshold;
+            double dRPhoMuonThreshold;
+            double dRJetLeptonThreshold;
+
+            bool useElecMVARecipe; 
+            bool useElecLooseId;
+            std::vector<double> elecEtaThresholds;
+            
 
             flashgg::MVAComputer<DoubleHTag> mvaComputer_;
             vector<double> mvaBoundaries_, mxBoundaries_;
@@ -93,6 +109,7 @@ namespace flashgg {
 
             std::vector<double> HLF_VectorVar_;
             std::vector<std::vector<double>> PL_VectorVar_;
+            std::vector<double> x_mean_, x_std_;
             string ttHWeightfileName_ ;
 #ifdef CMSSW9
             tensorflow::Session* session_ttH;
@@ -138,7 +155,7 @@ namespace flashgg {
         photonElectronVeto_=iConfig.getUntrackedParameter<std::vector<int > >("PhotonElectronVeto");
         //needed for HHbbgg MVA
         if(doMVAFlattening_){
-            MVAFlatteningFileName_=iConfig.getUntrackedParameter<edm::FileInPath>("MVAFlatteningFileName");
+            MVAFlatteningFileName_ = iConfig.getUntrackedParameter<edm::FileInPath>("MVAFlatteningFileName");
             MVAFlatteningFile_ = new TFile((MVAFlatteningFileName_.fullPath()).c_str(),"READ");
             MVAFlatteningCumulative_ = (TGraph*)MVAFlatteningFile_->Get("cumulativeGraph"); 
         }
@@ -159,24 +176,32 @@ namespace flashgg {
             }
         }
 
-        if(dottHTagger_){
-            tthKiller_.initializeSelectionThresholds();
-            tthKiller_.initializeMVAVariables();
-            tthKiller_.setupMVA(tthKiller_.ttHMVAWeights_,tthKiller_.ttHMVAVars_);//FIXME do configurable
+        if(dottHTagger_)
+        {
+            //leptons selection
+            leptonPtThreshold = iConfig.getParameter<double>("looseLeptonPtThreshold");
+            muEtaThreshold = iConfig.getParameter<double>("muonEtaThreshold");
+            muPFIsoSumRelThreshold = iConfig.getParameter<double>("muPFIsoSumRelThreshold");
+
+            dRPhoElectronThreshold = iConfig.getParameter<double>("deltaRPhoElectronThreshold");
+            dRPhoMuonThreshold = iConfig.getParameter<double>("deltaRPhoMuonThreshold");
+            dRJetLeptonThreshold = iConfig.getParameter<double>("deltaRJetLepThreshold");
+
+            useElecMVARecipe = iConfig.getParameter<bool>("useElectronMVARecipe"); 
+            useElecLooseId = iConfig.getParameter<bool>("useElectronLooseID");
+            elecEtaThresholds = iConfig.getParameter<std::vector<double > >("electronEtaThresholds");
+            
+            
+            x_mean_ = iConfig.getParameter<std::vector<double>> ("mean");
+            x_std_ = iConfig.getParameter<std::vector<double>> ("std");
+
+            //needed for ttH killer
+            METToken_= consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ("METTag") ) ;
+            electronToken_ = consumes<edm::View<flashgg::Electron> >( iConfig.getParameter<edm::InputTag> ("ElectronTag") );
+            muonToken_ = consumes<edm::View<flashgg::Muon> >( iConfig.getParameter<edm::InputTag>("MuonTag") );
+            vertexToken_ = consumes<edm::View<reco::Vertex> >( iConfig.getParameter<edm::InputTag> ("VertexTag") );
+            rhoToken_ = consumes<double>( iConfig.getParameter<edm::InputTag>( "rhoTag" ) );
         }
-
-        HLF_VectorVar_.resize(9);  // High-level features. 9 at the moment
-        PL_VectorVar_.resize(6);
-        for (int i = 0; i < 6; i++)
-            PL_VectorVar_[i].resize(7); // List of particles. 6 objects. Each object has 7 attributes.
-
-
-        //needed for ttH MVA
-        METToken_= consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ("METTag") ) ;
-        electronToken_ = consumes<edm::View<flashgg::Electron> >( iConfig.getParameter<edm::InputTag> ("ElectronTag") );
-        muonToken_ = consumes<edm::View<flashgg::Muon> >( iConfig.getParameter<edm::InputTag>("MuonTag") );
-        vertexToken_ = consumes<edm::View<reco::Vertex> >( iConfig.getParameter<edm::InputTag> ("VertexTag") );
-        rhoToken_ = consumes<double>( iConfig.getParameter<edm::InputTag>( "rhoTag" ) );
 
         produces<vector<DoubleHTag>>();
         produces<vector<TagTruthBase>>();
@@ -357,9 +382,14 @@ namespace flashgg {
             //tag_obj.setMVAprob( mva_vector );
 
             //tth Tagger
-            if(dottHTagger_){
+            if (dottHTagger_) 
+            {
+                HLF_VectorVar_.resize(9);  // High-level features. 9 at the moment
+                PL_VectorVar_.resize(6);
+                for (int i = 0; i < 6; i++)
+                    PL_VectorVar_[i].resize(7); // List of particles. 6 objects. Each object has 7 attributes.
+
                 float sumEt=0.,njets=0.;
-                std::map<std::string, float> ttHVars;
                 std::vector<flashgg::Jet> cleanedDR_jets;
                 for( size_t ijet=0; ijet < cleaned_jets.size();++ijet){
                     auto jet = cleaned_jets[ijet];
@@ -369,7 +399,7 @@ namespace flashgg {
                     njets+=1;
                     cleanedDR_jets.push_back(*jet);
                 }
-                ttHVars["sumEt"] = sumEt;
+                ttHVars["sumET"] = sumEt;
                 edm::Handle<View<flashgg::Met> > METs;
                 evt.getByToken( METToken_, METs );
                 if( METs->size() != 1 )
@@ -406,8 +436,8 @@ namespace flashgg {
                 ttHVars["etadipho"] = dipho->p4().eta();
                 ttHVars["phidipho"] = dipho->p4().phi();
 
-                std::vector<edm::Ptr<flashgg::Electron> > selectedElectrons = selectStdAllElectrons( theElectrons->ptrs(), vertices->ptrs(), tthKiller_.looseLeptonPtThreshold, tthKiller_.elecEtaThresholds, tthKiller_.useElecMVARecipe, tthKiller_.useElecLooseId, *rho, evt.isRealData() );
-                std::vector<edm::Ptr<flashgg::Electron> > tagElectrons = tthKiller_.filterElectrons( selectedElectrons, *tag_obj.diPhoton(), leadJet->p4(), subleadJet->p4(), tthKiller_.dRPhoLeptonThreshold, tthKiller_.dRJetLeptonThreshold);
+                std::vector<edm::Ptr<flashgg::Electron> > selectedElectrons = selectStdAllElectrons( theElectrons->ptrs(), vertices->ptrs(), leptonPtThreshold, elecEtaThresholds, useElecMVARecipe, useElecLooseId, *rho, evt.isRealData() );
+                std::vector<edm::Ptr<flashgg::Electron> > tagElectrons = tthKiller_.filterElectrons( selectedElectrons, *tag_obj.diPhoton(), leadJet->p4(), subleadJet->p4(), dRPhoElectronThreshold, dRJetLeptonThreshold);
 
                 if (tagElectrons.size() > 0) 
                 {
@@ -435,8 +465,8 @@ namespace flashgg {
                 } 
                 Handle<View<flashgg::Muon> > theMuons;
                 evt.getByToken( muonToken_, theMuons );
-                std::vector<edm::Ptr<flashgg::Muon> > selectedMuons = selectAllMuons( theMuons->ptrs(), vertices->ptrs(), tthKiller_.muEtaThreshold, tthKiller_.looseLeptonPtThreshold, tthKiller_.muPFIsoSumRelThreshold);
-                std::vector<edm::Ptr<flashgg::Muon> > tagMuons = tthKiller_.filterMuons( selectedMuons, *tag_obj.diPhoton(), leadJet->p4(), subleadJet->p4(), tthKiller_.dRPhoLeptonThreshold, tthKiller_.dRJetLeptonThreshold);
+                std::vector<edm::Ptr<flashgg::Muon> > selectedMuons = selectAllMuons( theMuons->ptrs(), vertices->ptrs(), muEtaThreshold, leptonPtThreshold, muPFIsoSumRelThreshold);
+                std::vector<edm::Ptr<flashgg::Muon> > tagMuons = tthKiller_.filterMuons( selectedMuons, *tag_obj.diPhoton(), leadJet->p4(), subleadJet->p4(), dRPhoMuonThreshold, dRJetLeptonThreshold);
 
                 if (tagMuons.size() > 0) 
                 {
@@ -465,9 +495,9 @@ namespace flashgg {
 
                 ttHVars["fabs_CosThetaStar_CS"] = abs(tag_obj.getCosThetaStar_CS(6500));//FIXME don't do hardcoded
                 ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);
-
-                //FIXME: Add normalization
-
+                
+                // StandardizeInputs();
+                
                 //9 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
                 //'Xtt1','fabs_CosThetaStar_CS','fabs_CosTheta_bb'
                 HLF_VectorVar_[0] = ttHVars["sumET"];
@@ -540,9 +570,8 @@ namespace flashgg {
                 // Sort by pT
                 std::sort(PL_VectorVar_.rbegin(), PL_VectorVar_.rend()); 
 
-
 #ifdef CMSSW9
-                tensorflow::GraphDef* graphDef_ttH = tensorflow::loadGraphDef(ttHWeightfileName_.c_str());
+                tensorflow::GraphDef* graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_+".pb").c_str());
                 session_ttH = tensorflow::createSession(graphDef_ttH);
 
 #elif CMSSW8
@@ -552,7 +581,34 @@ namespace flashgg {
                 float ttHScore = EvaluateNN();
 
                 tag_obj.ttHScore_ = ttHScore;
+                tag_obj.sumET_ = ttHVars["sumET"];
+                tag_obj.phiMET_ = ttHVars["phiMET"];
+                tag_obj.dPhi1_ = ttHVars["dPhi1"];
+                tag_obj.dPhi2_ = ttHVars["dPhi2"];
+                tag_obj.PhoJetMinDr_ = ttHVars["PhoJetMinDr"];
+                tag_obj.njets_ = ttHVars["njets"];
+                tag_obj.Xtt0_ = ttHVars["Xtt0"];
+                tag_obj.Xtt1_ = ttHVars["Xtt1"];
+                tag_obj.pte1_ = ttHVars["pte1"];
+                tag_obj.pte2_ = ttHVars["pte2"];
+                tag_obj.ptmu1_ = ttHVars["ptmu1"];
+                tag_obj.ptmu2_ = ttHVars["ptmu2"];
+                tag_obj.ptdipho_ = ttHVars["ptdipho"];
+                tag_obj.etae1_ = ttHVars["etae1"];
+                tag_obj.etae2_ = ttHVars["etae2"];
+                tag_obj.etamu1_ = ttHVars["etamu1"];
+                tag_obj.etamu2_ = ttHVars["etamu2"];
+                tag_obj.etadipho_ = ttHVars["etadipho"];
+                tag_obj.phie1_ = ttHVars["phie1"];
+                tag_obj.phie2_ = ttHVars["phie2"];
+                tag_obj.phimu1_ = ttHVars["phimu1"];
+                tag_obj.phimu2_ = ttHVars["phimu2"];
+                tag_obj.phidipho_ = ttHVars["phidipho"];
+                tag_obj.fabs_CosThetaStar_CS_ = ttHVars["fabs_CosThetaStar_CS"];
+                tag_obj.fabs_CosTheta_bb_ = ttHVars["fabs_CosTheta_bb"];
 
+                PL_VectorVar_.clear();
+                HLF_VectorVar_.clear();
             }
 
             // choose category and propagate weights
@@ -576,14 +632,42 @@ namespace flashgg {
         evt.put( std::move( truths ) );
         evt.put( std::move( tags ) );
     }
-
+    
+    void DoubleHTagProducer::StandardizeInputs()
+    {
+        // Standardize the input
+        if (!isclose(ttHVars["sumET"],0)) ttHVars["sumET"] = (ttHVars["sumET"] - x_mean_[0])/x_std_[0];
+        if (!isclose(ttHVars["phiMET"],0)) ttHVars["phiMET"] = (ttHVars["phiMET"] - x_mean_[1])/x_std_[1];
+        if (!isclose(ttHVars["dPhi1"],0)) ttHVars["dPhi1"] = (ttHVars["dPhi1"] - x_mean_[2])/x_std_[2];
+        if (!isclose(ttHVars["dPhi2"],0)) ttHVars["dPhi2"] = (ttHVars["dPhi2"] - x_mean_[3])/x_std_[3];
+        if (!isclose(ttHVars["PhoJetMinDr"],0)) ttHVars["PhoJetMinDr"] = (ttHVars["PhoJetMinDr"] - x_mean_[4])/x_std_[4];
+        if (!isclose(ttHVars["njets"],0)) ttHVars["njets"] = (ttHVars["njets"] - x_mean_[5])/x_std_[5];
+        if (!isclose(ttHVars["Xtt0"],0)) ttHVars["Xtt0"] = (ttHVars["Xtt0"] - x_mean_[6])/x_std_[6];
+        if (!isclose(ttHVars["Xtt1"],0)) ttHVars["Xtt1"] = (ttHVars["Xtt1"] - x_mean_[7])/x_std_[7];
+        if (!isclose(ttHVars["pte1"],0)) ttHVars["pte1"] = (ttHVars["pte1"] - x_mean_[8])/x_std_[8];
+        if (!isclose(ttHVars["pte2"],0)) ttHVars["pte2"] = (ttHVars["pte2"] - x_mean_[9])/x_std_[9];
+        if (!isclose(ttHVars["ptmu1"],0)) ttHVars["ptmu1"] = (ttHVars["ptmu1"] - x_mean_[10])/x_std_[10];
+        if (!isclose(ttHVars["ptmu2"],0)) ttHVars["ptmu2"] = (ttHVars["ptmu2"] - x_mean_[11])/x_std_[11];
+        if (!isclose(ttHVars["ptdipho"],0)) ttHVars["ptdipho"] = (ttHVars["ptdipho"] - x_mean_[12])/x_std_[12];
+        if (!isclose(ttHVars["etae1"],0)) ttHVars["etae1"] = (ttHVars["etae1"] - x_mean_[13])/x_std_[13];
+        if (!isclose(ttHVars["etae2"],0)) ttHVars["etae2"] = (ttHVars["etae2"] - x_mean_[14])/x_std_[14];
+        if (!isclose(ttHVars["etamu1"],0)) ttHVars["etamu1"] = (ttHVars["etamu1"] - x_mean_[15])/x_std_[15];
+        if (!isclose(ttHVars["etamu2"],0)) ttHVars["etamu2"] = (ttHVars["etamu2"] - x_mean_[16])/x_std_[16];
+        if (!isclose(ttHVars["etadipho"],0)) ttHVars["etadipho"] = (ttHVars["etadipho"] - x_mean_[17])/x_std_[17];
+        if (!isclose(ttHVars["phie1"],0)) ttHVars["phie1"] = (ttHVars["phie1"] - x_mean_[18])/x_std_[18];
+        if (!isclose(ttHVars["phie2"],0)) ttHVars["phie2"] = (ttHVars["phie2"] - x_mean_[19])/x_std_[19];
+        if (!isclose(ttHVars["phimu1"],0)) ttHVars["phimu1"] = (ttHVars["phimu1"] - x_mean_[20])/x_std_[20];
+        if (!isclose(ttHVars["phimu2"],0)) ttHVars["phimu2"] = (ttHVars["phimu2"] - x_mean_[21])/x_std_[21];
+        if (!isclose(ttHVars["phidipho"],0)) ttHVars["phidipho"] = (ttHVars["phidipho"] - x_mean_[22])/x_std_[22];
+        if (!isclose(ttHVars["fabs_CosThetaStar_CS"],0)) ttHVars["fabs_CosThetaStar_CS"] = (ttHVars["fabs_CosThetaStar_CS"] - x_mean_[23])/x_std_[23];
+        if (!isclose(ttHVars["fabs_CosTheta_bb"],0)) ttHVars["fabs_CosTheta_bb"] = (ttHVars["fabs_CosTheta_bb"] - x_mean_[24])/x_std_[24];
+    }
     
     float DoubleHTagProducer::EvaluateNN(){
 
         unsigned int shape = HLF_VectorVar_.size();
         unsigned int plshape1 = PL_VectorVar_.size();
         unsigned int plshape2 = PL_VectorVar_[0].size();
-        std::printf("shape = %d %d\n", plshape1, plshape2); 
 #ifdef CMSSW9
         tensorflow::Tensor HLFinput(tensorflow::DT_FLOAT, {1,shape});
         for (unsigned int i = 0; i < shape; i++){
@@ -593,7 +677,7 @@ namespace flashgg {
         for (unsigned int i = 0; i < plshape1; i++)
             for (unsigned int j = 0; j < plshape2; j++)
             {
-                PLinput.matrix<float>()(0, i, j) = float(PL_VectorVar_[i][j]);
+                PLinput.tensor<float,3>()(0, i, j) = float(PL_VectorVar_[i][j]);
             }
         std::vector<tensorflow::Tensor> outputs;
         tensorflow::run(session_ttH, { {"input_216:0", HLFinput}, {"input_215:0", PLinput} }, { "dense_302/Sigmoid:0" }, &outputs);
@@ -614,7 +698,6 @@ namespace flashgg {
         DNNmodel_->eval();
         float NNscore = y->getValue<float>(0,0);
 #endif         
-        std::cout << "Output score is " << NNscore << std::endl;
         return NNscore;
     }//end EvaluateNN
     

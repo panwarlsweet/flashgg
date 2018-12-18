@@ -42,14 +42,10 @@ namespace flashgg {
         std::vector<std::string> orderedVars;
 
 
-        void initializeSelectionThresholds();
         void dummyPrint();
-        void initializeMVAVariables(std::string weightFile="",std::vector<string> varvec={});  
 
         std::string ttHMVAWeights_;
         std::vector<std::string> ttHMVAVars_;
-        void setupMVA(std::string File, std::vector<std::string> inVars);
-        float mvaDiscriminants(std::map<std::string,float>) ;
         std::vector<float> XttCalculation(std::vector<flashgg::Jet> allJetsCol, std::vector<flashgg::Jet> DiJet);
         std::vector<edm::Ptr<flashgg::Electron> > filterElectrons( const std::vector<edm::Ptr<flashgg::Electron> > &electronPointers, 
                                                                                      flashgg::DiPhotonCandidate dipho, 
