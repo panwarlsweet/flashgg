@@ -132,7 +132,7 @@ namespace flashgg {
         useJetID_( iConfig.getParameter<bool>   ( "UseJetID"     ) ),
         JetIDLevel_( iConfig.getParameter<string> ( "JetIDLevel"   ) ),
         globalVariablesDumper_(iConfig.getParameter<edm::ParameterSet>("globalVariables")),
-        mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesDumper_)
+        mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesDumper_),
         ttHWeightfileName_( iConfig.getUntrackedParameter<std::string>("ttHWeightfile"))
     {
         mjjBoundaries_ = iConfig.getParameter<vector<double > >( "MJJBoundaries" ); 
@@ -519,7 +519,7 @@ namespace flashgg {
                 ttHVars["fabs_CosThetaStar_CS"] = abs(tag_obj.getCosThetaStar_CS(6500));//FIXME don't do hardcoded
                 ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);
                 
-                // StandardizeInputs();
+                StandardizeInputs();
                 
                 //9 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
                 //'Xtt1','fabs_CosThetaStar_CS','fabs_CosTheta_bb'

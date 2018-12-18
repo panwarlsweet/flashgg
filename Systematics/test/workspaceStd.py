@@ -61,7 +61,7 @@ customize.options.register('doubleHReweightTarget',
                            'doubleHReweightTarget'
                            )
 customize.options.register('year',
-                           '2016',
+                           '2017',
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.string,
                            'year'
@@ -79,7 +79,7 @@ customize.options.register('doDoubleHttHKiller',
                            'doDoubleHttHKiller'
                            )
 customize.options.register('ttHKillerVariablesOnly',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'ttHKillerVariablesOnly'
@@ -166,7 +166,7 @@ print 'tthTagsOnly '+str(customize.tthTagsOnly)
 # import flashgg customization to check if we have signal or background
 from flashgg.MetaData.JobConfig import customize
 # set default options if needed
-customize.setDefault("maxEvents",5000)
+customize.setDefault("maxEvents",-1)
 customize.setDefault("targetLumi",1.00e+3)
 customize.parse()
 
@@ -465,8 +465,10 @@ process.source = cms.Source ("PoolSource",
 #"root://cms-xrd-global.cern.ch///store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra_5/1/VBFHToGG_M-125_13TeV_powheg_pythia8/RunIIMoriond17_HHbbgg_breg_extra_5-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180530_092552/0000/myMicroAODOutputFile_6.root"
 #"root://cms-xrd-global.cern.ch///store/group/phys_higgs/cmshgg/spigazzi/flashgg/RunIIFall17-3_2_0/RunIIFall17-3_2_0/DoubleEG/RunIIFall17-3_2_0-RunIIFall17-3_2_0-v0-Run2017E-31Mar2018-v1/181008_110407/0001/myMicroAODOutputFile_1661.root"
 #"root://cms-xrd-global.cern.ch///store/user/micheli/MicroAOD/ReMiniAOD2016-DeepCSV-bRegression/ReMiniAOD2016-DeepCSV-bRegression/prod-uAOD-300-11-g22a116d/DoubleEG/ReMiniAOD2016-DeepCSV-bRegression-prod-uAOD-300-11-g22a116d-v0-Run2016C-03Feb2017-v1/180928_153054/0000/myMicroAODOutputFile_420.root"
-"root://cms-xrd-global.cern.ch//store/user/micheli/MicroAOD/ReMiniAOD2016-DeepCSV-bRegression/ReMiniAOD2016-DeepCSV-bRegression/prod-uAOD-300-11-g22a116d/DoubleEG/ReMiniAOD2016-DeepCSV-bRegression-prod-uAOD-300-11-g22a116d-v0-Run2016G-03Feb2017-v1/180928_153415/0000/myMicroAODOutputFile_57.root"
-#"root://cms-xrd-global.cern.ch////store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra_5/1/ttHToGG_M125_13TeV_powheg_pythia8_v2/RunIIMoriond17_HHbbgg_breg_extra_5-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180530_093447/0000/myMicroAODOutputFile_2.root"
+#"root://cms-xrd-global.cern.ch//store/user/micheli/MicroAOD/ReMiniAOD2016-DeepCSV-bRegression/ReMiniAOD2016-DeepCSV-bRegression/prod-uAOD-300-11-g22a116d/DoubleEG/ReMiniAOD2016-DeepCSV-bRegression-prod-uAOD-300-11-g22a116d-v0-Run2016G-03Feb2017-v1/180928_153415/0000/myMicroAODOutputFile_57.root"
+"root://cms-xrd-global.cern.ch////store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra_5/1/ttHToGG_M125_13TeV_powheg_pythia8_v2/RunIIMoriond17_HHbbgg_breg_extra_5-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180530_093447/0000/myMicroAODOutputFile_2.root"
+#"root://cms-xrd-global.cern.ch////store/group/phys_higgs/HiggsExo/HH_bbgg/RunIIFall17-3_1_0/3_1_0/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/RunIIFall17-3_1_0-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/180830_190720/0000/myMicroAODOutputFile_2.root"
+
 ))
 
 process.TFileService = cms.Service("TFileService",

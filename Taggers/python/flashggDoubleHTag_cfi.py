@@ -68,9 +68,9 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
                                    doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
-                                   doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
+                                   doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
-                                   globalVariables=globalVariables
+                                   globalVariables=globalVariables,
                                    
                                    dottHTagger=cms.bool(True), #whether to do ttH killer. 
                                     

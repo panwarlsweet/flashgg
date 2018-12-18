@@ -389,7 +389,7 @@ namespace flashgg {
 
         edm::Handle<double>  rho;
         evt.getByToken(rhoTag_,rho);
-        double rho_    = *rho;
+        //double rho_    = *rho;
 
         Handle<View<reco::Vertex> > vertices;
         evt.getByToken( vertexToken_, vertices );
