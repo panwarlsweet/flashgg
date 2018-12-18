@@ -65,23 +65,6 @@ def variablesToDump(customize):
              "subleadingJet_mass := subleadJet().p4().M()",
              "subleadingJet_hflav := subleadJet().hadronFlavour()",
              "subleadingJet_pflav := subleadJet().partonFlavour()",
-#
-#
-#             "ttHMVA_MET := 0",# these variables are needed for ttH killer MVA, which has to be implemented in the producer with another mvaComputer
-#             "ttHMVA_njets := 0",
-#             "ttHMVA_Xtt0 :=0 ",
-#             "ttHMVA_Xtt1 :=0 ",
-#             "ttHMVA_MjjW0 :=0 ",
-#             "ttHMVA_MjjW1 :=0 ",
-#             "ttHMVA_Mjjbt0 :=0 ",
-#             "ttHMVA_Mjjbt1 :=0 ",
-#             "ttHMVA_leadingMuon :=0 ",
-#             "ttHMVA_subleadingMuon :=0 ",
-#             "ttHMVA_nmus :=0 ",
-#             "ttHMVA_leadingElectron :=0 ",
-#             "ttHMVA_subleadingElectron :=0 ",
-#             "ttHMVA_nelecs :=0 ",
-#             "ttHHHbggMVA := 0",
     ]
     if customize.doBJetRegression : variables +=[
              "leadingJet_bRegNNCorr := leadJet().userFloat('bRegNNCorr')",
@@ -90,6 +73,41 @@ def variablesToDump(customize):
              "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
              "sigmaMJets := getSigmaMOverMJets()"
     ]
+
+    if customize.ttHKillerVariablesOnly : ttHVariables = [
+            "ttH_sumET := sumET()",
+            "ttH_phiMET := phiMET()",
+            "ttH_dPhi1 := dPhi1()",
+            "ttH_dPhi2 := dPhi2()",
+            "ttH_PhoJetMinDr := PhoJetMinDr()",
+            "ttH_njets := njets()",
+            "ttH_Xtt0 := Xtt0()",
+            "ttH_Xtt1 := Xtt1()",
+            "ttH_pte1 := pte1()",
+            "ttH_pte2 := pte2()",
+            "ttH_ptmu1 := ptmu1()",
+            "ttH_ptmu2 := ptmu2()",
+            "ttH_ptdipho := ptdipho()",
+            "ttH_etae1 := etae1()",
+            "ttH_etae2 := etae2()",
+            "ttH_etamu1 := etamu1()",
+            "ttH_etamu2 := etamu2()",
+            "ttH_etadipho := etadipho()",
+            "ttH_phie1 := phie1()",
+            "ttH_phie2 := phie2()",
+            "ttH_phimu1 := phimu1()",
+            "ttH_phimu2 := phimu2()",
+            "ttH_phidipho := phidipho()",
+            "ttH_fabs_CosThetaStar_CS := fabs_CosThetaStar_CS()",
+            "ttH_fabs_CosTheta_bb := fabs_CosTheta_bb()",
+            ]
+    
+    if customize.ttHKillerVariablesOnly : return ttHVariables
+    
+    if customize.doDoubleHttHKiller : variables +=[
+            "ttHScore := ttHScore()",
+    ]
+
     if customize.dumpWorkspace == False : return variables
     else : return var_workspace
 

@@ -9,13 +9,24 @@
 
 #include "flashgg/DataFormats/interface/DiPhotonCandidate.h"
 #include "flashgg/DataFormats/interface/Jet.h"
+#include "flashgg/DataFormats/interface/Met.h"
+#include "flashgg/DataFormats/interface/Electron.h"
+#include "flashgg/DataFormats/interface/Muon.h"
+
 #include "flashgg/DataFormats/interface/DiPhotonMVAResult.h"
 #include "flashgg/DataFormats/interface/DoubleHTag.h"
 #include "flashgg/DataFormats/interface/TagTruthBase.h"
 #include "DataFormats/Common/interface/RefToPtr.h"
-
+#include "flashgg/Taggers/interface/LeptonSelection.h"
 #include "flashgg/MicroAOD/interface/MVAComputer.h"
+#include "flashgg/DataFormats/interface/DoubleHttHTagger.h"
 
+#ifdef CMSSW9
+#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
+#elif CMSSW8
+#include "DNN/Tensorflow/interface/Graph.h"
+#include "DNN/Tensorflow/interface/Tensor.h"
+#endif
 
 #include <vector>
 #include <algorithm>
@@ -36,14 +47,18 @@ namespace flashgg {
     private:
         void produce( Event &, const EventSetup & ) override;
         int chooseCategory( float mva, float mx );
+        float EvaluateNN();
+        bool isclose(double a, double b, double rel_tol, double abs_tol);        
+        void StandardizeInputs();
         
         EDGetTokenT<View<DiPhotonCandidate> > diPhotonToken_;
         std::vector<edm::EDGetTokenT<edm::View<flashgg::Jet> > > jetTokens_;
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
         string systLabel_;
+        std::map<std::string, float> ttHVars;
 
         double minLeadPhoPt_, minSubleadPhoPt_;
-        bool scalingPtCuts_, doPhotonId_, doMVAFlattening_, doCategorization_;
+        bool scalingPtCuts_, doPhotonId_, doMVAFlattening_, doCategorization_, dottHTagger_;
         double photonIDCut_;
         double vetoConeSize_;         
         unsigned int doSigmaMDecorr_;
@@ -68,11 +83,39 @@ namespace flashgg {
         MVAComputer<DoubleHTag> mvaComputer_;
         vector<double> mvaBoundaries_, mxBoundaries_;
         int multiclassSignalIdx_;
+            
+        //leptons selection
+        double leptonPtThreshold;
+        double muEtaThreshold;
+        double muPFIsoSumRelThreshold; 
+
+        double dRPhoElectronThreshold;
+        double dRPhoMuonThreshold;
+        double dRJetLeptonThreshold;
+
+        bool useElecMVARecipe; 
+        bool useElecLooseId;
+        std::vector<double> elecEtaThresholds;
+
 
         FileInPath MVAFlatteningFileName_;
         TFile * MVAFlatteningFile_;
         TGraph * MVAFlatteningCumulative_;
         double MVAscaling_;
+            
+        DoubleHttHTagger tthKiller_;
+        float ttHTagger;
+        edm::EDGetTokenT<edm::View<flashgg::Met> > METToken_;
+        edm::EDGetTokenT<edm::View<flashgg::Electron> > electronToken_;
+        edm::EDGetTokenT<edm::View<flashgg::Muon> > muonToken_;
+        edm::EDGetTokenT<edm::View<reco::Vertex> > vertexToken_;
+        edm::EDGetTokenT<double> rhoToken_;
+
+        std::vector<double> HLF_VectorVar_;
+        std::vector<std::vector<double>> PL_VectorVar_;
+        std::vector<double> x_mean_, x_std_;
+        string ttHWeightfileName_ ;
+        tensorflow::Session* session_ttH;
     };
 
     DoubleHTagProducer::DoubleHTagProducer( const ParameterSet &iConfig ) :
@@ -90,6 +133,7 @@ namespace flashgg {
         JetIDLevel_( iConfig.getParameter<string> ( "JetIDLevel"   ) ),
         globalVariablesDumper_(iConfig.getParameter<edm::ParameterSet>("globalVariables")),
         mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesDumper_)
+        ttHWeightfileName_( iConfig.getUntrackedParameter<std::string>("ttHWeightfile"))
     {
         mjjBoundaries_ = iConfig.getParameter<vector<double > >( "MJJBoundaries" ); 
         mvaBoundaries_ = iConfig.getParameter<vector<double > >( "MVABoundaries" );
@@ -100,18 +144,19 @@ namespace flashgg {
 
         auto jetTags = iConfig.getParameter<std::vector<edm::InputTag> > ( "JetTags" ); 
         for( auto & tag : jetTags ) { jetTokens_.push_back( consumes<edm::View<flashgg::Jet> >( tag ) ); }
-        
+
         assert(is_sorted(mvaBoundaries_.begin(), mvaBoundaries_.end()) && "mva boundaries are not in ascending order (we count on that for categorization)");
         assert(is_sorted(mxBoundaries_.begin(), mxBoundaries_.end()) && "mx boundaries are not in ascending order (we count on that for categorization)");
         doPhotonId_ = iConfig.getUntrackedParameter<bool>("ApplyEGMPhotonID");        
         photonIDCut_ = iConfig.getParameter<double>("PhotonIDCut");
-        
+
         doMVAFlattening_ = iConfig.getParameter<bool>("doMVAFlattening"); 
         doCategorization_ = iConfig.getParameter<bool>("doCategorization"); 
+        dottHTagger_ = iConfig.getParameter<bool>("dottHTagger"); 
         photonElectronVeto_=iConfig.getUntrackedParameter<std::vector<int > >("PhotonElectronVeto");
         //needed for HHbbgg MVA
         if(doMVAFlattening_){
-            MVAFlatteningFileName_=iConfig.getUntrackedParameter<edm::FileInPath>("MVAFlatteningFileName");
+            MVAFlatteningFileName_ = iConfig.getUntrackedParameter<edm::FileInPath>("MVAFlatteningFileName");
             MVAFlatteningFile_ = new TFile((MVAFlatteningFileName_.fullPath()).c_str(),"READ");
             MVAFlatteningCumulative_ = (TGraph*)MVAFlatteningFile_->Get("cumulativeGraph"); 
         }
@@ -127,21 +172,41 @@ namespace flashgg {
             if(h_decorrEBEB_ && h_decorrNotEBEB_){
                 transfEBEB_ = new DecorrTransform(h_decorrEBEB_ , 125., 1, 0);
                 transfNotEBEB_ = new DecorrTransform(h_decorrNotEBEB_ , 125., 1, 0);
-                
+
             } else {
                 throw cms::Exception( "Configuration" ) << "The file "<<sigmaMDecorrFile_.fullPath()<<" provided for sigmaM/M decorrelation does not contain the expected histograms."<<std::endl;
             }
         }
 
-        //needed for ttH MVA
-//        METToken_( consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ( "METTag" ) ) );
-//        electronToken_ = consumes<edm::View<flashgg::Electron> >( iConfig.getParameter<edm::InputTag> ( "ElectronTag" ) );
-//        muonToken_ = consumes<edm::View<flashgg::Muon> >( iConfig.getParameter<edm::InputTag>( "MuonTag" ) );
+        if(dottHTagger_)
+        {
+            //leptons selection
+            leptonPtThreshold = iConfig.getParameter<double>("looseLeptonPtThreshold");
+            muEtaThreshold = iConfig.getParameter<double>("muonEtaThreshold");
+            muPFIsoSumRelThreshold = iConfig.getParameter<double>("muPFIsoSumRelThreshold");
 
+            dRPhoElectronThreshold = iConfig.getParameter<double>("deltaRPhoElectronThreshold");
+            dRPhoMuonThreshold = iConfig.getParameter<double>("deltaRPhoMuonThreshold");
+            dRJetLeptonThreshold = iConfig.getParameter<double>("deltaRJetLepThreshold");
 
+            useElecMVARecipe = iConfig.getParameter<bool>("useElectronMVARecipe"); 
+            useElecLooseId = iConfig.getParameter<bool>("useElectronLooseID");
+            elecEtaThresholds = iConfig.getParameter<std::vector<double > >("electronEtaThresholds");
+            
+            
+            x_mean_ = iConfig.getParameter<std::vector<double>> ("mean");
+            x_std_ = iConfig.getParameter<std::vector<double>> ("std");
 
-        produces<vector<DoubleHTag> >();
-        produces<vector<TagTruthBase> >();
+            //needed for ttH killer
+            METToken_= consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ("METTag") ) ;
+            electronToken_ = consumes<edm::View<flashgg::Electron> >( iConfig.getParameter<edm::InputTag> ("ElectronTag") );
+            muonToken_ = consumes<edm::View<flashgg::Muon> >( iConfig.getParameter<edm::InputTag>("MuonTag") );
+            vertexToken_ = consumes<edm::View<reco::Vertex> >( iConfig.getParameter<edm::InputTag> ("VertexTag") );
+            rhoToken_ = consumes<double>( iConfig.getParameter<edm::InputTag>( "rhoTag" ) );
+        }
+
+        produces<vector<DoubleHTag>>();
+        produces<vector<TagTruthBase>>();
     }
 
     int DoubleHTagProducer::chooseCategory( float mvavalue, float mxvalue)
@@ -149,7 +214,7 @@ namespace flashgg {
         //// should return 0 if mva above all the numbers, 1 if below the first, ..., boundaries.size()-N if below the Nth, ...
         //this is for mva, then you have mx
         if (!doCategorization_) {
-             return 0;
+            return 0;
         }
         int mvaCat=-1;
         for( int n = 0 ; n < ( int )mvaBoundaries_.size() ; n++ ) {
@@ -158,7 +223,6 @@ namespace flashgg {
                 break;
             }
         }
-
 
         if (mvaCat==-1) return -1;// Does not pass, object will not be produced
 
@@ -188,6 +252,11 @@ namespace flashgg {
 
     }
 
+    bool DoubleHTagProducer::isclose(double a, double b, double rel_tol=1e-09, double abs_tol=0.0)
+    {
+        return fabs(a-b) <= max(rel_tol * max(fabs(a), fabs(b)), abs_tol);
+    }
+
     void DoubleHTagProducer::produce( Event &evt, const EventSetup & )
     {
         // read diphotons
@@ -198,7 +267,7 @@ namespace flashgg {
         std::unique_ptr<vector<DoubleHTag> > tags( new vector<DoubleHTag> );
         std::unique_ptr<vector<TagTruthBase> > truths( new vector<TagTruthBase> );
         edm::RefProd<vector<TagTruthBase> > rTagTruth = evt.getRefBeforePut<vector<TagTruthBase> >();
-        
+
         // MC truth
         TagTruthBase truth_obj;
         double genMhh=0.;
@@ -234,11 +303,11 @@ namespace flashgg {
         // loop over diphotons
         for( unsigned int candIndex = 0; candIndex < diPhotons->size() ; candIndex++ ) {
             edm::Ptr<flashgg::DiPhotonCandidate> dipho = diPhotons->ptrAt( candIndex );
-            
+
             // kinematic cuts on diphotons
             auto & leadPho = *(dipho->leadingPhoton());
             auto & subleadPho = *(dipho->subLeadingPhoton());
-            
+
             double leadPt = leadPho.pt();
             double subleadPt = subleadPho.pt();
             if( scalingPtCuts_ ) {
@@ -256,14 +325,14 @@ namespace flashgg {
             if(leadPho.passElectronVeto()<photonElectronVeto_[0] || subleadPho.passElectronVeto()<photonElectronVeto_[1]){
                 continue;
             }
-            
-            
+
+
             // find vertex associated to diphoton object
             size_t vtx = (size_t)dipho->jetCollectionIndex();
             // and read corresponding jet collection
             edm::Handle<edm::View<flashgg::Jet> > jets;
             evt.getByToken( jetTokens_[vtx], jets);
-            
+
             // photon-jet cross-cleaning and pt/eta/btag/jetid cuts for jets
             std::vector<edm::Ptr<flashgg::Jet> > cleaned_jets;
             for( size_t ijet=0; ijet < jets->size(); ++ijet ) {//jets are ordered in pt
@@ -313,17 +382,16 @@ namespace flashgg {
             DoubleHTag tag_obj( dipho, leadJet, subleadJet );
             tag_obj.setDiPhotonIndex( candIndex );
             tag_obj.setSystLabel( systLabel_ );
-            
+
             if (tag_obj.dijet().mass()<mjjBoundaries_[0] || tag_obj.dijet().mass()>mjjBoundaries_[1]) continue;
 
             // compute extra variables here
             tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass() - tag_obj.diPhoton()->mass() + 250. );
             tag_obj.setGenMhh( genMhh );
-            
             if(doSigmaMDecorr_){
                 tag_obj.setSigmaMDecorrTransf(transfEBEB_,transfNotEBEB_);
             }
-            
+
             // eval MVA discriminant
             std::vector<float> mva_vector = mvaComputer_.predict_prob(tag_obj);
             double mva = mva_vector[multiclassSignalIdx_];
@@ -333,7 +401,237 @@ namespace flashgg {
             }
 
             tag_obj.setMVA( mva );
-            //            tag_obj.setMVAprob( mva_vector );
+            
+            // tag_obj.setMVAprob( mva_vector );
+
+            // tth Tagger
+            if (dottHTagger_) 
+            {
+                HLF_VectorVar_.resize(9);  // High-level features. 9 at the moment
+                PL_VectorVar_.resize(6);
+                for (int i = 0; i < 6; i++)
+                    PL_VectorVar_[i].resize(7); // List of particles. 6 objects. Each object has 7 attributes.
+
+                float sumEt=0.,njets=0.;
+                std::vector<flashgg::Jet> cleanedDR_jets;
+                for( size_t ijet=0; ijet < cleaned_jets.size();++ijet){
+                    auto jet = cleaned_jets[ijet];
+                    if( reco::deltaR(*jet,*leadJet)< vetoConeSize_) continue;
+                    if( reco::deltaR(*jet,*subleadJet)< vetoConeSize_) continue;
+                    sumEt+=jet->p4().pt();
+                    njets+=1;
+                    cleanedDR_jets.push_back(*jet);
+                }
+                ttHVars["sumET"] = sumEt;
+                edm::Handle<View<flashgg::Met> > METs;
+                evt.getByToken( METToken_, METs );
+                if( METs->size() != 1 )
+                { std::cout << "WARNING number of MET is not equal to 1" << std::endl; }
+                Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
+                auto p4MET=theMET->p4();
+                ttHVars["MET"]=p4MET.pt();
+                ttHVars["phiMET"]=p4MET.phi();
+
+                ttHVars["dPhi1"] = reco::deltaPhi(p4MET.Phi(), leadJet->p4().phi());
+                ttHVars["dPhi2"] = reco::deltaPhi(p4MET.Phi(), subleadJet->p4().phi());
+                ttHVars["PhoJetMinDr"] = tag_obj.getPhoJetMinDr();
+                ttHVars["njets"] = njets;
+                std::vector<flashgg::Jet> DiJet;
+                DiJet.push_back(tag_obj.leadJet());
+                DiJet.push_back(tag_obj.subleadJet());
+                std::vector<float> Xtt = tthKiller_.XttCalculation(cleanedDR_jets,DiJet);
+                if(Xtt.size()>1){
+                    ttHVars["Xtt0"] = Xtt[0];
+                    ttHVars["Xtt1"] = Xtt[1];
+                }else{
+                    ttHVars["Xtt0"] = 1000;
+                    ttHVars["Xtt1"] = 0;
+                }
+                Handle<View<flashgg::Electron> > theElectrons;
+                evt.getByToken( electronToken_, theElectrons );
+
+                Handle<View<reco::Vertex> > vertices;
+                evt.getByToken( vertexToken_, vertices );
+                edm::Handle<double>  rho;
+                evt.getByToken(rhoToken_,rho);
+
+                ttHVars["ptdipho"] = dipho->p4().pt();
+                ttHVars["etadipho"] = dipho->p4().eta();
+                ttHVars["phidipho"] = dipho->p4().phi();
+
+                std::vector<edm::Ptr<flashgg::Electron> > selectedElectrons = selectStdAllElectrons( theElectrons->ptrs(), vertices->ptrs(), leptonPtThreshold, elecEtaThresholds, useElecMVARecipe, useElecLooseId, *rho, evt.isRealData() );
+                std::vector<edm::Ptr<flashgg::Electron> > tagElectrons = tthKiller_.filterElectrons( selectedElectrons, *tag_obj.diPhoton(), leadJet->p4(), subleadJet->p4(), dRPhoElectronThreshold, dRJetLeptonThreshold);
+
+                if (tagElectrons.size() > 0) 
+                {
+                    ttHVars["pte1"] = tagElectrons.at( 0 )->p4().pt();
+                    ttHVars["etae1"] = tagElectrons.at( 0 )->p4().eta();
+                    ttHVars["phie1"] = tagElectrons.at( 0 )->p4().phi();
+                }
+                else 
+                {
+                    ttHVars["pte1"] = 0.;
+                    ttHVars["etae1"] = 0.;
+                    ttHVars["phie1"] = 0.;
+                }
+                if (tagElectrons.size() > 1) 
+                {
+                    ttHVars["pte2"] = tagElectrons.at( 1 )->p4().pt();     
+                    ttHVars["etae2"] = tagElectrons.at( 1 )->p4().eta();     
+                    ttHVars["phie2"] = tagElectrons.at( 1 )->p4().phi();     
+                }
+                else 
+                {
+                    ttHVars["pte2"] = 0.;
+                    ttHVars["etae2"] = 0.;
+                    ttHVars["phie2"] = 0.;
+                } 
+                Handle<View<flashgg::Muon> > theMuons;
+                evt.getByToken( muonToken_, theMuons );
+                std::vector<edm::Ptr<flashgg::Muon> > selectedMuons = selectAllMuons( theMuons->ptrs(), vertices->ptrs(), muEtaThreshold, leptonPtThreshold, muPFIsoSumRelThreshold);
+                std::vector<edm::Ptr<flashgg::Muon> > tagMuons = tthKiller_.filterMuons( selectedMuons, *tag_obj.diPhoton(), leadJet->p4(), subleadJet->p4(), dRPhoMuonThreshold, dRJetLeptonThreshold);
+
+                if (tagMuons.size() > 0) 
+                {
+                    ttHVars["ptmu1"] = tagMuons.at( 0 )->p4().pt();
+                    ttHVars["etamu1"] = tagMuons.at( 0 )->p4().eta();
+                    ttHVars["phimu1"] = tagMuons.at( 0 )->p4().phi();
+                }
+                else 
+                {
+                    ttHVars["ptmu1"] = 0.;
+                    ttHVars["etamu1"] = 0.;
+                    ttHVars["phimu1"] = 0.;
+                }
+                if (tagMuons.size() > 1) 
+                {
+                    ttHVars["ptmu2"] = tagMuons.at( 1 )->p4().pt();    
+                    ttHVars["etamu2"] = tagMuons.at( 1 )->p4().eta();    
+                    ttHVars["phimu2"] = tagMuons.at( 1 )->p4().phi();    
+                }
+                else 
+                {
+                    ttHVars["ptmu2"] = 0.;
+                    ttHVars["etamu2"] = 0.;
+                    ttHVars["phimu2"] = 0.;
+                }
+
+                ttHVars["fabs_CosThetaStar_CS"] = abs(tag_obj.getCosThetaStar_CS(6500));//FIXME don't do hardcoded
+                ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);
+                
+                // StandardizeInputs();
+                
+                //9 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
+                //'Xtt1','fabs_CosThetaStar_CS','fabs_CosTheta_bb'
+                HLF_VectorVar_[0] = ttHVars["sumET"];
+                HLF_VectorVar_[1] = ttHVars["dPhi1"];
+                HLF_VectorVar_[2] = ttHVars["dPhi2"];
+                HLF_VectorVar_[3] = ttHVars["PhoJetMinDr"];
+                HLF_VectorVar_[4] = ttHVars["njets"];
+                HLF_VectorVar_[5] = ttHVars["Xtt0"];
+                HLF_VectorVar_[6] = ttHVars["Xtt1"];
+                HLF_VectorVar_[7] = ttHVars["fabs_CosThetaStar_CS"];
+                HLF_VectorVar_[8] = ttHVars["fabs_CosTheta_bb"];
+
+                // 6 objects: ele1, ele2, mu1, mu2, dipho, MET
+                // Each object has 7 attributes: pt, eta, phi, isele, ismuon, isdipho, isMET
+                //
+                // 0: leading ele
+                PL_VectorVar_[0][0] = ttHVars["pte1"];
+                PL_VectorVar_[0][1] = ttHVars["etae1"];
+                PL_VectorVar_[0][2] = ttHVars["phie1"];
+                PL_VectorVar_[0][3] = (isclose(ttHVars["pte1"],0)) ? 0 : 1; // isEle
+                PL_VectorVar_[0][4] = 0; // isMuon
+                PL_VectorVar_[0][5] = 0; // isDiPho
+                PL_VectorVar_[0][6] = 0; // isMET
+
+                // 1: subleading ele
+                PL_VectorVar_[1][0] = ttHVars["pte2"];
+                PL_VectorVar_[1][1] = ttHVars["etae2"];
+                PL_VectorVar_[1][2] = ttHVars["phie2"];
+                PL_VectorVar_[1][3] = (isclose(ttHVars["pte2"],0)) ? 0 : 1; // isEle
+                PL_VectorVar_[1][4] = 0; // isMuon
+                PL_VectorVar_[1][5] = 0; // isDiPho
+                PL_VectorVar_[1][6] = 0; // isMET
+
+                // 2: leading muon
+                PL_VectorVar_[2][0] = ttHVars["ptmu1"];
+                PL_VectorVar_[2][1] = ttHVars["etamu1"];
+                PL_VectorVar_[2][2] = ttHVars["phimu1"];
+                PL_VectorVar_[2][3] = 0; // isEle
+                PL_VectorVar_[2][4] = (isclose(ttHVars["ptmu1"],0)) ? 0 : 1; // isMuon
+                PL_VectorVar_[2][5] = 0; // isDiPho
+                PL_VectorVar_[2][6] = 0; // isMET
+
+                // 3: subleading muon
+                PL_VectorVar_[3][0] = ttHVars["ptmu2"];
+                PL_VectorVar_[3][1] = ttHVars["etamu2"];
+                PL_VectorVar_[3][2] = ttHVars["phimu2"];
+                PL_VectorVar_[3][3] = 0; //isEle
+                PL_VectorVar_[3][4] = (isclose(ttHVars["ptmu2"],0)) ? 0 : 1; // isMuon
+                PL_VectorVar_[3][5] = 0; // isDiPho
+                PL_VectorVar_[3][6] = 0; // isMET
+
+                // 4: dipho
+                PL_VectorVar_[4][0] = ttHVars["ptdipho"];
+                PL_VectorVar_[4][1] = ttHVars["etadipho"];
+                PL_VectorVar_[4][2] = ttHVars["phidipho"];
+                PL_VectorVar_[4][3] = 0; // isEle
+                PL_VectorVar_[4][4] = 0; // isMuon
+                PL_VectorVar_[4][5] = (isclose(ttHVars["ptdipho"],0)) ? 0 : 1; // isDiPho
+                PL_VectorVar_[4][6] = 0; // isMET
+
+                // 5: MET
+                PL_VectorVar_[5][0] = ttHVars["MET"];
+                PL_VectorVar_[5][1] = 0; // MET eta
+                PL_VectorVar_[5][2] = ttHVars["phiMET"];
+                PL_VectorVar_[5][3] = 0; //isEle
+                PL_VectorVar_[5][4] = 0; // isMuon
+                PL_VectorVar_[5][5] = 0; // isDiPho
+                PL_VectorVar_[5][6] = (isclose(ttHVars["MET"],0)) ? 0 : 1; // isMET
+
+                // Sort by pT
+                std::sort(PL_VectorVar_.rbegin(), PL_VectorVar_.rend()); 
+
+#ifdef CMSSW9
+                tensorflow::GraphDef* graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_+".pb").c_str());
+#elif CMSSW8
+                tensorflow::GraphDef* graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_+".pb").c_str()); // Use another file here
+#endif 
+                session_ttH = tensorflow::createSession(graphDef_ttH);
+
+                float ttHScore = EvaluateNN();
+
+                tag_obj.ttHScore_ = ttHScore;
+                tag_obj.sumET_ = ttHVars["sumET"];
+                tag_obj.phiMET_ = ttHVars["phiMET"];
+                tag_obj.dPhi1_ = ttHVars["dPhi1"];
+                tag_obj.dPhi2_ = ttHVars["dPhi2"];
+                tag_obj.PhoJetMinDr_ = ttHVars["PhoJetMinDr"];
+                tag_obj.njets_ = ttHVars["njets"];
+                tag_obj.Xtt0_ = ttHVars["Xtt0"];
+                tag_obj.Xtt1_ = ttHVars["Xtt1"];
+                tag_obj.pte1_ = ttHVars["pte1"];
+                tag_obj.pte2_ = ttHVars["pte2"];
+                tag_obj.ptmu1_ = ttHVars["ptmu1"];
+                tag_obj.ptmu2_ = ttHVars["ptmu2"];
+                tag_obj.ptdipho_ = ttHVars["ptdipho"];
+                tag_obj.etae1_ = ttHVars["etae1"];
+                tag_obj.etae2_ = ttHVars["etae2"];
+                tag_obj.etamu1_ = ttHVars["etamu1"];
+                tag_obj.etamu2_ = ttHVars["etamu2"];
+                tag_obj.etadipho_ = ttHVars["etadipho"];
+                tag_obj.phie1_ = ttHVars["phie1"];
+                tag_obj.phie2_ = ttHVars["phie2"];
+                tag_obj.phimu1_ = ttHVars["phimu1"];
+                tag_obj.phimu2_ = ttHVars["phimu2"];
+                tag_obj.phidipho_ = ttHVars["phidipho"];
+                tag_obj.fabs_CosThetaStar_CS_ = ttHVars["fabs_CosThetaStar_CS"];
+                tag_obj.fabs_CosTheta_bb_ = ttHVars["fabs_CosTheta_bb"];
+
+                PL_VectorVar_.clear();
+                HLF_VectorVar_.clear();
+            }
             
             // choose category and propagate weights
             int catnum = chooseCategory( tag_obj.MVA(), tag_obj.MX() );
@@ -349,7 +647,7 @@ namespace flashgg {
 
           if (catnum>-1){
                 if (doCategorization_) {
-                   if (tag_obj.dijet().mass()<mjjBoundariesLower_[catnum] || tag_obj.dijet().mass()>mjjBoundariesUpper_[catnum]) continue;
+                    if (tag_obj.dijet().mass()<mjjBoundariesLower_[catnum] || tag_obj.dijet().mass()>mjjBoundariesUpper_[catnum]) continue;
                 }
                 tags->push_back( tag_obj );
                 // link mc-truth
@@ -361,6 +659,59 @@ namespace flashgg {
         evt.put( std::move( truths ) );
         evt.put( std::move( tags ) );
     }
+    
+    void DoubleHTagProducer::StandardizeInputs()
+    {
+        // Standardize the input
+        if (!isclose(ttHVars["sumET"],0)) ttHVars["sumET"] = (ttHVars["sumET"] - x_mean_[0])/x_std_[0];
+        if (!isclose(ttHVars["phiMET"],0)) ttHVars["phiMET"] = (ttHVars["phiMET"] - x_mean_[1])/x_std_[1];
+        if (!isclose(ttHVars["dPhi1"],0)) ttHVars["dPhi1"] = (ttHVars["dPhi1"] - x_mean_[2])/x_std_[2];
+        if (!isclose(ttHVars["dPhi2"],0)) ttHVars["dPhi2"] = (ttHVars["dPhi2"] - x_mean_[3])/x_std_[3];
+        if (!isclose(ttHVars["PhoJetMinDr"],0)) ttHVars["PhoJetMinDr"] = (ttHVars["PhoJetMinDr"] - x_mean_[4])/x_std_[4];
+        if (!isclose(ttHVars["njets"],0)) ttHVars["njets"] = (ttHVars["njets"] - x_mean_[5])/x_std_[5];
+        if (!isclose(ttHVars["Xtt0"],0)) ttHVars["Xtt0"] = (ttHVars["Xtt0"] - x_mean_[6])/x_std_[6];
+        if (!isclose(ttHVars["Xtt1"],0)) ttHVars["Xtt1"] = (ttHVars["Xtt1"] - x_mean_[7])/x_std_[7];
+        if (!isclose(ttHVars["pte1"],0)) ttHVars["pte1"] = (ttHVars["pte1"] - x_mean_[8])/x_std_[8];
+        if (!isclose(ttHVars["pte2"],0)) ttHVars["pte2"] = (ttHVars["pte2"] - x_mean_[9])/x_std_[9];
+        if (!isclose(ttHVars["ptmu1"],0)) ttHVars["ptmu1"] = (ttHVars["ptmu1"] - x_mean_[10])/x_std_[10];
+        if (!isclose(ttHVars["ptmu2"],0)) ttHVars["ptmu2"] = (ttHVars["ptmu2"] - x_mean_[11])/x_std_[11];
+        if (!isclose(ttHVars["ptdipho"],0)) ttHVars["ptdipho"] = (ttHVars["ptdipho"] - x_mean_[12])/x_std_[12];
+        if (!isclose(ttHVars["etae1"],0)) ttHVars["etae1"] = (ttHVars["etae1"] - x_mean_[13])/x_std_[13];
+        if (!isclose(ttHVars["etae2"],0)) ttHVars["etae2"] = (ttHVars["etae2"] - x_mean_[14])/x_std_[14];
+        if (!isclose(ttHVars["etamu1"],0)) ttHVars["etamu1"] = (ttHVars["etamu1"] - x_mean_[15])/x_std_[15];
+        if (!isclose(ttHVars["etamu2"],0)) ttHVars["etamu2"] = (ttHVars["etamu2"] - x_mean_[16])/x_std_[16];
+        if (!isclose(ttHVars["etadipho"],0)) ttHVars["etadipho"] = (ttHVars["etadipho"] - x_mean_[17])/x_std_[17];
+        if (!isclose(ttHVars["phie1"],0)) ttHVars["phie1"] = (ttHVars["phie1"] - x_mean_[18])/x_std_[18];
+        if (!isclose(ttHVars["phie2"],0)) ttHVars["phie2"] = (ttHVars["phie2"] - x_mean_[19])/x_std_[19];
+        if (!isclose(ttHVars["phimu1"],0)) ttHVars["phimu1"] = (ttHVars["phimu1"] - x_mean_[20])/x_std_[20];
+        if (!isclose(ttHVars["phimu2"],0)) ttHVars["phimu2"] = (ttHVars["phimu2"] - x_mean_[21])/x_std_[21];
+        if (!isclose(ttHVars["phidipho"],0)) ttHVars["phidipho"] = (ttHVars["phidipho"] - x_mean_[22])/x_std_[22];
+        if (!isclose(ttHVars["fabs_CosThetaStar_CS"],0)) ttHVars["fabs_CosThetaStar_CS"] = (ttHVars["fabs_CosThetaStar_CS"] - x_mean_[23])/x_std_[23];
+        if (!isclose(ttHVars["fabs_CosTheta_bb"],0)) ttHVars["fabs_CosTheta_bb"] = (ttHVars["fabs_CosTheta_bb"] - x_mean_[24])/x_std_[24];
+    }
+    
+    float DoubleHTagProducer::EvaluateNN()
+    {
+        unsigned int shape = HLF_VectorVar_.size();
+        unsigned int plshape1 = PL_VectorVar_.size();
+        unsigned int plshape2 = PL_VectorVar_[0].size();
+        
+        tensorflow::Tensor HLFinput(tensorflow::DT_FLOAT, {1,shape});
+        for (unsigned int i = 0; i < shape; i++){
+            HLFinput.matrix<float>()(0,i) =  float(HLF_VectorVar_[i]);
+        }
+        tensorflow::Tensor PLinput(tensorflow::DT_FLOAT, tensorflow::TensorShape({1,plshape1, plshape2}));
+        for (unsigned int i = 0; i < plshape1; i++)
+            for (unsigned int j = 0; j < plshape2; j++)
+            {
+                PLinput.tensor<float,3>()(0, i, j) = float(PL_VectorVar_[i][j]);
+            }
+        std::vector<tensorflow::Tensor> outputs;
+        tensorflow::run(session_ttH, { {"input_216:0", HLFinput}, {"input_215:0", PLinput} }, { "dense_302/Sigmoid:0" }, &outputs);
+        float NNscore = outputs[0].matrix<float>()(0, 0);
+        return NNscore;
+    }
+    
 }
 
 typedef flashgg::DoubleHTagProducer FlashggDoubleHTagProducer;
