@@ -105,6 +105,7 @@ namespace flashgg {
             
         DoubleHttHTagger tthKiller_;
         float ttHTagger;
+        float ttHScoreThreshold;
         edm::EDGetTokenT<edm::View<flashgg::Met> > METToken_;
         edm::EDGetTokenT<edm::View<flashgg::Electron> > electronToken_;
         edm::EDGetTokenT<edm::View<flashgg::Muon> > muonToken_;
@@ -132,8 +133,7 @@ namespace flashgg {
         useJetID_( iConfig.getParameter<bool>   ( "UseJetID"     ) ),
         JetIDLevel_( iConfig.getParameter<string> ( "JetIDLevel"   ) ),
         globalVariablesDumper_(iConfig.getParameter<edm::ParameterSet>("globalVariables")),
-        mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesDumper_),
-        ttHWeightfileName_( iConfig.getUntrackedParameter<std::string>("ttHWeightfile"))
+        mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesDumper_)
     {
         mjjBoundaries_ = iConfig.getParameter<vector<double > >( "MJJBoundaries" ); 
         mvaBoundaries_ = iConfig.getParameter<vector<double > >( "MVABoundaries" );
@@ -203,6 +203,14 @@ namespace flashgg {
             muonToken_ = consumes<edm::View<flashgg::Muon> >( iConfig.getParameter<edm::InputTag>("MuonTag") );
             vertexToken_ = consumes<edm::View<reco::Vertex> >( iConfig.getParameter<edm::InputTag> ("VertexTag") );
             rhoToken_ = consumes<double>( iConfig.getParameter<edm::InputTag>( "rhoTag" ) );
+            
+#ifdef CMSSW9
+            ttHWeightfileName_ = iConfig.getUntrackedParameter<std::string>("ttHWeightfile2016");
+            ttHScoreThreshold = iConfig.getParameter<double>("ttHScoreThreshold2017");
+#elif CMSSW8
+            ttHWeightfileName_ = iConfig.getUntrackedParameter<std::string>("ttHWeightfile2017");
+            ttHScoreThreshold = iConfig.getParameter<double>("ttHScoreThreshold2016");
+#endif
         }
 
         produces<vector<DoubleHTag>>();
@@ -519,7 +527,7 @@ namespace flashgg {
                 ttHVars["fabs_CosThetaStar_CS"] = abs(tag_obj.getCosThetaStar_CS(6500));//FIXME don't do hardcoded
                 ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);
                 
-                /*
+                
                 StandardizeInputs();
                 
                 //9 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
@@ -594,17 +602,14 @@ namespace flashgg {
                 // Sort by pT
                 std::sort(PL_VectorVar_.rbegin(), PL_VectorVar_.rend()); 
 
-#ifdef CMSSW9
-                tensorflow::GraphDef* graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_+".pb").c_str());
-#elif CMSSW8
-                tensorflow::GraphDef* graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_+".pb").c_str()); // Use another file here
-#endif 
+                tensorflow::GraphDef* graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_).c_str());
                 session_ttH = tensorflow::createSession(graphDef_ttH);
 
                 float ttHScore = EvaluateNN();
+                if (ttHScore < ttHScoreThreshold) continue;
                 
                 tag_obj.ttHScore_ = ttHScore;
-                */
+                
                 tag_obj.sumET_ = ttHVars["sumET"];
                 tag_obj.MET_ = ttHVars["MET"];
                 tag_obj.phiMET_ = ttHVars["phiMET"];

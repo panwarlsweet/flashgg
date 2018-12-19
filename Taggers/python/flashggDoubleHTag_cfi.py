@@ -88,7 +88,12 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    useElectronMVARecipe = cms.bool(False),
                                    useElectronLooseID = cms.bool(True),
                                    electronEtaThresholds=cms.vdouble(1.4442,1.566,2.5),
-                                   ttHWeightfile= cms.untracked.string(os.environ["CMSSW_BASE"]+"/src/flashgg/Taggers/data/ttHKiller/InclusiveTTH"),
+                                   ttHWeightfile2016 = cms.untracked.string(os.environ["CMSSW_BASE"]+"/src/flashgg/Taggers/data/ttHKiller/InclusiveTTH.pb"),
+                                   ttHWeightfile2017 = cms.untracked.string(os.environ["CMSSW_BASE"]+"/src/flashgg/Taggers/data/ttHKiller/InclusiveTTH.pb"), #to be updated
+
+                                   ttHScoreThreshold2016 = cms.double(0.3), #to be updated
+                                   ttHScoreThreshold2017 = cms.double(0.3), #to be updated
+
                                    # For standardization
                                    mean = cms.vdouble(308.5304347943692, 67.83712117844036, 0.006674811903807095,
                                        -0.0005501000411279925, 0.0022091205962238318, 1.2908510548177694,
