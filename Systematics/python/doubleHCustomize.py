@@ -76,6 +76,7 @@ def variablesToDump(customize):
 
     if customize.ttHKillerVariablesOnly : ttHVariables = [
             "ttH_sumET := sumET()",
+            "ttH_MET := MET()",
             "ttH_phiMET := phiMET()",
             "ttH_dPhi1 := dPhi1()",
             "ttH_dPhi2 := dPhi2()",

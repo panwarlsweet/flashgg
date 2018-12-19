@@ -519,6 +519,7 @@ namespace flashgg {
                 ttHVars["fabs_CosThetaStar_CS"] = abs(tag_obj.getCosThetaStar_CS(6500));//FIXME don't do hardcoded
                 ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);
                 
+                /*
                 StandardizeInputs();
                 
                 //9 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
@@ -601,9 +602,11 @@ namespace flashgg {
                 session_ttH = tensorflow::createSession(graphDef_ttH);
 
                 float ttHScore = EvaluateNN();
-
+                
                 tag_obj.ttHScore_ = ttHScore;
+                */
                 tag_obj.sumET_ = ttHVars["sumET"];
+                tag_obj.MET_ = ttHVars["MET"];
                 tag_obj.phiMET_ = ttHVars["phiMET"];
                 tag_obj.dPhi1_ = ttHVars["dPhi1"];
                 tag_obj.dPhi2_ = ttHVars["dPhi2"];
