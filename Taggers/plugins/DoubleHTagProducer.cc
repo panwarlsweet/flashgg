@@ -21,12 +21,7 @@
 #include "flashgg/MicroAOD/interface/MVAComputer.h"
 #include "flashgg/DataFormats/interface/DoubleHttHTagger.h"
 
-#ifdef CMSSW9
 #include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
-#elif CMSSW8
-#include "DNN/Tensorflow/interface/Graph.h"
-#include "DNN/Tensorflow/interface/Tensor.h"
-#endif
 
 #include <vector>
 #include <algorithm>
