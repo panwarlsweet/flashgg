@@ -328,7 +328,9 @@ class JobConfig(object):
                                     if len(matches) != 1:
                                         raise Exception("Could not determine sample pu distribution for reweighting. Possible matches are [%s]. Selected [%s]\n dataset: %s" % 
                                                         ( ",".join(self.pu_distribs.keys()), ",".join(matches), dsetname ) )
-                                samplepu = self.pu_distribs[matches[0]]
+                                #samplepu = self.pu_distribs[matches[0]]
+                                if matches[0] in self.pu_distribs.keys(): samplepu = self.pu_distribs[matches[0]]
+				else: samplepu = self.pu_distribs_hack_2017[matches[0]]
                             puObj.puReWeight = True
                             puObj.puBins = cms.vdouble( map(float, samplepu.probFunctionVariable) )
                             puObj.mcPu   = samplepu.probValue
