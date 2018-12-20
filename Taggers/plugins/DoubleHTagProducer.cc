@@ -419,13 +419,14 @@ namespace flashgg {
                 std::vector<flashgg::Jet> cleanedDR_jets;
                 for( size_t ijet=0; ijet < cleaned_jets.size();++ijet){
                     auto jet = cleaned_jets[ijet];
-                    if( reco::deltaR(*jet,*leadJet)< vetoConeSize_) continue;
-                    if( reco::deltaR(*jet,*subleadJet)< vetoConeSize_) continue;
+                    if( reco::deltaR(*jet, leadPho)< vetoConeSize_) continue;
+                    if( reco::deltaR(*jet, subleadPho)< vetoConeSize_) continue;
                     sumEt+=jet->p4().pt();
                     njets+=1;
                     cleanedDR_jets.push_back(*jet);
                 }
                 ttHVars["sumET"] = sumEt;
+                if (isclose(sumEt, 0)) std::cout << "WARNING: sumEt = 0, please check! Number of cleaned jets: " << cleaned_jets.size() << ", number of cleanedDR jets " << cleanedDR_jets.size() << std::endl;
                 edm::Handle<View<flashgg::Met> > METs;
                 evt.getByToken( METToken_, METs );
                 if( METs->size() != 1 )

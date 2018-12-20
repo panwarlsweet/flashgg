@@ -101,6 +101,7 @@ def variablesToDump(customize):
             "ttH_phidipho := phidipho()",
             "ttH_fabs_CosThetaStar_CS := fabs_CosThetaStar_CS()",
             "ttH_fabs_CosTheta_bb := fabs_CosTheta_bb()",
+            "ttHScore := ttHScore()",
             ]
     
     if customize.ttHKillerVariablesOnly : return ttHVariables
