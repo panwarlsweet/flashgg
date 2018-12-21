@@ -418,8 +418,10 @@ namespace flashgg {
                 float sumEt=0.,njets=0.;
                 njets = cleaned_jets.size();
                 std::vector<flashgg::Jet> cleanedDR_jets;
+                std::vector<flashgg::Jet> cleaned_physical_jets; // for Xtt calculation who doesn't take edm::Ptr
                 for( size_t ijet=0; ijet < cleaned_jets.size();++ijet){
                     auto jet = cleaned_jets[ijet];
+                    cleaned_physical_jets.push_back(*jet);
                     if( reco::deltaR(*jet, *leadJet)< vetoConeSize_) continue;
                     if( reco::deltaR(*jet, *subleadJet)< vetoConeSize_) continue;
                     sumEt+=jet->p4().pt();
@@ -442,7 +444,7 @@ namespace flashgg {
                 std::vector<flashgg::Jet> DiJet;
                 DiJet.push_back(tag_obj.leadJet());
                 DiJet.push_back(tag_obj.subleadJet());
-                std::vector<float> Xtt = tthKiller_.XttCalculation(cleaned_jets,DiJet);
+                std::vector<float> Xtt = tthKiller_.XttCalculation(cleaned_physical_jets,DiJet);
                 if(Xtt.size()>1){
                     ttHVars["Xtt0"] = Xtt[0];
                     ttHVars["Xtt1"] = Xtt[1];
