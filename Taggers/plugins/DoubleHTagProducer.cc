@@ -416,17 +416,16 @@ namespace flashgg {
                     PL_VectorVar_[i].resize(7); // List of particles. 6 objects. Each object has 7 attributes.
 
                 float sumEt=0.,njets=0.;
+                njets = cleaned_jets.size();
                 std::vector<flashgg::Jet> cleanedDR_jets;
                 for( size_t ijet=0; ijet < cleaned_jets.size();++ijet){
                     auto jet = cleaned_jets[ijet];
-                    if( reco::deltaR(*jet, leadPho)< vetoConeSize_) continue;
-                    if( reco::deltaR(*jet, subleadPho)< vetoConeSize_) continue;
+                    if( reco::deltaR(*jet, *leadJet)< vetoConeSize_) continue;
+                    if( reco::deltaR(*jet, *subleadJet)< vetoConeSize_) continue;
                     sumEt+=jet->p4().pt();
-                    njets+=1;
                     cleanedDR_jets.push_back(*jet);
                 }
                 ttHVars["sumET"] = sumEt;
-                if (isclose(sumEt, 0)) std::cout << "WARNING: sumEt = 0, please check! Number of cleaned jets: " << cleaned_jets.size() << ", number of cleanedDR jets " << cleanedDR_jets.size() << std::endl;
                 edm::Handle<View<flashgg::Met> > METs;
                 evt.getByToken( METToken_, METs );
                 if( METs->size() != 1 )
@@ -443,7 +442,7 @@ namespace flashgg {
                 std::vector<flashgg::Jet> DiJet;
                 DiJet.push_back(tag_obj.leadJet());
                 DiJet.push_back(tag_obj.subleadJet());
-                std::vector<float> Xtt = tthKiller_.XttCalculation(cleanedDR_jets,DiJet);
+                std::vector<float> Xtt = tthKiller_.XttCalculation(cleaned_jets,DiJet);
                 if(Xtt.size()>1){
                     ttHVars["Xtt0"] = Xtt[0];
                     ttHVars["Xtt1"] = Xtt[1];
