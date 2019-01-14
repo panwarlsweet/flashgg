@@ -55,6 +55,18 @@ If everything now looks reasonable, you can build:
  The code is run in exactly the same way for 2016 and 2017 years. All needed corrections, systematics, etc are picked up automatically,
  you only need to specify two flags specifying the year you wish to run on : 
  year='2016' PUyear='2016' or  year='2017' PUyear='2017' 
+ 
+ #### To run on DATA:
+ One has to specify:
+```
+ processId=Data processType=data
+```
+As well as add lumimask (the names of CMS data certification files can be found in jsons)
+```
+lumiMask=path/name.txt
+```
+
+  
   
 #### For MC one has to specify the correct PU target to be used :
 It can be found in these jsons :
