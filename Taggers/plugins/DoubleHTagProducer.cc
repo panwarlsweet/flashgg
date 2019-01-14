@@ -445,12 +445,12 @@ namespace flashgg {
                 DiJet.push_back(tag_obj.leadJet());
                 DiJet.push_back(tag_obj.subleadJet());
                 std::vector<float> Xtt = tthKiller_.XttCalculation(cleaned_physical_jets,DiJet);
-                if(Xtt.size()>1){
+                if(Xtt.size()>3){
                     ttHVars["Xtt0"] = Xtt[0];
-                    ttHVars["Xtt1"] = Xtt[1];
+                    ttHVars["Xtt1"] = Xtt[3];
                 }else{
                     ttHVars["Xtt0"] = 1000;
-                    ttHVars["Xtt1"] = 0;
+                    ttHVars["Xtt1"] = 1000;
                 }
                 Handle<View<flashgg::Electron> > theElectrons;
                 evt.getByToken( electronToken_, theElectrons );
