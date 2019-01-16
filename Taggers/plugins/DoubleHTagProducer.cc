@@ -189,8 +189,6 @@ namespace flashgg {
             elecEtaThresholds = iConfig.getParameter<std::vector<double > >("electronEtaThresholds");
             
             
-            x_mean_ = iConfig.getParameter<std::vector<double>> ("mean");
-            x_std_ = iConfig.getParameter<std::vector<double>> ("std");
 
             //needed for ttH killer
             METToken_= consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ("METTag") ) ;
@@ -200,11 +198,15 @@ namespace flashgg {
             rhoToken_ = consumes<double>( iConfig.getParameter<edm::InputTag>( "rhoTag" ) );
             
 #ifdef CMSSW9
-            ttHWeightfileName_ = iConfig.getUntrackedParameter<std::string>("ttHWeightfile2016");
-            ttHScoreThreshold = iConfig.getParameter<double>("ttHScoreThreshold2017");
-#elif CMSSW8
             ttHWeightfileName_ = iConfig.getUntrackedParameter<std::string>("ttHWeightfile2017");
+            ttHScoreThreshold = iConfig.getParameter<double>("ttHScoreThreshold2017");
+            x_mean_ = iConfig.getParameter<std::vector<double>> ("mean2017");
+            x_std_ = iConfig.getParameter<std::vector<double>> ("std2017");
+#elif CMSSW8
+            ttHWeightfileName_ = iConfig.getUntrackedParameter<std::string>("ttHWeightfile2016");
             ttHScoreThreshold = iConfig.getParameter<double>("ttHScoreThreshold2016");
+            x_mean_ = iConfig.getParameter<std::vector<double>> ("mean2016");
+            x_std_ = iConfig.getParameter<std::vector<double>> ("std2016");
 #endif
         }
 
@@ -441,6 +443,7 @@ namespace flashgg {
                 ttHVars["dPhi2"] = reco::deltaPhi(p4MET.Phi(), subleadJet->p4().phi());
                 ttHVars["PhoJetMinDr"] = tag_obj.getPhoJetMinDr();
                 ttHVars["njets"] = njets;
+                
                 std::vector<flashgg::Jet> DiJet;
                 DiJet.push_back(tag_obj.leadJet());
                 DiJet.push_back(tag_obj.subleadJet());
@@ -452,6 +455,7 @@ namespace flashgg {
                     ttHVars["Xtt0"] = 1000;
                     ttHVars["Xtt1"] = 1000;
                 }
+                
                 Handle<View<flashgg::Electron> > theElectrons;
                 evt.getByToken( electronToken_, theElectrons );
 
@@ -459,6 +463,14 @@ namespace flashgg {
                 evt.getByToken( vertexToken_, vertices );
                 edm::Handle<double>  rho;
                 evt.getByToken(rhoToken_,rho);
+            
+                ttHVars["ptjet1"] = leadJet->p4().pt();
+                ttHVars["etajet1"] = leadJet->p4().eta();
+                ttHVars["phijet1"] = leadJet->p4().phi();
+
+                ttHVars["ptjet2"] = subleadJet->p4().pt();
+                ttHVars["etajet2"] = subleadJet->p4().eta();
+                ttHVars["phijet2"] = subleadJet->p4().phi();
 
                 ttHVars["ptdipho"] = dipho->p4().pt();
                 ttHVars["etadipho"] = dipho->p4().eta();
@@ -527,7 +539,7 @@ namespace flashgg {
                 
                 StandardizeInputs();
                 
-                //9 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
+                //10 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
                 //'Xtt1','fabs_CosThetaStar_CS','fabs_CosTheta_bb'
                 HLF_VectorVar_[0] = ttHVars["sumET"];
                 HLF_VectorVar_[1] = ttHVars["dPhi1"];
@@ -595,7 +607,25 @@ namespace flashgg {
                 PL_VectorVar_[5][4] = 0; // isMuon
                 PL_VectorVar_[5][5] = 0; // isDiPho
                 PL_VectorVar_[5][6] = (isclose(ttHVars["MET"],0)) ? 0 : 1; // isMET
-
+//
+//                // 6: leading jet
+//                PL_VectorVar_[6][0] = ttHVars["ptjet1"];
+//                PL_VectorVar_[6][1] = ttHVars["etajet1"];
+//                PL_VectorVar_[6][2] = ttHVars["phijet1"];
+//                PL_VectorVar_[6][3] = 0; //isEle
+//                PL_VectorVar_[6][4] = 0; // isMuon
+//                PL_VectorVar_[6][5] = 0; // isDiPho
+//                PL_VectorVar_[6][6] = 0; // isMET 
+//
+//                // 7: subleading jet
+//                PL_VectorVar_[7][0] = ttHVars["ptjet2"];
+//                PL_VectorVar_[7][1] = ttHVars["etajet2"];
+//                PL_VectorVar_[7][2] = ttHVars["phijet2"];
+//                PL_VectorVar_[7][3] = 0; //isEle
+//                PL_VectorVar_[7][4] = 0; // isMuon
+//                PL_VectorVar_[7][5] = 0; // isDiPho
+//                PL_VectorVar_[7][6] = 0; // isMET
+//
                 // Sort by pT
                 std::sort(PL_VectorVar_.rbegin(), PL_VectorVar_.rend()); 
 
@@ -633,6 +663,12 @@ namespace flashgg {
                 tag_obj.phidipho_ = ttHVars["phidipho"];
                 tag_obj.fabs_CosThetaStar_CS_ = ttHVars["fabs_CosThetaStar_CS"];
                 tag_obj.fabs_CosTheta_bb_ = ttHVars["fabs_CosTheta_bb"];
+                tag_obj.ptjet1_ = ttHVars["ptjet1"];
+                tag_obj.ptjet2_ = ttHVars["ptjet2"];
+                tag_obj.etajet1_ = ttHVars["etajet1"];
+                tag_obj.etajet2_ = ttHVars["etajet2"];
+                tag_obj.phijet1_ = ttHVars["phijet1"];
+                tag_obj.phijet2_ = ttHVars["phijet2"];
 
                 PL_VectorVar_.clear();
                 HLF_VectorVar_.clear();
@@ -712,7 +748,12 @@ namespace flashgg {
                 PLinput.tensor<float,3>()(0, i, j) = float(PL_VectorVar_[i][j]);
             }
         std::vector<tensorflow::Tensor> outputs;
-        tensorflow::run(session_ttH, { {"input_216:0", HLFinput}, {"input_215:0", PLinput} }, { "dense_302/Sigmoid:0" }, &outputs);
+
+#ifdef CMSSW9
+        tensorflow::run(session_ttH, { {"input_646:0", HLFinput}, {"input_645:0", PLinput} }, { "dense_893/Sigmoid:0" }, &outputs);
+#elif CMSSW8
+        tensorflow::run(session_ttH, { {"input_608:0", HLFinput}, {"input_607:0", PLinput} }, { "dense_835/Sigmoid:0" }, &outputs);
+#endif
         float NNscore = outputs[0].matrix<float>()(0, 0);
         return NNscore;
     }

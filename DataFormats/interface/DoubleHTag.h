@@ -48,7 +48,7 @@ namespace flashgg {
         void  setSigmaMDecorrTransf( DecorrTransform* transfEBEB, DecorrTransform* transfNotEBEB){ transfEBEB_= transfEBEB; transfNotEBEB_=transfNotEBEB;}
         LorentzVector getdiHiggsP4() const {return p4();}
         float ttHScore_;
-        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_; 
+        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_; 
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
         float phiMET() const {return phiMET_;}
@@ -56,6 +56,7 @@ namespace flashgg {
         float dPhi2() const {return dPhi2_;}
         float PhoJetMinDr() const {return PhoJetMinDr_;}
         float njets() const {return njets_;}
+        float mjj() const {return mjj_;}
         float Xtt0() const {return Xtt0_;}
         float Xtt1() const {return Xtt1_;}
         float pte1() const {return pte1_;}
@@ -63,6 +64,12 @@ namespace flashgg {
         float ptmu1() const {return ptmu1_;}
         float ptmu2() const {return ptmu2_;}
         float ptdipho() const {return ptdipho_;}
+        float ptjet1() const {return ptjet1_;}
+        float ptjet2() const {return ptjet2_;}
+        float etajet1() const {return etajet1_;}
+        float etajet2() const {return etajet2_;}
+        float phijet1() const {return phijet1_;}
+        float phijet2() const {return phijet2_;}
         float etae1() const {return etae1_;}
         float etae2() const {return etae2_;}
         float etamu1() const {return etamu1_;}
