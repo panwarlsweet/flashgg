@@ -111,7 +111,9 @@ namespace flashgg {
         std::vector<std::vector<double>> PL_VectorVar_;
         std::vector<double> x_mean_, x_std_;
         string ttHWeightfileName_ ;
+        tensorflow::GraphDef* graphDef_ttH;
         tensorflow::Session* session_ttH;
+
     };
 
     DoubleHTagProducer::DoubleHTagProducer( const ParameterSet &iConfig ) :
@@ -175,6 +177,7 @@ namespace flashgg {
 
         if(dottHTagger_)
         {
+
             //leptons selection
             leptonPtThreshold = iConfig.getParameter<double>("looseLeptonPtThreshold");
             muEtaThreshold = iConfig.getParameter<double>("muonEtaThreshold");
@@ -188,8 +191,6 @@ namespace flashgg {
             useElecLooseId = iConfig.getParameter<bool>("useElectronLooseID");
             elecEtaThresholds = iConfig.getParameter<std::vector<double > >("electronEtaThresholds");
             
-            
-
             //needed for ttH killer
             METToken_= consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ("METTag") ) ;
             electronToken_ = consumes<edm::View<flashgg::Electron> >( iConfig.getParameter<edm::InputTag> ("ElectronTag") );
@@ -208,6 +209,8 @@ namespace flashgg {
             x_mean_ = iConfig.getParameter<std::vector<double>> ("mean2016");
             x_std_ = iConfig.getParameter<std::vector<double>> ("std2016");
 #endif
+            graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_).c_str());
+            session_ttH = tensorflow::createSession(graphDef_ttH);
         }
 
         produces<vector<DoubleHTag>>();
@@ -261,7 +264,7 @@ namespace flashgg {
     {
         return fabs(a-b) <= max(rel_tol * max(fabs(a), fabs(b)), abs_tol);
     }
-
+        
     void DoubleHTagProducer::produce( Event &evt, const EventSetup & )
     {
         // read diphotons
@@ -282,7 +285,7 @@ namespace flashgg {
             evt.getByToken( genParticleToken_, genParticles );
             Point higgsVtx(0.,0.,0.);
             for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
-                int pdgid = genParticles->ptrAt( genLoop )->pdgId();
+                int pdgid = genParticles->ptrAt( genLoop )->pdgId(); 
                 if( pdgid == 25 || pdgid == 22 ) {
                     higgsVtx = genParticles->ptrAt( genLoop )->vertex();
                     break;
@@ -304,7 +307,7 @@ namespace flashgg {
             truth_obj.setGenPV( higgsVtx );
             truths->push_back( truth_obj );
         }
-
+        
         // loop over diphotons
         for( unsigned int candIndex = 0; candIndex < diPhotons->size() ; candIndex++ ) {
             edm::Ptr<flashgg::DiPhotonCandidate> dipho = diPhotons->ptrAt( candIndex );
@@ -629,8 +632,6 @@ namespace flashgg {
                 // Sort by pT
                 std::sort(PL_VectorVar_.rbegin(), PL_VectorVar_.rend()); 
 
-                tensorflow::GraphDef* graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_).c_str());
-                session_ttH = tensorflow::createSession(graphDef_ttH);
 
                 float ttHScore = EvaluateNN();
                 if (ttHScore < ttHScoreThreshold) continue;
