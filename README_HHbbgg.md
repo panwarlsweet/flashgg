@@ -26,7 +26,8 @@ cmsenv
 git cms-init
 cd $CMSSW_BASE/src
 git clone https://github.com/chernyavskaya/flashgg flashgg
-git remote add nchernyavskaya https://github.com/chernyavskaya/flashgg.git
+cd flashgg     
+git remote add chernyavskaya https://github.com/chernyavskaya/flashgg.git
 git fetch chernyavskaya
 git checkout -b branch_name --track chernyavskaya/hh_tag_94X_20181217
  
@@ -34,6 +35,7 @@ git checkout -b branch_name --track chernyavskaya/hh_tag_94X_20181217
 In the sourse file flashgg/setup_9_4_X.sh , comment out the following linesm you do not need them, because you check out the code directly from me instead of general flahgg:
 https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181217/setup_9_4_X.sh#L27-L33
 ```
+cd $CMSSW_BASE/src    
 source flashgg/setup_9_4_X.sh
 ```
 
@@ -41,11 +43,12 @@ If everything now looks reasonable, you can build:
  ```
  cd $CMSSW_BASE/src
  scram b -j 3
+ source flashgg/afterbuild_9_4_X.sh     
  ```
  
  ### How to run the code :
  ```
- fggRunJobs.py --load json/json.file -d output_dir Systematics/test/workspaceStd.py maxEvents=-1
+ fggRunJobs.py --load json/json.file -d output_dir -x cmsRun Systematics/test/workspaceStd.py maxEvents=-1
  doubleHTagsOnly=True doDoubleHTag=True doBJetRegression=True doSystematics=False doPdfWeights=False
  dumpWorkspace=False dumpTrees=True 
  year='2017' PUyear='2017'
