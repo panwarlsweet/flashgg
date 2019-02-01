@@ -48,7 +48,7 @@ If everything now looks reasonable, you can build:
  
  ### How to run the code :
  ```
- fggRunJobs.py --load json/json.file -d output_dir -x cmsRun Systematics/test/workspaceStd.py maxEvents=-1
+ fggRunJobs.py --load json/json.file -d output_dir Systematics/test/workspaceStd.py maxEvents=-1
  doubleHTagsOnly=True doDoubleHTag=True doBJetRegression=True doSystematics=False doPdfWeights=False
  dumpWorkspace=False dumpTrees=True 
  year='2017' PUyear='2017'
