@@ -1,6 +1,10 @@
 import FWCore.ParameterSet.Config as cms
 
+import flashgg.Taggers.flashggDoubleHReweight_cfi as reweight_settings
+
 flashggTaggedGenDiphotons = cms.EDProducer('FlashggTaggedGenDiPhotonProducer',
                                            src=cms.InputTag("flashggGenDiPhotons"),
-                                           tags=cms.InputTag("flashggTagSorter")
+                                           tags=cms.InputTag("flashggTagSorter"),
+											  			 HHbbgg_reweight_producer = cms.string(reweight_settings.reweight_producer),
+											          HHbbgg_reweight_names = cms.vstring(reweight_settings.reweight_names)
                                   )

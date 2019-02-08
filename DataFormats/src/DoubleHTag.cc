@@ -22,7 +22,23 @@ DoubleHTag *DoubleHTag::clone() const
     return result;
 }
 
-float DoubleHTag::getCosThetaStar_CS(float ebeam) const {
+float DoubleHTag::getCosThetaStar_CS() const {
+
+    LorentzVector hh_lor = diPhoton()->p4() + dijet();
+    TLorentzVector hh;
+    hh.SetPxPyPzE(hh_lor.Px(),hh_lor.Py(),hh_lor.Pz(),hh_lor.E()) ;
+
+    LorentzVector h1_lor = diPhoton()->p4();
+    TLorentzVector h_1;
+    h_1.SetPxPyPzE(h1_lor.Px(),h1_lor.Py(),h1_lor.Pz(),h1_lor.E()) ; 
+
+    h_1.Boost(-hh.BoostVector());   
+                  
+    return h_1.CosTheta();
+}
+
+
+float DoubleHTag::getCosThetaStar_CS_old(float ebeam) const {
     // cos theta star angle in the Collins Soper frame
     // Copied directly from here: https://github.com/ResonantHbbHgg/Selection/blob/master/selection.h#L3367-L3385
     TLorentzVector p1, p2;

@@ -38,7 +38,8 @@ namespace flashgg {
         
         const LorentzVector & dijet() const { return dijet_; }
 
-        float getCosThetaStar_CS(float ebeam) const;
+        float getCosThetaStar_CS() const;
+        float getCosThetaStar_CS_old(float ebeam) const;
         std::vector<float> CosThetaAngles() const;
         float HelicityCosTheta( TLorentzVector Booster, TLorentzVector Boosted) const;
         float getPhoJetMinDr() const;
@@ -46,9 +47,12 @@ namespace flashgg {
         float getSigmaMOverMJets() const;
         void  setSigmaMDecorrTransf( DecorrTransform* transfEBEB, DecorrTransform* transfNotEBEB){ transfEBEB_= transfEBEB; transfNotEBEB_=transfNotEBEB;}
         LorentzVector getdiHiggsP4() const {return p4();}
+        void setBenchmarkReweight(std::vector<float> x) { benchmark_reweights_ = x; }
+        float getBenchmarkReweight(int targetNode) const { return benchmark_reweights_[targetNode]; }
 
     private:
         double mva_, MX_, genMhh_;
+        vector<float> benchmark_reweights_;
  //       std::vector<float> mva_prob_;
         edm::Ptr<flashgg::Jet> leadJet_, subleadJet_;
         LorentzVector dijet_;

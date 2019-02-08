@@ -11,7 +11,7 @@ def variablesToDump(customize):
              "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
              "leadingJet_puJetIdMVA := leadJet().puJetIdMVA()",
              "subleadingJet_puJetIdMVA := subleadJet().puJetIdMVA()",
-             "absCosThetaStar_CS := abs(getCosThetaStar_CS(6500))",#FIXME get energy from somewhere?
+             "absCosThetaStar_CS := abs(getCosThetaStar_CS())",
              "absCosTheta_bb := abs(CosThetaAngles()[1])",
              "absCosTheta_gg := abs(CosThetaAngles()[0])",
              "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
@@ -90,6 +90,9 @@ def variablesToDump(customize):
              "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
              "sigmaMJets := getSigmaMOverMJets()"
     ]
+    if customize.doubleHReweightTarget != -1: 
+         for num in range(0,12):
+		       variables += ["benchmark_reweight_%d := getBenchmarkReweight(%d)"%(num,num)]
     if customize.dumpWorkspace == False : return variables
     else : return var_workspace
 
@@ -132,9 +135,9 @@ def addNodesReweighting(customize,process):
     if customize.doubleHReweightTarget != -1:
         from flashgg.Taggers.flashggDoubleHReweight_cfi import flashggDoubleHReweight
         process.flashggDoubleHReweight = flashggDoubleHReweight
-        process.p.replace(process.tagsDumper, process.flashggDoubleHReweight*process.tagsDumper)
+        process.p.replace(process.flashggDoubleHTag, process.flashggDoubleHReweight*process.flashggDoubleHTag)
         process.flashggDoubleHReweight.targetNode = customize.doubleHReweightTarget
-        process.tagsDumper.reweight  =  cms.InputTag("flashggDoubleHReweight")
+        process.tagsDumper.reweight  =  cms.InputTag("flashggDoubleHReweight","benchmark%d"%customize.doubleHReweightTarget)
     
 
 def addGenAnalysis(customize,process,tagList):
@@ -161,7 +164,7 @@ def addGenAnalysis(customize,process,tagList):
     process.genDiphotonDumper.dumpGlobalVariables = True
     process.genDiphotonDumper.globalVariables = globalVariables
     if customize.doubleHReweightTarget != -1:
-        process.genDiphotonDumper.reweight  =  cms.InputTag("flashggDoubleHReweight")
+        process.genDiphotonDumper.reweight  =  cms.InputTag("flashggDoubleHReweight","benchmark%d"%customize.doubleHReweightTarget)
     
     genVariables = ["mgg := mass",
                     "mbb := dijet.mass",
@@ -187,6 +190,9 @@ def addGenAnalysis(customize,process,tagList):
                     "subleadJet_e  := subLeadingJet.energy",
                     
                     ]
+    if customize.doubleHReweightTarget != -1: 
+         for num in range(0,12):
+		       genVariables += ["benchmark_reweight_%d := getHHbbggBenchmarkReweight(%d)"%(num,num)]
     
     ## define categories for gen-level dumper
     cfgTools.addCategory(process.genDiphotonDumper,  ## events with not reco-level tag

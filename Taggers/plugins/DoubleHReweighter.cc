@@ -56,25 +56,26 @@ namespace flashgg {
     DoubleHReweighter::DoubleHReweighter( const ParameterSet &iConfig ) :
         genParticleToken_( consumes<View<reco::GenParticle> >( iConfig.getParameter<InputTag> ( "GenParticleTag" ) ) ),
         targetNode_( iConfig.getParameter<int> ( "targetNode" ) ),
-        weightsFile_(iConfig.getUntrackedParameter<edm::FileInPath>("weightsFile")),
+        weightsFile_(iConfig.getParameter<edm::FileInPath>("weightsFile")),
         NCOEFFSA_(iConfig.getParameter<unsigned int>( "NCOEFFSA" )),
         A_13TeV_SM_(iConfig.getParameter< vector<double>>("A_13TeV_SM")),
-        benchmarks_map_(iConfig.getUntrackedParameter<edm::ParameterSet>("benchmarks_map"))
+        benchmarks_map_(iConfig.getParameter<edm::ParameterSet>("benchmarks_map"))
     {
 
             f_weights_ = new TFile((weightsFile_.fullPath()).c_str(), "READ");
             
             for (unsigned int n=0; n<NCOEFFSA_; n++){
-                hists_params_.push_back((TH2F*)f_weights_->Get("h_A%i"));
-                if (!(hists_params_[n])) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting full grid does not contain the expected histograms."<<std::endl;
+                hists_params_.push_back((TH2F*)f_weights_->Get(Form("h_A%i",n)));
+                if (!(hists_params_[n])) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting full grid does not contain the expected histogram number : "<<n<<std::endl;
             }
             hist_SM_ = (TH2F*)f_weights_->Get("h_SM");
             if (!(hist_SM_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected SM histogram."<<std::endl;
             hist_inputMix_ = (TH2F*)f_weights_->Get("allHHNodeMap2D");
             if (!(hist_inputMix_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected input histogram for mix of nodes."<<std::endl;
-
-        produces<float>();
-    }
+    
+        for (unsigned int num=0;num<12;num++)
+             produces<float>(Form("benchmark%i",num));
+    }   
     
 // return bin in 2D isto wihtout under/over flow (e.g. if ibin > ibinmax , ibin = ibinmax)
     pair<int,int> DoubleHReweighter::find2DBin(TH2* h, float x, float y)
@@ -133,8 +134,6 @@ namespace flashgg {
     void DoubleHReweighter::produce( Event &evt, const EventSetup & )
     {
         // prepare output
-      //  std::unique_ptr<vector<float> > final_weight( new vector<float> );
-        std::unique_ptr<float>  final_weight( new float(0.) );
         std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
         Handle<View<reco::GenParticle> > genParticles;
         evt.getByToken( genParticleToken_, genParticles );
@@ -146,6 +145,7 @@ namespace flashgg {
             }   
         }
        
+        std::vector<float> NRWeights; //we will use this in the future when we would like to save all weights
         if (selHiggses.size()==2){
             TLorentzVector H1,H2;
             H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
@@ -153,15 +153,16 @@ namespace flashgg {
             float gen_mHH  = (H1+H2).M();
             float gen_cosTheta = getCosThetaStar_CS(H1,H2);   
             // Now, lets fill in the weigts for the 12 benchmarks.
-            std::vector<float> NRWeights; //we will use this in the future when we would like to save all weights
             for (unsigned int n=0; n<NUM_benchmarks; n++) 
                 NRWeights.push_back(getWeight(n, gen_mHH, gen_cosTheta));
-            float NRWeight_target =  NRWeights[-2+targetNode_]; //In our convention nodes start from node_2 and go up to node_13, therefore shift -2
-            ( *final_weight ) = NRWeight_target;
         } 
-        evt.put( std::move( final_weight ) );
-     //   for ....
-    //    evt.put( std::move( final_weight ,number) );
+        for (unsigned int n=0; n<NUM_benchmarks; n++){
+            std::string weight_number = "benchmark";
+            weight_number.append(std::to_string(n));
+            std::unique_ptr<float>  final_weight( new float(NRWeights[n]) );
+            evt.put( std::move( final_weight) , weight_number);
+        }
+         // number is a string. Each collection is specified by 4 string :  type, name of producer, process_name(reco,flashggMicroAOD),last one  - if producer produces more than one object of the same type -> here : number
     }
 }
 

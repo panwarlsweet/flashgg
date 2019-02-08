@@ -20,6 +20,9 @@ flashggDoubleHReweight = cms.EDProducer("FlashggDoubleHReweighter",
                                              kt = cms.vdouble(1.0,  1.0,  1.0,  1.5, 1.0, 1.0, 1.0, 1.0,  1.0, 1.5 , 1.0, 1.0 ), 
                                              c2 = cms.vdouble(-1.0, 0.5, -1.5, -3.0, 0.0, 0.0, 0.0, 0.0,  1.0, -1.0, 0.0, 1.0), 
                                              cg = cms.vdouble(0.0, -0.8,  0.0,  0.0, 0.8 ,0.2, 0.2,-1.0, -0.6, 0.0, 1.0, 0.0), 
-                                             c2g = cms.vdouble(0.0, 0.6, -0.8,  0.0,-1.0,-0.2,-0.2, 1.0,  0.6, 0.0, -1.0, 0.0)
+                                             c2g = cms.vdouble(0.0, 0.6, -0.8,  0.0,-1.0,-0.2,-0.2, 1.0,  0.6, 0.0, -1.0, 0.0),
                                         )
                                         )
+
+reweight_producer = "flashggDoubleHReweight"
+reweight_names = ["benchmark0","benchmark1","benchmark2","benchmark3","benchmark4","benchmark5","benchmark6","benchmark7","benchmark8","benchmark9","benchmark10","benchmark11"]

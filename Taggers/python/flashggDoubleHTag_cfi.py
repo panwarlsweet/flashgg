@@ -27,6 +27,7 @@ elif year == "2017":
     MVAscalingValue=1.011026
 
 
+import flashgg.Taggers.flashggDoubleHReweight_cfi as reweight_settings
 
 flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    DiPhotonTag=cms.InputTag('flashggPreselectedDiPhotons'), # diphoton collection (will be replaced by systematics machinery at run time)
@@ -67,10 +68,13 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
                                    doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
-                                   doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
+                                   doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
-                                   globalVariables=globalVariables
+                                   globalVariables=globalVariables,
+											  reweight_producer = cms.string(reweight_settings.reweight_producer),
+											  reweight_names = cms.vstring(reweight_settings.reweight_names)
                                   ) 
+
 
 cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                       # here the syntax is VarNameInTMVA := expression
@@ -78,7 +82,7 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                        #"subleadingJet_bDis := subleadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",
                        "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
                        "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
-                       "absCosThetaStar_CS := abs(getCosThetaStar_CS(6500))",#FIXME get energy from somewhere?
+                       "absCosThetaStar_CS := abs(getCosThetaStar_CS_old(6500))",#FIXME get energy from somewhere?
                        "absCosTheta_bb := abs(CosThetaAngles()[1])",
                        "absCosTheta_gg := abs(CosThetaAngles()[0])",
                        "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
