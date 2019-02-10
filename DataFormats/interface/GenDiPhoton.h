@@ -5,7 +5,7 @@
 #include "flashgg/DataFormats/interface/GenPhotonExtra.h"
 #include "DataFormats/Common/interface/Ptr.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
-
+#include "flashgg/DataFormats/interface/Met.h"
 #include "flashgg/DataFormats/interface/WeightedObject.h"
 #include "flashgg/DataFormats/interface/DiPhotonTagBase.h"
 
@@ -16,7 +16,7 @@ namespace flashgg {
     public:
         GenDiPhoton();
         GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>);
-        GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>);
+        GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Met>);
         ~GenDiPhoton();
 
         virtual GenDiPhoton *clone() const { return ( new GenDiPhoton( *this ) ); }
@@ -29,6 +29,8 @@ namespace flashgg {
 
         const flashgg::GenPhotonExtra& leadingExtra() const { return leadingPhoton_; };
         const flashgg::GenPhotonExtra& subLeadingExtra() const { return subLeadingPhoton_; }
+
+        const flashgg::Met& Met() const { return Met_; }
         
         float sumPt() const { return  leadingPhoton_.cand().pt() + subLeadingPhoton_.cand().pt(); }
         bool operator <( const GenDiPhoton &b ) const { return ( sumPt() < b.sumPt() ); }
@@ -58,6 +60,7 @@ namespace flashgg {
         edm::Ptr<reco::GenJet> leadingJet_;
         edm::Ptr<reco::GenJet> subLeadingJet_;
         
+        flashgg::Met Met_;
         int cat_;
         std::string tag_;
         edm::Ptr<DiPhotonTagBase> recoTagObj_;

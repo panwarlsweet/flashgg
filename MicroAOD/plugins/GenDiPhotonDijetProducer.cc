@@ -6,7 +6,7 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/EDMException.h"
-
+#include "flashgg/DataFormats/interface/Met.h"
 #include "flashgg/DataFormats/interface/GenDiPhoton.h"
 
 #include "flashgg/DataFormats/interface/GenPhotonExtra.h"
@@ -31,7 +31,7 @@ namespace flashgg {
 
         EDGetTokenT<View<GenPhotonExtra> > genPhotonToken_;
         EDGetTokenT<View<reco::GenJet> > genJetToken_;
-        
+        EDGetTokenT<View<Met> > metToken_;
         bool overlapRemoval_;
 
     };
@@ -39,6 +39,7 @@ namespace flashgg {
     GenDiPhotonDiJetProducer::GenDiPhotonDiJetProducer( const ParameterSet &iConfig ) :
         genPhotonToken_( consumes<View<flashgg::GenPhotonExtra> >( iConfig.getParameter<InputTag> ( "src" ) ) ),
         genJetToken_( consumes<View<reco::GenJet> >( iConfig.getParameter<InputTag> ( "jets" ) ) ),
+        metToken_( consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ( "flashggMets" ) ) ),
         overlapRemoval_(false)
     {
         if( iConfig.exists("overlapRemoval") ) { 
@@ -54,6 +55,9 @@ namespace flashgg {
 
         Handle<View<reco::GenJet> > jets;
         evt.getByToken( genJetToken_, jets );
+
+        Handle<View<flashgg::Met> > mets;
+        evt.getByToken( metToken_, mets );
 
         std::unique_ptr<vector<GenDiPhoton> > diphotons( new vector<GenDiPhoton> );
         for( size_t ii = 0 ; ii < photons->size() ; ++ii ) {
@@ -71,7 +75,10 @@ namespace flashgg {
                 }
                 if( seljets.size() >= 2 ) { 
                     auto jet0 = seljets[0], jet1 = seljets[1];
-                    diphotons->push_back(GenDiPhoton(pi,pj,jet0,jet1));
+                    for( size_t kk = 0 ; kk < mets->size() ; ++kk ) {
+                        auto met = mets->ptrAt( kk );
+                        diphotons->push_back(GenDiPhoton(pi,pj,jet0,jet1,met));
+                                         }
                 }
             }
         }

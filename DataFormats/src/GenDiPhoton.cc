@@ -15,11 +15,12 @@ GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<fl
     computeP4AndOrder();
 }
 
-GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<flashgg::GenPhotonExtra> photon2, edm::Ptr<reco::GenJet> jet1, edm::Ptr<reco::GenJet> jet2)
+GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<flashgg::GenPhotonExtra> photon2, edm::Ptr<reco::GenJet> jet1, edm::Ptr<reco::GenJet> jet2, edm::Ptr<flashgg::Met> Met )
     : GenDiPhoton(photon1,photon2)
 {
     leadingJet_ = jet1;
     subLeadingJet_ = jet2;
+    Met_ = *Met;
     if( leadingJet_->pt() < subLeadingJet_->pt() ) { std::swap(leadingJet_,subLeadingJet_); }
 }
 
