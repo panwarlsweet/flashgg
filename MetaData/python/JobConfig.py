@@ -126,6 +126,7 @@ class JobConfig(object):
         
         self.parsed = False
         
+        self.pu_distribs_hack_2017 = {  }
         
         from SimGeneral.MixingModule.mix_2015_25ns_Startup_PoissonOOTPU_cfi import mix as mix_2015_25ns
         from SimGeneral.MixingModule.mix_2015_50ns_Startup_PoissonOOTPU_cfi import mix as mix_2015_50ns
@@ -154,10 +155,10 @@ class JobConfig(object):
             from flashgg.MetaData.mix_2017MCv2_DYJetsToLL import mix as mix_94X_mc2017
             #from flashgg.MetaData.mix_2017MCv2_GJet_Combined import mix as mix_94X_mc2017
             self.pu_distribs["94X_mc2017"] = mix_94X_mc2017.input.nbPileupEvents
+            self.pu_distribs_hack_2017["94X_mc2017"] = mix_94X_mc2017.input.nbPileupEvents
         except Exception:
             print "Failed to load 94X_mc2017 mixing"
             
-        self.pu_distribs_hack_2017 = {  }
 
         try:
             import importlib
