@@ -44,7 +44,8 @@ namespace flashgg {
         int chooseCategory( float mva, float mx );
         float EvaluateNN();
         bool isclose(double a, double b, double rel_tol, double abs_tol);        
-        void StandardizeInputs();
+        void StandardizeHLF();
+        void StandardizeParticleList();
         
         EDGetTokenT<View<DiPhotonCandidate> > diPhotonToken_;
         std::vector<edm::EDGetTokenT<edm::View<flashgg::Jet> > > jetTokens_;
@@ -109,7 +110,7 @@ namespace flashgg {
 
         std::vector<double> HLF_VectorVar_;
         std::vector<std::vector<double>> PL_VectorVar_;
-        std::vector<double> x_mean_, x_std_;
+        std::vector<double> x_mean_, x_std_, list_mean_, list_std_;
         string ttHWeightfileName_ ;
         tensorflow::GraphDef* graphDef_ttH;
         tensorflow::Session* session_ttH;
@@ -203,11 +204,15 @@ namespace flashgg {
             ttHScoreThreshold = iConfig.getParameter<double>("ttHScoreThreshold2017");
             x_mean_ = iConfig.getParameter<std::vector<double>> ("mean2017");
             x_std_ = iConfig.getParameter<std::vector<double>> ("std2017");
+            list_mean_ = iConfig.getParameter<std::vector<double>> ("listmean2017");
+            list_std_ = iConfig.getParameter<std::vector<double>> ("liststd2017");
 #elif CMSSW8
             ttHWeightfileName_ = iConfig.getUntrackedParameter<std::string>("ttHWeightfile2016");
             ttHScoreThreshold = iConfig.getParameter<double>("ttHScoreThreshold2016");
             x_mean_ = iConfig.getParameter<std::vector<double>> ("mean2016");
             x_std_ = iConfig.getParameter<std::vector<double>> ("std2016");
+            list_mean_ = iConfig.getParameter<std::vector<double>> ("listmean2016");
+            list_std_ = iConfig.getParameter<std::vector<double>> ("liststd2016");
 #endif
             graphDef_ttH = tensorflow::loadGraphDef((ttHWeightfileName_).c_str());
             session_ttH = tensorflow::createSession(graphDef_ttH);
@@ -539,8 +544,34 @@ namespace flashgg {
                 ttHVars["fabs_CosThetaStar_CS"] = abs(tag_obj.getCosThetaStar_CS(6500));//FIXME don't do hardcoded
                 ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);
                 
+                tag_obj.sumET_ = ttHVars["sumET"];
+                tag_obj.MET_ = ttHVars["MET"];
+                tag_obj.phiMET_ = ttHVars["phiMET"];
+                tag_obj.dPhi1_ = ttHVars["dPhi1"];
+                tag_obj.dPhi2_ = ttHVars["dPhi2"];
+                tag_obj.PhoJetMinDr_ = ttHVars["PhoJetMinDr"];
+                tag_obj.njets_ = ttHVars["njets"];
+                tag_obj.Xtt0_ = ttHVars["Xtt0"];
+                tag_obj.Xtt1_ = ttHVars["Xtt1"];
+                tag_obj.pte1_ = ttHVars["pte1"];
+                tag_obj.pte2_ = ttHVars["pte2"];
+                tag_obj.ptmu1_ = ttHVars["ptmu1"];
+                tag_obj.ptmu2_ = ttHVars["ptmu2"];
+                tag_obj.ptdipho_ = ttHVars["ptdipho"];
+                tag_obj.etae1_ = ttHVars["etae1"];
+                tag_obj.etae2_ = ttHVars["etae2"];
+                tag_obj.etamu1_ = ttHVars["etamu1"];
+                tag_obj.etamu2_ = ttHVars["etamu2"];
+                tag_obj.etadipho_ = ttHVars["etadipho"];
+                tag_obj.phie1_ = ttHVars["phie1"];
+                tag_obj.phie2_ = ttHVars["phie2"];
+                tag_obj.phimu1_ = ttHVars["phimu1"];
+                tag_obj.phimu2_ = ttHVars["phimu2"];
+                tag_obj.phidipho_ = ttHVars["phidipho"];
+                tag_obj.fabs_CosThetaStar_CS_ = ttHVars["fabs_CosThetaStar_CS"];
+                tag_obj.fabs_CosTheta_bb_ = ttHVars["fabs_CosTheta_bb"];
                 
-                StandardizeInputs();
+                StandardizeHLF();
                 
                 //10 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
                 //'Xtt1','fabs_CosThetaStar_CS','fabs_CosTheta_bb'
@@ -632,45 +663,28 @@ namespace flashgg {
                 // Sort by pT
                 std::sort(PL_VectorVar_.rbegin(), PL_VectorVar_.rend()); 
 
+                StandardizeParticleList();
 
                 float ttHScore = EvaluateNN();
+                //std::cout << "ttH score = " << ttHScore << std::endl;
+                
+//                for (unsigned int i = 0; i < 6; i++)
+//                {
+//                    if (isclose(PL_VectorVar_[i][5],1)) // diphoton
+//                    {
+//                        tag_obj.ptdipho_ = PL_VectorVar_[i][0];
+//                        tag_obj.etadipho_ = PL_VectorVar_[i][1];
+//                        tag_obj.phidipho_ = PL_VectorVar_[i][2];
+//                    }
+//                    else if (isclose(PL_VectorVar_[i][6],1)) // MET
+//                    {
+//                        tag_obj.MET_ = PL_VectorVar_[i][0];
+//                        tag_obj.phiMET_ = PL_VectorVar_[i][2];
+//                    }
+//                }
                 if (ttHScore < ttHScoreThreshold) continue;
                 
                 tag_obj.ttHScore_ = ttHScore;
-                
-                tag_obj.sumET_ = ttHVars["sumET"];
-                tag_obj.MET_ = ttHVars["MET"];
-                tag_obj.phiMET_ = ttHVars["phiMET"];
-                tag_obj.dPhi1_ = ttHVars["dPhi1"];
-                tag_obj.dPhi2_ = ttHVars["dPhi2"];
-                tag_obj.PhoJetMinDr_ = ttHVars["PhoJetMinDr"];
-                tag_obj.njets_ = ttHVars["njets"];
-                tag_obj.Xtt0_ = ttHVars["Xtt0"];
-                tag_obj.Xtt1_ = ttHVars["Xtt1"];
-                tag_obj.pte1_ = ttHVars["pte1"];
-                tag_obj.pte2_ = ttHVars["pte2"];
-                tag_obj.ptmu1_ = ttHVars["ptmu1"];
-                tag_obj.ptmu2_ = ttHVars["ptmu2"];
-                tag_obj.ptdipho_ = ttHVars["ptdipho"];
-                tag_obj.etae1_ = ttHVars["etae1"];
-                tag_obj.etae2_ = ttHVars["etae2"];
-                tag_obj.etamu1_ = ttHVars["etamu1"];
-                tag_obj.etamu2_ = ttHVars["etamu2"];
-                tag_obj.etadipho_ = ttHVars["etadipho"];
-                tag_obj.phie1_ = ttHVars["phie1"];
-                tag_obj.phie2_ = ttHVars["phie2"];
-                tag_obj.phimu1_ = ttHVars["phimu1"];
-                tag_obj.phimu2_ = ttHVars["phimu2"];
-                tag_obj.phidipho_ = ttHVars["phidipho"];
-                tag_obj.fabs_CosThetaStar_CS_ = ttHVars["fabs_CosThetaStar_CS"];
-                tag_obj.fabs_CosTheta_bb_ = ttHVars["fabs_CosTheta_bb"];
-                tag_obj.ptjet1_ = ttHVars["ptjet1"];
-                tag_obj.ptjet2_ = ttHVars["ptjet2"];
-                tag_obj.etajet1_ = ttHVars["etajet1"];
-                tag_obj.etajet2_ = ttHVars["etajet2"];
-                tag_obj.phijet1_ = ttHVars["phijet1"];
-                tag_obj.phijet2_ = ttHVars["phijet2"];
-
                 PL_VectorVar_.clear();
                 HLF_VectorVar_.clear();
             }
@@ -702,36 +716,51 @@ namespace flashgg {
         evt.put( std::move( tags ) );
     }
     
-    void DoubleHTagProducer::StandardizeInputs()
+    void DoubleHTagProducer::StandardizeHLF()
     {
-        // Standardize the input
-        if (!isclose(ttHVars["sumET"],0)) ttHVars["sumET"] = (ttHVars["sumET"] - x_mean_[0])/x_std_[0];
-        if (!isclose(ttHVars["phiMET"],0)) ttHVars["phiMET"] = (ttHVars["phiMET"] - x_mean_[1])/x_std_[1];
-        if (!isclose(ttHVars["dPhi1"],0)) ttHVars["dPhi1"] = (ttHVars["dPhi1"] - x_mean_[2])/x_std_[2];
-        if (!isclose(ttHVars["dPhi2"],0)) ttHVars["dPhi2"] = (ttHVars["dPhi2"] - x_mean_[3])/x_std_[3];
-        if (!isclose(ttHVars["PhoJetMinDr"],0)) ttHVars["PhoJetMinDr"] = (ttHVars["PhoJetMinDr"] - x_mean_[4])/x_std_[4];
-        if (!isclose(ttHVars["njets"],0)) ttHVars["njets"] = (ttHVars["njets"] - x_mean_[5])/x_std_[5];
-        if (!isclose(ttHVars["Xtt0"],0)) ttHVars["Xtt0"] = (ttHVars["Xtt0"] - x_mean_[6])/x_std_[6];
-        if (!isclose(ttHVars["Xtt1"],0)) ttHVars["Xtt1"] = (ttHVars["Xtt1"] - x_mean_[7])/x_std_[7];
-        if (!isclose(ttHVars["pte1"],0)) ttHVars["pte1"] = (ttHVars["pte1"] - x_mean_[8])/x_std_[8];
-        if (!isclose(ttHVars["pte2"],0)) ttHVars["pte2"] = (ttHVars["pte2"] - x_mean_[9])/x_std_[9];
-        if (!isclose(ttHVars["ptmu1"],0)) ttHVars["ptmu1"] = (ttHVars["ptmu1"] - x_mean_[10])/x_std_[10];
-        if (!isclose(ttHVars["ptmu2"],0)) ttHVars["ptmu2"] = (ttHVars["ptmu2"] - x_mean_[11])/x_std_[11];
-        if (!isclose(ttHVars["ptdipho"],0)) ttHVars["ptdipho"] = (ttHVars["ptdipho"] - x_mean_[12])/x_std_[12];
-        if (!isclose(ttHVars["etae1"],0)) ttHVars["etae1"] = (ttHVars["etae1"] - x_mean_[13])/x_std_[13];
-        if (!isclose(ttHVars["etae2"],0)) ttHVars["etae2"] = (ttHVars["etae2"] - x_mean_[14])/x_std_[14];
-        if (!isclose(ttHVars["etamu1"],0)) ttHVars["etamu1"] = (ttHVars["etamu1"] - x_mean_[15])/x_std_[15];
-        if (!isclose(ttHVars["etamu2"],0)) ttHVars["etamu2"] = (ttHVars["etamu2"] - x_mean_[16])/x_std_[16];
-        if (!isclose(ttHVars["etadipho"],0)) ttHVars["etadipho"] = (ttHVars["etadipho"] - x_mean_[17])/x_std_[17];
-        if (!isclose(ttHVars["phie1"],0)) ttHVars["phie1"] = (ttHVars["phie1"] - x_mean_[18])/x_std_[18];
-        if (!isclose(ttHVars["phie2"],0)) ttHVars["phie2"] = (ttHVars["phie2"] - x_mean_[19])/x_std_[19];
-        if (!isclose(ttHVars["phimu1"],0)) ttHVars["phimu1"] = (ttHVars["phimu1"] - x_mean_[20])/x_std_[20];
-        if (!isclose(ttHVars["phimu2"],0)) ttHVars["phimu2"] = (ttHVars["phimu2"] - x_mean_[21])/x_std_[21];
-        if (!isclose(ttHVars["phidipho"],0)) ttHVars["phidipho"] = (ttHVars["phidipho"] - x_mean_[22])/x_std_[22];
-        if (!isclose(ttHVars["fabs_CosThetaStar_CS"],0)) ttHVars["fabs_CosThetaStar_CS"] = (ttHVars["fabs_CosThetaStar_CS"] - x_mean_[23])/x_std_[23];
-        if (!isclose(ttHVars["fabs_CosTheta_bb"],0)) ttHVars["fabs_CosTheta_bb"] = (ttHVars["fabs_CosTheta_bb"] - x_mean_[24])/x_std_[24];
+        // Standardize the HLF inputs. NOTE: We don't standardize pt, eta, phi of physics object here.
+        ttHVars["sumET"] = (ttHVars["sumET"] - x_mean_[0])/x_std_[0];
+        // ttHVars["MET"] = (ttHVars["MET"] - x_mean_[1])/x_std_[1];
+        // ttHVars["phiMET"] = (ttHVars["phiMET"] - x_mean_[2])/x_std_[2];
+        ttHVars["dPhi1"] = (ttHVars["dPhi1"] - x_mean_[3])/x_std_[3];
+        ttHVars["dPhi2"] = (ttHVars["dPhi2"] - x_mean_[4])/x_std_[4];
+        ttHVars["PhoJetMinDr"] = (ttHVars["PhoJetMinDr"] - x_mean_[5])/x_std_[5];
+        ttHVars["njets"] = (ttHVars["njets"] - x_mean_[6])/x_std_[6];
+        ttHVars["Xtt0"] = (ttHVars["Xtt0"] - x_mean_[7])/x_std_[7];
+        ttHVars["Xtt1"] = (ttHVars["Xtt1"] - x_mean_[8])/x_std_[8];
+        //ttHVars["pte1"] = (ttHVars["pte1"] - x_mean_[9])/x_std_[9];
+        //ttHVars["pte2"] = (ttHVars["pte2"] - x_mean_[10])/x_std_[10];
+        //ttHVars["ptmu1"] = (ttHVars["ptmu1"] - x_mean_[11])/x_std_[11];
+        //ttHVars["ptmu2"] = (ttHVars["ptmu2"] - x_mean_[12])/x_std_[12];
+        //ttHVars["ptdipho"] = (ttHVars["ptdipho"] - x_mean_[13])/x_std_[13];
+        // ttHVars["etae1"] = (ttHVars["etae1"] - x_mean_[14])/x_std_[14];
+        //ttHVars["etae2"] = (ttHVars["etae2"] - x_mean_[15])/x_std_[15];
+        // ttHVars["etamu1"] = (ttHVars["etamu1"] - x_mean_[16])/x_std_[16];
+        // ttHVars["etamu2"] = (ttHVars["etamu2"] - x_mean_[17])/x_std_[17];
+        //ttHVars["etadipho"] = (ttHVars["etadipho"] - x_mean_[18])/x_std_[18];
+        //ttHVars["phie1"] = (ttHVars["phie1"] - x_mean_[19])/x_std_[19];
+        // ttHVars["phie2"] = (ttHVars["phie2"] - x_mean_[20])/x_std_[20];
+        // ttHVars["phimu1"] = (ttHVars["phimu1"] - x_mean_[21])/x_std_[21];
+        // ttHVars["phimu2"] = (ttHVars["phimu2"] - x_mean_[22])/x_std_[22];
+        // ttHVars["phidipho"] = (ttHVars["phidipho"] - x_mean_[23])/x_std_[23];
+        ttHVars["fabs_CosThetaStar_CS"] = (ttHVars["fabs_CosThetaStar_CS"] - x_mean_[24])/x_std_[24];
+        ttHVars["fabs_CosTheta_bb"] = (ttHVars["fabs_CosTheta_bb"] - x_mean_[25])/x_std_[25];
     }
     
+    void DoubleHTagProducer::StandardizeParticleList()
+    {
+        // Standardize pt, eta, phi of physics objects
+        for (unsigned int i = 0; i < 6; i++) // 6 objects
+        {
+            if (!isclose(PL_VectorVar_[i][0],0)) // only standardize object that exists (non-zero pt)
+            for (unsigned int j = 0; j < 3; j++) // pt, eta, phi for each objects
+            {
+                 PL_VectorVar_[i][j] = (PL_VectorVar_[i][j] - list_mean_[j])/(list_std_[j]);
+            }
+        }
+        
+    }
+
     float DoubleHTagProducer::EvaluateNN()
     {
         unsigned int shape = HLF_VectorVar_.size();
@@ -739,22 +768,30 @@ namespace flashgg {
         unsigned int plshape2 = PL_VectorVar_[0].size();
         
         tensorflow::Tensor HLFinput(tensorflow::DT_FLOAT, {1,shape});
+        //std::cout << "Input high level feature: ";
         for (unsigned int i = 0; i < shape; i++){
             HLFinput.matrix<float>()(0,i) =  float(HLF_VectorVar_[i]);
+            //std::cout << HLF_VectorVar_[i] << "  ";
         }
         tensorflow::Tensor PLinput(tensorflow::DT_FLOAT, tensorflow::TensorShape({1,plshape1, plshape2}));
+        //std::cout << "\nInput particle list: \n";
         for (unsigned int i = 0; i < plshape1; i++)
+        {
             for (unsigned int j = 0; j < plshape2; j++)
             {
                 PLinput.tensor<float,3>()(0, i, j) = float(PL_VectorVar_[i][j]);
+                //std::cout << PL_VectorVar_[i][j] << "  ";
             }
+            //std::cout << std::endl;
+        }
         std::vector<tensorflow::Tensor> outputs;
 
 #ifdef CMSSW9
-        tensorflow::run(session_ttH, { {"input_646:0", HLFinput}, {"input_645:0", PLinput} }, { "dense_893/Sigmoid:0" }, &outputs);
+        tensorflow::run(session_ttH, { {"input_1:0", PLinput}, {"input_2:0", HLFinput} }, { "dense_4/Sigmoid" }, &outputs);
 #elif CMSSW8
         tensorflow::run(session_ttH, { {"input_608:0", HLFinput}, {"input_607:0", PLinput} }, { "dense_835/Sigmoid:0" }, &outputs);
 #endif
+        //std::cout << "EvaluateNN result: " << outputs[0].matrix<float>()(0, 0) << std::endl;
         float NNscore = outputs[0].matrix<float>()(0, 0);
         return NNscore;
     }
