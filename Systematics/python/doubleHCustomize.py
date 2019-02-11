@@ -74,7 +74,7 @@ def variablesToDump(customize):
              "sigmaMJets := getSigmaMOverMJets()"
     ]
 
-    if customize.ttHKillerVariablesOnly : ttHVariables = [
+    if customize.ttHKillerInputVariables : variables += [
             "ttH_sumET := sumET()",
             "ttH_MET := MET()",
             "ttH_phiMET := phiMET()",
@@ -110,7 +110,6 @@ def variablesToDump(customize):
             #"ttHScore := ttHScore()",
             ]
     
-    if customize.ttHKillerVariablesOnly : return ttHVariables
     
     if customize.doDoubleHttHKiller : variables +=[
             "ttHScore := ttHScore()",
