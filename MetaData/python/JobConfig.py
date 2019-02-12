@@ -2,10 +2,6 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 from flashgg.MetaData.samples_utils import SamplesManager
 import FWCore.ParameterSet.Config as cms
 
-#import flashgg.Systematics.settings as settings
-#year = settings.year
-year = "2017" 
-
 
 class JobConfig(object):
     
@@ -116,6 +112,11 @@ class JobConfig(object):
                                VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                                VarParsing.VarParsing.varType.string,          # string, int, or float
                                "puTarget")
+        self.options.register ('PUyear',
+                               "2016", # default value
+                               VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                               VarParsing.VarParsing.varType.string,          # string, int, or float
+                               "PUyear")
         self.options.register ('WeightName', # for THQ/THW samples the LHE weight should be mentioned
                                None, # default value
                                VarParsing.VarParsing.multiplicity.singleton, # singleton or list
@@ -125,6 +126,7 @@ class JobConfig(object):
         
         self.parsed = False
         
+        self.pu_distribs_hack_2017 = {  }
         
         from SimGeneral.MixingModule.mix_2015_25ns_Startup_PoissonOOTPU_cfi import mix as mix_2015_25ns
         from SimGeneral.MixingModule.mix_2015_50ns_Startup_PoissonOOTPU_cfi import mix as mix_2015_50ns
@@ -153,10 +155,10 @@ class JobConfig(object):
             from flashgg.MetaData.mix_2017MCv2_DYJetsToLL import mix as mix_94X_mc2017
             #from flashgg.MetaData.mix_2017MCv2_GJet_Combined import mix as mix_94X_mc2017
             self.pu_distribs["94X_mc2017"] = mix_94X_mc2017.input.nbPileupEvents
+            self.pu_distribs_hack_2017["94X_mc2017"] = mix_94X_mc2017.input.nbPileupEvents
         except Exception:
             print "Failed to load 94X_mc2017 mixing"
             
-        self.pu_distribs_hack_2017 = {  }
 
         try:
             import importlib
@@ -301,7 +303,7 @@ class JobConfig(object):
 #                                hack2017 = True
                                 found_hack2017 = False
 #                                if hack2017:
-                                if year=="2017":
+                                if self.options.PUyear=="2017":
                                     print dsetname.split("/")[1]
                                    # print self.pu_distribs.keys()
                                     print self.pu_distribs_hack_2017.keys()
@@ -328,7 +330,8 @@ class JobConfig(object):
                                     if len(matches) != 1:
                                         raise Exception("Could not determine sample pu distribution for reweighting. Possible matches are [%s]. Selected [%s]\n dataset: %s" % 
                                                         ( ",".join(self.pu_distribs.keys()), ",".join(matches), dsetname ) )
-                                samplepu = self.pu_distribs[matches[0]]
+                                if self.options.PUyear=="2017": samplepu = self.pu_distribs_hack_2017[matches[0]]
+                                else : samplepu = self.pu_distribs[matches[0]]
                             puObj.puReWeight = True
                             puObj.puBins = cms.vdouble( map(float, samplepu.probFunctionVariable) )
                             puObj.mcPu   = samplepu.probValue
