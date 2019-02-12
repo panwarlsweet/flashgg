@@ -40,7 +40,7 @@ namespace flashgg {
         pair<int,int> find2DBin(TH2* h, float x, float y);
 
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
-        int targetNode_;
+        int doReweight_;
         edm::FileInPath weightsFile_;  // file with prepared histograms needed for reweighting
         const unsigned int NUM_benchmarks = 12; // number of becnhmarks for reweighting
         std::vector<TH2F*> hists_params_;   // histograms with weights for 15 parameters
@@ -55,7 +55,7 @@ namespace flashgg {
 
     DoubleHReweighter::DoubleHReweighter( const ParameterSet &iConfig ) :
         genParticleToken_( consumes<View<reco::GenParticle> >( iConfig.getParameter<InputTag> ( "GenParticleTag" ) ) ),
-        targetNode_( iConfig.getParameter<int> ( "targetNode" ) ),
+        doReweight_( iConfig.getParameter<int> ( "doReweight" ) ),
         weightsFile_(iConfig.getParameter<edm::FileInPath>("weightsFile")),
         NCOEFFSA_(iConfig.getParameter<unsigned int>( "NCOEFFSA" )),
         A_13TeV_SM_(iConfig.getParameter< vector<double>>("A_13TeV_SM")),
@@ -101,20 +101,24 @@ namespace flashgg {
         float w = 0.;
         pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, gen_cosTheta);
         float denom = hist_inputMix_->GetBinContent(bins.first, bins.second);
-        if (denom == 0)
+        if (denom == 0) { 
             return 0;
+        }
         float nEvSM = hist_SM_->GetBinContent(bins.first, bins.second);
         vector<double> Acoeffs;
-        for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic)
+        for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic){
             Acoeffs.push_back((hists_params_[ic])->GetBinContent(bins.first, bins.second));
-        double kl = benchmarks_map_.getParameter<vector<double>>("kl")[targetNode_] ;  
-        double kt = benchmarks_map_.getParameter<vector<double>>("kt")[targetNode_];  
-        double c2 = benchmarks_map_.getParameter<vector<double>>("c2")[targetNode_];  
-        double cg = benchmarks_map_.getParameter<vector<double>>("cg")[targetNode_] ;  
-        double c2g = benchmarks_map_.getParameter<vector<double>>("c2g")[targetNode_];  
+        } 
+        double kl = benchmarks_map_.getParameter<vector<double>>("kl")[targetNode] ;  
+        double kt = benchmarks_map_.getParameter<vector<double>>("kt")[targetNode];  
+        double c2 = benchmarks_map_.getParameter<vector<double>>("c2")[targetNode];  
+        double cg = benchmarks_map_.getParameter<vector<double>>("cg")[targetNode] ;  
+        double c2g = benchmarks_map_.getParameter<vector<double>>("c2g")[targetNode];  
         double effBSM = nEvSM * functionGF(kl,kt,c2,cg,c2g,Acoeffs)/functionGF(kl,kt,c2,cg,c2g,A_13TeV_SM_);
     
-        if (effBSM/denom < 0) return 0; // In case of negative weights, which should never happen
+        if (effBSM/denom < 0) {
+            return 0;
+        } // In case of very small negative weights, which can happen
         w = (effBSM/denom) ;
 
        return w;
@@ -153,8 +157,9 @@ namespace flashgg {
             float gen_mHH  = (H1+H2).M();
             float gen_cosTheta = getCosThetaStar_CS(H1,H2);   
             // Now, lets fill in the weigts for the 12 benchmarks.
-            for (unsigned int n=0; n<NUM_benchmarks; n++) 
+            for (unsigned int n=0; n<NUM_benchmarks; n++){ 
                 NRWeights.push_back(getWeight(n, gen_mHH, gen_cosTheta));
+            }
         } 
         for (unsigned int n=0; n<NUM_benchmarks; n++){
             std::string weight_number = "benchmark";

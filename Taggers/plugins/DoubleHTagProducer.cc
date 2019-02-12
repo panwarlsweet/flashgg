@@ -75,6 +75,7 @@ namespace flashgg {
         double MVAscaling_;
 
         vector< edm::EDGetTokenT<float> > reweights_;
+        int doReweight_;
     };
 
     DoubleHTagProducer::DoubleHTagProducer( const ParameterSet &iConfig ) :
@@ -99,6 +100,7 @@ namespace flashgg {
         mjjBoundariesLower_ = iConfig.getParameter<vector<double > >( "MJJBoundariesLower" ); 
         mjjBoundariesUpper_ = iConfig.getParameter<vector<double > >( "MJJBoundariesUpper" ); 
         multiclassSignalIdx_ = (iConfig.getParameter<edm::ParameterSet>("MVAConfig")).getParameter<int>("multiclassSignalIdx"); 
+        doReweight_ = (iConfig.getParameter<int>("doReweight")); 
    
         auto names = iConfig.getParameter<vector<string>>("reweight_names");
         for (auto & name : names ) {
@@ -204,13 +206,15 @@ namespace flashgg {
 
         //read reweighting
         vector<float> reweight_values;
-        for (auto & reweight_token : reweights_)
+        if (doReweight_>0) 
         {
-            edm::Handle<float> reweight_hadle;
-            evt.getByToken(reweight_token, reweight_hadle);
-            reweight_values.push_back(*reweight_hadle);
+           for (auto & reweight_token : reweights_)
+           {
+                edm::Handle<float> reweight_hadle;
+                evt.getByToken(reweight_token, reweight_hadle);
+                reweight_values.push_back(*reweight_hadle);
+            }
         }
-
         
 
         // prepare output
@@ -338,7 +342,7 @@ namespace flashgg {
             // compute extra variables here
             tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass() - tag_obj.diPhoton()->mass() + 250. );
             tag_obj.setGenMhh( genMhh );
-            tag_obj.setBenchmarkReweight( reweight_values );
+            if (doReweight_>0) tag_obj.setBenchmarkReweight( reweight_values );
             
             if(doSigmaMDecorr_){
                 tag_obj.setSigmaMDecorrTransf(transfEBEB_,transfNotEBEB_);

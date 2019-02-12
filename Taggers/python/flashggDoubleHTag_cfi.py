@@ -28,6 +28,7 @@ elif year == "2017":
 
 
 import flashgg.Taggers.flashggDoubleHReweight_cfi as reweight_settings
+from flashgg.Taggers.flashggDoubleHReweight_cfi import flashggDoubleHReweight
 
 flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    DiPhotonTag=cms.InputTag('flashggPreselectedDiPhotons'), # diphoton collection (will be replaced by systematics machinery at run time)
@@ -71,6 +72,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
+											  doReweight = flashggDoubleHReweight.doReweight,
 											  reweight_producer = cms.string(reweight_settings.reweight_producer),
 											  reweight_names = cms.vstring(reweight_settings.reweight_names)
                                   ) 

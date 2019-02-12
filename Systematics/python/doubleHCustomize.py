@@ -90,9 +90,10 @@ def variablesToDump(customize):
              "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
              "sigmaMJets := getSigmaMOverMJets()"
     ]
-    if customize.doubleHReweightTarget != -1: 
+    if customize.doubleHReweight > 0: 
          for num in range(0,12):
 		       variables += ["benchmark_reweight_%d := getBenchmarkReweight(%d)"%(num,num)]
+		       var_workspace += ["benchmark_reweight_%d := getBenchmarkReweight(%d)"%(num,num)]
     if customize.dumpWorkspace == False : return variables
     else : return var_workspace
 
@@ -106,11 +107,6 @@ def customizeTagSequence(customize,process):
 
     ## customize here (regression, kin-fit, MVA...)
     if customize.doBJetRegression : process.flashggDoubleHTag.JetTags = cms.VInputTag( ["bRegProducer%d" % icoll for icoll,coll in enumerate(UnpackedJetCollectionVInputTag) ] )
-
-   # if customize.doubleHReweightTarget != -1:
-   #     process.load("flashgg.Taggers.flashggDoubleHReweight_cfi")
-   #     process.flashggDoubleHReweight.targetNode = customize.doubleHReweightTarget
-   #     process.tagsDumper.reweight  =  cms.InputTag("flashggDoubleHReweight")
 
     ## remove single Higgs tags
 
@@ -132,12 +128,11 @@ def customizeTagSequence(customize,process):
         process.flashggTagSequence.replace(process.flashggUntagged, process.flashggDoubleHTagSequence)   
 
 def addNodesReweighting(customize,process):
-    if customize.doubleHReweightTarget != -1:
+    if customize.doubleHReweight > 0 :
         from flashgg.Taggers.flashggDoubleHReweight_cfi import flashggDoubleHReweight
         process.flashggDoubleHReweight = flashggDoubleHReweight
         process.p.replace(process.flashggDoubleHTag, process.flashggDoubleHReweight*process.flashggDoubleHTag)
-        process.flashggDoubleHReweight.targetNode = customize.doubleHReweightTarget
-        process.tagsDumper.reweight  =  cms.InputTag("flashggDoubleHReweight","benchmark%d"%customize.doubleHReweightTarget)
+        process.flashggDoubleHReweight.doReweight = customize.doubleHReweight
     
 
 def addGenAnalysis(customize,process,tagList):
@@ -163,8 +158,6 @@ def addGenAnalysis(customize,process,tagList):
     from flashgg.Taggers.globalVariables_cff import globalVariables
     process.genDiphotonDumper.dumpGlobalVariables = True
     process.genDiphotonDumper.globalVariables = globalVariables
-    if customize.doubleHReweightTarget != -1:
-        process.genDiphotonDumper.reweight  =  cms.InputTag("flashggDoubleHReweight","benchmark%d"%customize.doubleHReweightTarget)
     
     genVariables = ["mgg := mass",
                     "mbb := dijet.mass",
@@ -190,7 +183,7 @@ def addGenAnalysis(customize,process,tagList):
                     "subleadJet_e  := subLeadingJet.energy",
                     
                     ]
-    if customize.doubleHReweightTarget != -1: 
+    if customize.doubleHReweight > 0: 
          for num in range(0,12):
 		       genVariables += ["benchmark_reweight_%d := getHHbbggBenchmarkReweight(%d)"%(num,num)]
     

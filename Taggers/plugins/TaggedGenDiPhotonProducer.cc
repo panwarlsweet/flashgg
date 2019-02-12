@@ -38,7 +38,8 @@ namespace flashgg {
         classifier_t classifier_;
 
         vector< edm::EDGetTokenT<float> > HHbbgg_reweights_;
-
+        int doReweight_;
+    
     };
 
     TaggedGenDiPhotonProducer::TaggedGenDiPhotonProducer( const ParameterSet &iConfig ) :
@@ -46,6 +47,8 @@ namespace flashgg {
         tags_( consumes<View<flashgg::DiPhotonTagBase> >( iConfig.getParameter<InputTag> ( "tags" ) ) ),
         classifier_(iConfig)
     {
+        doReweight_ = (iConfig.getParameter<int>("HHbbgg_doReweight")); 
+
         auto names = iConfig.getParameter<vector<string>>("HHbbgg_reweight_names");
         for (auto & name : names ) {
             HHbbgg_reweights_.push_back(consumes<float>(edm::InputTag(iConfig.getParameter<string>("HHbbgg_reweight_producer") , name))) ;
@@ -80,12 +83,15 @@ namespace flashgg {
             if( tags->size()>0 ) { newdipho.setTagObj(tags->ptrAt(0)); }
             //read reweighting
             vector<float> reweight_values;
-            for (auto & reweight_token : HHbbgg_reweights_){
-                edm::Handle<float> reweight_hadle;
-                evt.getByToken(reweight_token, reweight_hadle);
-                reweight_values.push_back(*reweight_hadle);
-             }
-            newdipho.setHHbbggBenchmarkReweight( reweight_values );
+            if (doReweight_>0) 
+            {
+               for (auto & reweight_token : HHbbgg_reweights_){
+                 edm::Handle<float> reweight_hadle;
+                 evt.getByToken(reweight_token, reweight_hadle);
+                 reweight_values.push_back(*reweight_hadle);
+               }
+               newdipho.setHHbbggBenchmarkReweight( reweight_values );
+            }
             diphotons->push_back(newdipho);
             /// cout << "TaggedGenDiPhotonProducer dipho " << newdipho.categoryNumber() << " " << (int)newdipho << " "  << newdipho.tag() << endl;
         }
