@@ -106,9 +106,9 @@ https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181130/Taggers/python
 #### Nodes reweighting :
 To reweight for different BSM benchmarks, you have to prepare a json with only all 12 BSM nodes, like this one:
 https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181217/jsons/HHbbgg_MC_2016_80X_nodesOnly.json
-Per each new target node you have to submit a separate job specifying in the commandLine which node you want to be the target:
+After you run on all nodes, the trees should should be added together. 12 reweighting weights are saved in the trees : benchmark_reweight_NUM. The weight benchmark_reweight_NUM should be applied to obtain a benchmark number NUM. _Make sure that you preserve normalization of the nodes! It is not guranteed with this reweighting!_ 
 ```
-doubleHReweightTarget=2
+doubleHReweight=1
 ```
 By default it is set to -1, which means no reweighting is applied.
 
