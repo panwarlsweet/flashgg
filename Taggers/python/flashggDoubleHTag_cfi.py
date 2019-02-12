@@ -68,7 +68,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
                                    doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
-                                   doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
+                                   doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
                                    
@@ -112,7 +112,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                              2.90404729e-01, 2.85301766e-01),
 
                                    listmean2017 = cms.vdouble(9.77379993e+01, -2.75249574e-03,  6.81701973e-02),
-                                   liststd2017 = cms.vdouble(85.75455047,  1.31191137,  1.85627069)
+                                   liststd2017 = cms.vdouble(85.75455047,  1.31191137,  1.85627069),
                                    
                                    mean2016 = cms.vdouble(2.86329618e+02,  7.08058280e+01,  1.51705583e-01,  2.01783465e-03,
                                              2.97495115e-03,  1.27818958e+00,  5.00813342e+00,  1.09232817e+01,
