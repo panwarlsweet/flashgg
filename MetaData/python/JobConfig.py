@@ -113,7 +113,7 @@ class JobConfig(object):
                                VarParsing.VarParsing.varType.string,          # string, int, or float
                                "puTarget")
         self.options.register ('PUyear',
-                               "2016", # default value
+                               "2017", # default value
                                VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                                VarParsing.VarParsing.varType.string,          # string, int, or float
                                "PUyear")

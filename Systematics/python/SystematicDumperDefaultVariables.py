@@ -1,4 +1,5 @@
 minimalVariables = ["CMS_hgg_mass[160,100,180]:=diPhoton().mass",
+                    "CMS_hjj_mass[120,70,190]:=dijet().M()",
                     "dZ[40,-20.,20.]:=(tagTruth().genPV().z-diPhoton().vtx().z)", # store actual value
                                                                                #when doing systematics, variables need to have a binning
                                                                                #specified, otherwise the rooDataHist end up empty.
@@ -11,7 +12,8 @@ minimalNonSignalVariables = ["CMS_hgg_mass[160,100,180]:=diPhoton().mass","CMS_h
 
 minimalVariablesHTXS = minimalVariables+["stage0cat[72,9.5,81.5] := tagTruth().HTXSstage0cat"]
 
-defaultVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass", 
+defaultVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass",
+                                    "CMS_hjj_mass[120,70,190]:=dijet().M()", 
                                     "leadPt                   :=diPhoton().leadingPhoton.pt",
                                     "subleadPt                :=diPhoton().subLeadingPhoton.pt",
                                     "diphoMVA                 :=diPhotonMVA().result",    
