@@ -104,13 +104,21 @@ For this you need to set the flag either to True or False :
 https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181130/Taggers/python/flashggDoubleHTag_cfi.py#L70
 
 #### Nodes reweighting :
-To reweight for different BSM benchmarks, you have to prepare a json with only all 12 BSM nodes, like this one:
-https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181217/jsons/HHbbgg_MC_2016_80X_nodesOnly.json
-After you run on all nodes, the trees should should be added together. 12 reweighting weights are saved in the trees : benchmark_reweight_NUM. The weight benchmark_reweight_NUM should be applied to obtain a benchmark number NUM. _Make sure that you preserve normalization of the nodes! It is not guranteed with this reweighting!_ 
+To reweight for different BSM benchmarks you need to specify the option:
 ```
 doubleHReweight=1
 ```
 By default it is set to -1, which means no reweighting is applied.
+
+You have to prepare a json with only and exacly 12 BSM nodes for 2016 and 6 node for 2017. You should use the following jsons:
+```
+jsons/2017/HHbbgg_2017_94X_nodesonlySameName.json
+jsons/HHbbgg_MC_2016_80X_nodesOnlySameName.json
+```
+12 reweighting weights are saved in the trees : benchmark_reweight_NUM. The weight benchmark_reweight_NUM should be applied to obtain a benchmark number NUM. _Make sure that you preserve normalization of the nodes! It is not guranteed with this reweighting!_  To do that you just have to divide the weights for the nodes by the value from the following .json :
+```
+jsons/reweighting_normalization_15_02_2018.json
+````
 
 #### Events at generator level :
 You can save also all events at generator level with several gen-leve quantities for photons and jets. 
