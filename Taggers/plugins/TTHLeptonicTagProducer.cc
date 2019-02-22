@@ -250,7 +250,7 @@ namespace flashgg {
 
         edm::Handle<double>  rho;
         evt.getByToken(rhoTag_,rho);
-        double rho_    = *rho;
+        //double rho_    = *rho;
 
         Handle<View<flashgg::DiPhotonMVAResult> > mvaResults;
         evt.getByToken( mvaResultToken_, mvaResults );
