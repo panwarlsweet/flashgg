@@ -258,6 +258,10 @@ if customize.doDoubleHTag:
     import flashgg.Systematics.doubleHCustomize as hhc
     hhc.customizeTagSequence(  customize, process )
     minimalVariables += hhc.variablesToDump(customize)
+#####################################Only if needed, tmp fix for Francesco#########################
+#    if customize.processId == "Data":
+#         minimalNonSignalVariables += hhc.variablesToDumpData(customize)
+###################################################################################################
     print "saving variables:", minimalVariables
 
 print 'here we print the tag sequence after'
