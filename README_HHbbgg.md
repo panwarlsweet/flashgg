@@ -45,6 +45,11 @@ If everything now looks reasonable, you can build:
  scram b -j 3
  source flashgg/afterbuild_9_4_X.sh     
  ```
+ Now you have to manually copy the Scales and Smearing file (it works without it in interactive mode, but to run the jobs you need to copy the file)
+ ```
+cp $CMSSW_BASE/external/$SCRAM_ARCH/data/RecoEgamma/ScalesSmearings/data/Run2017_17Nov2017_v1_ele_unc_scales.dat   $CMSSW_BASE/src/RecoEgamma/ScalesSmearings/data/
+ ```
+ 
  
  ### How to run the code :
  ```
@@ -135,6 +140,7 @@ you have to do the following change in the code:
 Mets->MetsCorr in these 2 files:
 Systematics/python/flashggMetSystematics_cfi.py
 Taggers/python/flashggTags_cff.py
+Taggers/python/flashggDoubleHTag_cfi.py   ## this file has to be changed for SM 2017 as well
 ```
 If you do not do it, the code will simply crash.
 
