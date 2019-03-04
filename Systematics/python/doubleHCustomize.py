@@ -3,6 +3,7 @@ import FWCore.ParameterSet.Config as cms
 def variablesToDump(customize):
     var_workspace = [
 #             "Mjj := dijet().M()"
+#             "used_for_trainig := global.event"
     ]
     variables = [
         "leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
@@ -174,6 +175,8 @@ def customizeTagSequence(customize,process):
         process.flashggTagSequence.remove(process.flashggVHHadronicTag)
         process.flashggTagSequence.remove(process.flashggVBFMVA)
         process.flashggTagSequence.remove(process.flashggVBFDiPhoDiJetMVA)
+        process.flashggTagSequence.remove(process.flashggTTHDiLeptonTag)
+
 
         process.flashggTagSequence.replace(process.flashggUntagged, process.flashggDoubleHTagSequence)   
 
