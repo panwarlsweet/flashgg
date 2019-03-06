@@ -50,6 +50,8 @@ namespace flashgg {
         LorentzVector getdiHiggsP4() const {return p4();}
         void setBenchmarkReweight(std::vector<float> x) { benchmark_reweights_ = x; }
         float getBenchmarkReweight(int targetNode) const { return benchmark_reweights_[targetNode]; }
+        void setEventNumber(double x) { eventNumber_ = x; }
+        double eventNumber() const { return eventNumber_; }
 
         float ttHScore_;
         float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_; 
@@ -91,6 +93,7 @@ namespace flashgg {
         double mva_, MX_, genMhh_;
         vector<float> benchmark_reweights_;
  //       std::vector<float> mva_prob_;
+        long eventNumber_;
         edm::Ptr<flashgg::Jet> leadJet_, subleadJet_;
         LorentzVector dijet_;
         DecorrTransform* transfEBEB_;

@@ -437,6 +437,7 @@ namespace flashgg {
                 mva = MVAFlatteningCumulative_->Eval(mvaScaled);
             }
 
+            tag_obj.setEventNumber(evt.id().event() );
             tag_obj.setMVA( mva );
             
             // tag_obj.setMVAprob( mva_vector );

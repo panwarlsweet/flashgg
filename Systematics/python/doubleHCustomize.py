@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 def variablesToDump(customize):
     var_workspace = [
 #             "Mjj := dijet().M()"
-#             "used_for_trainig := global.event"
+             "eventNumber := eventNumber()"
     ]
     variables = [
         "leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
