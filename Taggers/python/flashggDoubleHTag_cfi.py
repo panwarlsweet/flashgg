@@ -43,7 +43,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    ScalingPtCuts = cms.bool(True),
                                    DoSigmaMDecorr =cms.untracked.uint32(1),#transformation of sigmaM/M
                                    SigmaMDecorrFile = cms.untracked.FileInPath("flashgg/Taggers/data/diphoMVA_sigmaMoMdecorr_split_Mgg40_180.root"),
-                                   ApplyEGMPhotonID = cms.untracked.bool(False),
+                                   ApplyEGMPhotonID = cms.untracked.bool(True),
                                    PhotonIDCut = cms.double(0.2),#this is loose id for 2016
                                    PhotonElectronVeto =cms.untracked.vint32(1, 1), #0: Pho1, 1: Pho2
 
@@ -51,7 +51,6 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    MaxJetEta   = cms.double(2.5),
                                    MJJBoundaries = cms.vdouble(70.,190.),
                                   # BTagType = cms.untracked.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'), #string for btag algorithm
-                                 #c  BTagType = cms.untracked.string('pfDeepCSVJetTags:probb'), #string for btag algorithm
                                    BTagType = cms.vstring('pfDeepCSVJetTags:probb','pfDeepCSVJetTags:probbb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),
                                    JetIDLevel = cms.string(jetPUID),
@@ -70,7 +69,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
                                    doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
-                                   doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
+                                   doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
 											  doReweight = flashggDoubleHReweight.doReweight,
@@ -96,8 +95,8 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    ttHWeightfile2016 = cms.untracked.string(os.environ["CMSSW_BASE"]+"/src/flashgg/Taggers/data/ttHKiller/2017model.pb"), # for now
                                    ttHWeightfile2017 = cms.untracked.string(os.environ["CMSSW_BASE"]+"/src/flashgg/Taggers/data/ttHKiller/2017model.pb"), 
 
-                                   ttHScoreThreshold2016 = cms.double(0.21), #to be updated
-                                   ttHScoreThreshold2017 = cms.double(0.21), #to be updated
+                                   ttHScoreThreshold2016 = cms.double(0.0), #to be updated
+                                   ttHScoreThreshold2017 = cms.double(0.0), #to be updated
 
                                    # For standardization
                                    mean2017 = cms.vdouble(2.86329618e+02,  7.08058280e+01,  1.51705583e-01,  2.01783465e-03,

@@ -94,11 +94,12 @@ namespace flashgg {
                 jec_unc_->setJetEta(y.eta());
                 jec_unc_->setJetPt(jec_adjust*y.pt()); 
                 unc = jec_unc_->getUncertainty(true);
+                std::cout  << "testing this ..........." << std::endl;
             }
             float scale = jec_adjust + syst_shift*unc;
             if( debug_ ) {
                 std::cout << "  " << shiftLabel( syst_shift ) << ": Jet has pt= " << y.pt() << " eta=" << y.eta()
-                          << " and we apply a multiplicative correction of " << scale << std::endl;
+                          << " and we apply a multiplicative correction of " << scale << " and unc=" <<  unc << " and syst_shift=" <<  syst_shift << " and jec_adjust=" << jec_adjust  << std::endl;
             }
             y.setP4( scale * y.p4() );
         }
