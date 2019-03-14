@@ -39,6 +39,7 @@ Recently deprecated:
  cd $CMSSW_BASE/src
  git clone https://github.com/cms-analysis/flashgg flashgg
  source flashgg/setup_9_4_X.sh
+ cp -r /afs/cern.ch/user/n/nchernya/public/Lata/ElectronTools EgammaAnalysis/
  ```
 
 If everything now looks reasonable, you can build:
