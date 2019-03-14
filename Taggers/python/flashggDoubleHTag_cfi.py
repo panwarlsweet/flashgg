@@ -40,7 +40,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    ScalingPtCuts = cms.bool(True),
                                    DoSigmaMDecorr =cms.untracked.uint32(1),#transformation of sigmaM/M
                                    SigmaMDecorrFile = cms.untracked.FileInPath("flashgg/Taggers/data/diphoMVA_sigmaMoMdecorr_split_Mgg40_180.root"),
-                                   ApplyEGMPhotonID = cms.untracked.bool(False),
+                                   ApplyEGMPhotonID = cms.untracked.bool(True),
                                    PhotonIDCut = cms.double(0.2),#this is loose id for 2016
                                    PhotonElectronVeto =cms.untracked.vint32(1, 1), #0: Pho1, 1: Pho2
 
