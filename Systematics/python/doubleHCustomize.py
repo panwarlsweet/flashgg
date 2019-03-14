@@ -75,9 +75,11 @@ def variablesToDump(customize):
              "sigmaMJets := getSigmaMOverMJets()"
     ]
     if customize.doubleHReweight > 0: 
-         for num in range(0,12):
+         for num in range(0,12):  #12 benchmarks + 1 SM
 		       variables += ["benchmark_reweight_%d := getBenchmarkReweight(%d)"%(num,num)]
 		       var_workspace += ["benchmark_reweight_%d := getBenchmarkReweight(%d)"%(num,num)]
+         variables += ["benchmark_reweight_SM := getBenchmarkReweight(12)"]
+         var_workspace += ["benchmark_reweight_SM := getBenchmarkReweight(12)"]
 
     if customize.ttHKillerInputVariables : variables += [
             "ttH_sumET := sumET()",
@@ -239,6 +241,7 @@ def addGenAnalysis(customize,process,tagList):
     if customize.doubleHReweight > 0: 
          for num in range(0,12):
 		       genVariables += ["benchmark_reweight_%d := getHHbbggBenchmarkReweight(%d)"%(num,num)]
+         genVariables += ["benchmark_reweight_SM := getHHbbggBenchmarkReweight(12)"]
     
     ## define categories for gen-level dumper
     cfgTools.addCategory(process.genDiphotonDumper,  ## events with not reco-level tag

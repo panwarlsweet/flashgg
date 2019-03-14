@@ -42,7 +42,8 @@ namespace flashgg {
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
         int doReweight_;
         edm::FileInPath weightsFile_;  // file with prepared histograms needed for reweighting
-        const unsigned int NUM_benchmarks = 12; // number of becnhmarks for reweighting
+        const unsigned int NUM_benchmarks = 13;  // number of becnhmarks for reweighting 12 +1 SM = 13 
+        const unsigned int numberSMbenchmark = 13;  // index of SM benchmark 
         std::vector<TH2F*> hists_params_;   // histograms with weights for 15 parameters
         TH2F* hist_SM_;  // histogram for SM point
         TH2F* hist_inputMix_;  // histogram for input mix of nodes
@@ -73,8 +74,9 @@ namespace flashgg {
             hist_inputMix_ = (TH2F*)f_weights_->Get("allHHNodeMap2D");
             if (!(hist_inputMix_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected input histogram for mix of nodes."<<std::endl;
     
-        for (unsigned int num=0;num<12;num++)
-             produces<float>(Form("benchmark%i",num));
+        for (unsigned int num=0;num<NUM_benchmarks;num++)
+             if (num==(numberSMbenchmark-1)) produces<float>("benchmarkSM");
+             else produces<float>(Form("benchmark%i",num));
     }   
     
 // return bin in 2D isto wihtout under/over flow (e.g. if ibin > ibinmax , ibin = ibinmax)
@@ -163,7 +165,8 @@ namespace flashgg {
         } 
         for (unsigned int n=0; n<NUM_benchmarks; n++){
             std::string weight_number = "benchmark";
-            weight_number.append(std::to_string(n));
+            if (n==(numberSMbenchmark-1)) weight_number.append("SM");
+            else weight_number.append(std::to_string(n));
             std::unique_ptr<float>  final_weight( new float(NRWeights[n]) );
             evt.put( std::move( final_weight) , weight_number);
         }
