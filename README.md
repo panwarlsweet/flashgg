@@ -25,7 +25,7 @@ Recently deprecated:
  cmsenv
  git cms-init
  cd $CMSSW_BASE/src 
- git clone https://github.com/cms-analysis/flashgg flashgg
+ git clone git@github.com:panwarlsweet/flashgg.git -b Nadya_Train_10_12_18
  source flashgg/setup_8_0_X.sh
  ```
 
