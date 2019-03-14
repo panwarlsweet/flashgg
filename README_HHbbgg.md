@@ -139,7 +139,6 @@ you have to do the following change in the code:
 ```
 Mets->MetsCorr in these 2 files:
 Systematics/python/flashggMetSystematics_cfi.py
-Taggers/python/flashggTags_cff.py
 Taggers/python/flashggDoubleHTag_cfi.py   ## this file has to be changed for SM 2017 as well
 ```
 If you do not do it, the code will simply crash.
