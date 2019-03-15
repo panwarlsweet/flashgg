@@ -25,7 +25,7 @@ Recently deprecated:
  cmsenv
  git cms-init
  cd $CMSSW_BASE/src 
- git clone https://github.com/cms-analysis/flashgg flashgg
+ git clone git@github.com:panwarlsweet/flashgg.git -b Nadya_Train_10_12_18
  source flashgg/setup_8_0_X.sh
  ```
 
@@ -37,8 +37,9 @@ Recently deprecated:
  cmsenv
  git cms-init
  cd $CMSSW_BASE/src
- git clone https://github.com/cms-analysis/flashgg flashgg
+ git clone git@github.com:panwarlsweet/flashgg.git -b Nadya_Train_10_12_18
  source flashgg/setup_9_4_X.sh
+ cp -r /afs/cern.ch/user/n/nchernya/public/Lata/ElectronTools EgammaAnalysis/
  ```
 
 If everything now looks reasonable, you can build:
@@ -51,7 +52,10 @@ In 94X after building you need to run:
  ```
  source flashgg/afterbuild_9_4_X.sh
  ```
-
+For Ruuning HHbbgg setup follow the instructions from here written by Nadya
+```
+https://github.com/chernyavskaya/flashgg/blob/hh_tag_ttH_22_02_2019/README_HHbbgg.md#how-to-run-the-code-
+```
 And a very basic workflow test:
  ```
  cd $CMSSW_BASE/src/flashgg
