@@ -13,18 +13,20 @@ year = settings.year
 #default values first
 year_norm = 0
 jetPUID = 'Loose'
-weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml"# path to TMVA weights
+weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml"# path to TMVA weights
 MVAscalingValue=cms.double(1.)#scale MVA output before the cumulative transformation for 2017(2016 kept unchanged for simplicity, we will probably change that once we have all 3 years.)
 
 if year == "2016":
     year_norm = 0
     jetPUID = 'Loose'
-    weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
+ #   weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
+    weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml", 
     MVAscalingValue=1.
 elif year == "2017":
     year_norm = 1
     jetPUID = 'Tight2017'
-    weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml", 
+   # weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml", 
+    weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year1.weights.xml", 
     MVAscalingValue=1.011026
 
 
@@ -55,6 +57,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    BTagType = cms.vstring('pfDeepCSVJetTags:probb','pfDeepCSVJetTags:probbb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),
                                    JetIDLevel = cms.string(jetPUID),
+                                 #  globalRhoTag = cms.InputTag('fixedGridRhoAll'),
 
                                    MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA
                                    MXBoundaries   = cms.vdouble(250., 354., 478., 560.), # .. and MX
@@ -73,11 +76,11 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
-											  doReweight = flashggDoubleHReweight.doReweight,
-											  reweight_producer = cms.string(reweight_settings.reweight_producer),
-											  reweight_names = cms.vstring(reweight_settings.reweight_names),
+                                   doReweight = flashggDoubleHReweight.doReweight,
+                                   reweight_producer = cms.string(reweight_settings.reweight_producer),
+                                   reweight_names = cms.vstring(reweight_settings.reweight_names),
                                    
-                                   dottHTagger=cms.bool(True), #whether to do ttH killer. 
+                                   dottHTagger=cms.bool(False), #whether to do ttH killer. 
                                     
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
                                    MuonTag=cms.InputTag('flashggSelectedMuons'),
@@ -144,9 +147,11 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                       # here the syntax is VarNameInTMVA := expression
                       [#"leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
                        #"subleadingJet_bDis := subleadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",
+                       "Mjj := dijet().M()",
                        "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
                        "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
-                       "absCosThetaStar_CS := abs(getCosThetaStar_CS_old(6500))",#FIXME get energy from somewhere?
+                      # "absCosThetaStar_CS := abs(getCosThetaStar_CS_old(6500))",#FIXME get energy from somewhere?
+                       "absCosThetaStar_CS := abs(getCosThetaStar_CS)",
                        "absCosTheta_bb := abs(CosThetaAngles()[1])",
                        "absCosTheta_gg := abs(CosThetaAngles()[0])",
                        "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
@@ -159,6 +164,7 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                        "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
                        "PhoJetMinDr := getPhoJetMinDr()",
                        "rho := global.rho",
+                       # "rho := rho()",
                        "(leadingJet_bRegNNResolution*1.4826) := leadJet().userFloat('bRegNNResolution')*1.4826",
                        "(subleadingJet_bRegNNResolution*1.4826) := subleadJet().userFloat('bRegNNResolution')*1.4826",
                        "(sigmaMJets*1.4826) := getSigmaMOverMJets()*1.4826",

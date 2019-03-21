@@ -13,6 +13,7 @@ def variablesToDump(customize):
              "leadingJet_puJetIdMVA := leadJet().puJetIdMVA()",
              "subleadingJet_puJetIdMVA := subleadJet().puJetIdMVA()",
              "absCosThetaStar_CS := abs(getCosThetaStar_CS())",
+             "absCosThetaStar_CS_old := abs(getCosThetaStar_CS_old(6500))",
              "absCosTheta_bb := abs(CosThetaAngles()[1])",
              "absCosTheta_gg := abs(CosThetaAngles()[0])",
              "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
@@ -79,7 +80,11 @@ def variablesToDump(customize):
 		       variables += ["benchmark_reweight_%d := getBenchmarkReweight(%d)"%(num,num)]
 		       var_workspace += ["benchmark_reweight_%d := getBenchmarkReweight(%d)"%(num,num)]
          variables += ["benchmark_reweight_SM := getBenchmarkReweight(12)"]
+         variables += ["benchmark_reweight_box := getBenchmarkReweight(13)"]
+         variables += ["benchmark_reweight_2017fake := getBenchmarkReweight(14)"]
          var_workspace += ["benchmark_reweight_SM := getBenchmarkReweight(12)"]
+         var_workspace += ["benchmark_reweight_box := getBenchmarkReweight(13)"]
+         var_workspace += ["benchmark_reweight_2017fake := getBenchmarkReweight(14)"]
 
     if customize.ttHKillerInputVariables : variables += [
             "ttH_sumET := sumET()",
@@ -129,8 +134,8 @@ def variablesToDumpData(customize):
    variables = [
              "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
              "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
-             "absCosThetaStar_CS_new := abs(getCosThetaStar_CS())",
-             "absCosThetaStar_CS := abs(getCosThetaStar_CS_old(6500))",
+             "absCosThetaStar_CS := abs(getCosThetaStar_CS())",
+             "absCosThetaStar_CS_old := abs(getCosThetaStar_CS_old(6500))",
              "absCosTheta_bb := abs(CosThetaAngles()[1])",
              "absCosTheta_gg := abs(CosThetaAngles()[0])",
              "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
@@ -242,6 +247,8 @@ def addGenAnalysis(customize,process,tagList):
          for num in range(0,12):
 		       genVariables += ["benchmark_reweight_%d := getHHbbggBenchmarkReweight(%d)"%(num,num)]
          genVariables += ["benchmark_reweight_SM := getHHbbggBenchmarkReweight(12)"]
+         genVariables += ["benchmark_reweight_box := getHHbbggBenchmarkReweight(13)"]
+         genVariables += ["benchmark_reweight_2017fake := getHHbbggBenchmarkReweight(14)"]
     
     ## define categories for gen-level dumper
     cfgTools.addCategory(process.genDiphotonDumper,  ## events with not reco-level tag

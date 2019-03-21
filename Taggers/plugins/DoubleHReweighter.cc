@@ -42,8 +42,10 @@ namespace flashgg {
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
         int doReweight_;
         edm::FileInPath weightsFile_;  // file with prepared histograms needed for reweighting
-        const unsigned int NUM_benchmarks = 13;  // number of becnhmarks for reweighting 12 +1 SM = 13 
+        const unsigned int NUM_benchmarks = 15;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15 
         const unsigned int numberSMbenchmark = 13;  // index of SM benchmark 
+        const unsigned int numberBoxbenchmark = 14;  // index of SM benchmark 
+        const unsigned int numberFakebenchmark = 15;  // index of SM benchmark 
         std::vector<TH2F*> hists_params_;   // histograms with weights for 15 parameters
         TH2F* hist_SM_;  // histogram for SM point
         TH2F* hist_inputMix_;  // histogram for input mix of nodes
@@ -76,6 +78,8 @@ namespace flashgg {
     
         for (unsigned int num=0;num<NUM_benchmarks;num++)
              if (num==(numberSMbenchmark-1)) produces<float>("benchmarkSM");
+             else if (num==(numberBoxbenchmark-1)) produces<float>("benchmarkBox");
+             else if (num==(numberFakebenchmark-1)) produces<float>("benchmark2017fake");
              else produces<float>(Form("benchmark%i",num));
     }   
     
@@ -166,6 +170,8 @@ namespace flashgg {
         for (unsigned int n=0; n<NUM_benchmarks; n++){
             std::string weight_number = "benchmark";
             if (n==(numberSMbenchmark-1)) weight_number.append("SM");
+            else if (n==(numberBoxbenchmark-1)) weight_number.append("Box");
+            else if (n==(numberFakebenchmark-1)) weight_number.append("2017fake");
             else weight_number.append(std::to_string(n));
             std::unique_ptr<float>  final_weight( new float(NRWeights[n]) );
             evt.put( std::move( final_weight) , weight_number);

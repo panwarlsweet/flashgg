@@ -65,7 +65,6 @@ namespace flashgg {
         DecorrTransform* transfEBEB_;
         DecorrTransform* transfNotEBEB_;
 
-
         double minJetPt_;
         double maxJetEta_;
         vector<double>mjjBoundaries_;
@@ -75,7 +74,8 @@ namespace flashgg {
         bool       useJetID_;
         string     JetIDLevel_;        
 
-        GlobalVariablesDumper globalVariablesDumper_;
+        ConsumesCollector cc_;
+        GlobalVariablesComputer globalVariablesComputer_;
         MVAComputer<DoubleHTag> mvaComputer_;
         vector<double> mvaBoundaries_, mxBoundaries_;
         int multiclassSignalIdx_;
@@ -133,8 +133,10 @@ namespace flashgg {
         bTagType_( iConfig.getParameter<vector<std::string>>( "BTagType") ),
         useJetID_( iConfig.getParameter<bool>   ( "UseJetID"     ) ),
         JetIDLevel_( iConfig.getParameter<string> ( "JetIDLevel"   ) ),
-        globalVariablesDumper_(iConfig.getParameter<edm::ParameterSet>("globalVariables")),
-        mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesDumper_)
+        cc_( consumesCollector() ),
+        globalVariablesComputer_(iConfig.getParameter<edm::ParameterSet>("globalVariables"), cc_),
+        mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesComputer_)
+        //mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"))
     {
         mjjBoundaries_ = iConfig.getParameter<vector<double > >( "MJJBoundaries" ); 
         mvaBoundaries_ = iConfig.getParameter<vector<double > >( "MVABoundaries" );
@@ -184,6 +186,8 @@ namespace flashgg {
                 throw cms::Exception( "Configuration" ) << "The file "<<sigmaMDecorrFile_.fullPath()<<" provided for sigmaM/M decorrelation does not contain the expected histograms."<<std::endl;
             }
         }
+
+
 
         if(dottHTagger_)
         {
@@ -281,9 +285,13 @@ namespace flashgg {
         
     void DoubleHTagProducer::produce( Event &evt, const EventSetup & )
     {
+
         // read diphotons
         Handle<View<flashgg::DiPhotonCandidate> > diPhotons;
         evt.getByToken( diPhotonToken_, diPhotons );
+
+        // update global variables
+        globalVariablesComputer_.update(evt);
 
         //read reweighting
         vector<float> reweight_values;
@@ -412,7 +420,7 @@ namespace flashgg {
 
             auto & leadJet = jet1; 
             auto & subleadJet = jet2; 
-
+ 
             // prepare tag object
             DoubleHTag tag_obj( dipho, leadJet, subleadJet );
             tag_obj.setDiPhotonIndex( candIndex );
@@ -429,6 +437,7 @@ namespace flashgg {
                 tag_obj.setSigmaMDecorrTransf(transfEBEB_,transfNotEBEB_);
             }
 
+
             // eval MVA discriminant
             std::vector<float> mva_vector = mvaComputer_.predict_prob(tag_obj);
             double mva = mva_vector[multiclassSignalIdx_];
@@ -439,7 +448,10 @@ namespace flashgg {
 
             tag_obj.setEventNumber(evt.id().event() );
             tag_obj.setMVA( mva );
-            
+           
+
+
+ 
             // tag_obj.setMVAprob( mva_vector );
 
             // tth Tagger
@@ -737,6 +749,7 @@ namespace flashgg {
                 }
           }
         }
+
         evt.put( std::move( truths ) );
         evt.put( std::move( tags ) );
     }

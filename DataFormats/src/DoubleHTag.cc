@@ -9,7 +9,7 @@ DoubleHTag::DoubleHTag() : DiPhotonTagBase::DiPhotonTagBase(), mva_(-2.)
 DoubleHTag::~DoubleHTag() {}
 
 DoubleHTag::DoubleHTag( edm::Ptr<flashgg::DiPhotonCandidate> diPho, edm::Ptr<flashgg::Jet> leadJet, edm::Ptr<flashgg::Jet> subleadJet )
-    : mva_(-.2), MX_(0.),genMhh_(0.), leadJet_(leadJet), subleadJet_(subleadJet) 
+    : mva_(-.2), MX_(0.),genMhh_(0.),leadJet_(leadJet), subleadJet_(subleadJet) 
 {
     dipho_ = diPho;
     dijet_ = leadJet_->p4() + subleadJet_->p4();
@@ -21,6 +21,8 @@ DoubleHTag *DoubleHTag::clone() const
     DoubleHTag *result = new DoubleHTag( *this );
     return result;
 }
+
+
 
 float DoubleHTag::getCosThetaStar_CS() const {
 
@@ -36,6 +38,7 @@ float DoubleHTag::getCosThetaStar_CS() const {
                   
     return h_1.CosTheta();
 }
+
 
 
 float DoubleHTag::getCosThetaStar_CS_old(float ebeam) const {
