@@ -3,7 +3,9 @@ import FWCore.ParameterSet.Config as cms
 def variablesToDump(customize):
     var_workspace = [
 #             "Mjj := dijet().M()"
-             "eventNumber := eventNumber()"
+             "eventNumber := eventNumber()",
+            "ttHScore := ttHScore()",
+             "HHbbggMVA := MVA()"
     ]
     variables = [
         "leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
@@ -132,26 +134,28 @@ def variablesToDump(customize):
 
 def variablesToDumpData(customize):
    variables = [
-             "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
-             "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
-             "absCosThetaStar_CS := abs(getCosThetaStar_CS())",
-             "absCosThetaStar_CS_old := abs(getCosThetaStar_CS_old(6500))",
-             "absCosTheta_bb := abs(CosThetaAngles()[1])",
-             "absCosTheta_gg := abs(CosThetaAngles()[0])",
-             "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
-             "dijetCandidatePtOverdiHiggsM := dijetPtOverM()",
-             "customLeadingPhotonIDMVA := diPhoton.leadingView.phoIdMvaWrtChosenVtx",
-             "customSubLeadingPhotonIDMVA := diPhoton.subLeadingView.phoIdMvaWrtChosenVtx",
-             "leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE",
-             "subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE",
-             "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
-             "PhoJetMinDr := getPhoJetMinDr()",#up to here input variables to MVA
-             "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
-             "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
-             "sigmaMJets := getSigmaMOverMJets()",
+           #  "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
+           #  "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
+           #  "absCosThetaStar_CS := abs(getCosThetaStar_CS())",
+           #  "absCosThetaStar_CS_old := abs(getCosThetaStar_CS_old(6500))",
+           #  "absCosTheta_bb := abs(CosThetaAngles()[1])",
+           #  "absCosTheta_gg := abs(CosThetaAngles()[0])",
+           #  "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
+           #  "dijetCandidatePtOverdiHiggsM := dijetPtOverM()",
+           #  "customLeadingPhotonIDMVA := diPhoton.leadingView.phoIdMvaWrtChosenVtx",
+           #  "customSubLeadingPhotonIDMVA := diPhoton.subLeadingView.phoIdMvaWrtChosenVtx",
+           #  "leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE",
+           #  "subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE",
+           #  "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
+           #  "PhoJetMinDr := getPhoJetMinDr()",#up to here input variables to MVA
+           #  "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
+           #  "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
+           #  "sigmaMJets := getSigmaMOverMJets()",
              "HHbbggMVA := MVA()",
-             "MX := MX()",
-             "Mjj := dijet().M()"
+           #  "MX := MX()",
+           #  "Mjj := dijet().M()",
+           #  "eventNumber := eventNumber()",
+            "ttHScore := ttHScore()"
              ]
    return variables
 

@@ -49,7 +49,7 @@ customize.options.register('tthTagsOnly',
                            'tthTagsOnly'
                            )
 customize.options.register('doubleHTagsOnly',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doubleHTagsOnly'
@@ -67,13 +67,13 @@ customize.options.register('year',
                            'year'
                            )
 customize.options.register('doDoubleHTag',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doDoubleHTag'
                            )
 customize.options.register('doDoubleHttHKiller',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doDoubleHttHKiller'
@@ -91,7 +91,7 @@ customize.options.register('doDoubleHGenAnalysis',
                            'doDoubleHGenAnalysis'
                            )
 customize.options.register('doBJetRegression',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doBJetRegression'
@@ -121,25 +121,25 @@ customize.options.register('acceptance',
                            'acceptance'
                            )
 customize.options.register('doSystematics',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doSystematics'
                            )
 customize.options.register('doPdfWeights',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doPdfWeights'
                            )
 customize.options.register('dumpTrees',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpTrees'
                            )
 customize.options.register('dumpWorkspace',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpWorkspace'
@@ -269,8 +269,8 @@ if customize.doDoubleHTag:
     hhc.customizeTagSequence(  customize, process )
     minimalVariables += hhc.variablesToDump(customize)
 #####################################Only if needed, tmp fix for Francesco#########################
-#    if customize.processId == "Data":
-#         minimalNonSignalVariables += hhc.variablesToDumpData(customize)
+    if customize.processId == "Data":
+         minimalNonSignalVariables += hhc.variablesToDumpData(customize)
 ###################################################################################################
     print "saving variables:", minimalVariables
 

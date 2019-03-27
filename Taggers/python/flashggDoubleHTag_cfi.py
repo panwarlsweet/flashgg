@@ -27,7 +27,8 @@ elif year == "2017":
     jetPUID = 'Tight2017'
    # weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml", 
     weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year1.weights.xml", 
-    MVAscalingValue=1.011026
+    #MVAscalingValue=1.011026
+    MVAscalingValue=1.02309
 
 
 import flashgg.Taggers.flashggDoubleHReweight_cfi as reweight_settings
@@ -59,10 +60,12 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    JetIDLevel = cms.string(jetPUID),
                                  #  globalRhoTag = cms.InputTag('fixedGridRhoAll'),
 
-                                   MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA
-                                   MXBoundaries   = cms.vdouble(250., 354., 478., 560.), # .. and MX
-                                   MJJBoundariesLower = cms.vdouble(98.0,95.0,97.0,96.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
-                                   MJJBoundariesUpper = cms.vdouble(150.0,150.0,143.0,150.0,150.0,150.0,150.0,145.0,155.0,142.0,146.0,152.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
+                                   MVABoundaries  = cms.vdouble(0.23,0.455, 0.709), # category boundaries for MVA
+                                   MXBoundaries   = cms.vdouble(250., 336., 411., 556.), # .. and MX
+                                  # MJJBoundariesLower = cms.vdouble(98.0,95.0,97.0,96.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
+                                  # MJJBoundariesUpper = cms.vdouble(150.0,150.0,143.0,150.0,150.0,150.0,150.0,145.0,155.0,142.0,146.0,152.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
+                                   MJJBoundariesLower = cms.vdouble(70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
+                                   MJJBoundariesUpper = cms.vdouble(190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
                                    MVAConfig = cms.PSet(variables=cms.VPSet(), # variables are added below
                                                         classifier=cms.string("BDT::bdt"), # classifier name
                                                         weights=cms.FileInPath("%s"%weightsFile), 
@@ -71,21 +74,21 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                                         multiclassSignalIdx=cms.int32(2), # this is multiclass index for Signal
                                                         ),
 
-                                   doMVAFlattening=cms.bool(False),#do transformation of cumulative to make it flat
+                                   doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
-                                   doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
-                                   MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
+                                   doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
+                                   MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
                                    doReweight = flashggDoubleHReweight.doReweight,
                                    reweight_producer = cms.string(reweight_settings.reweight_producer),
                                    reweight_names = cms.vstring(reweight_settings.reweight_names),
                                    
-                                   dottHTagger=cms.bool(False), #whether to do ttH killer. 
+                                   dottHTagger=cms.bool(True), #whether to do ttH killer. 
                                     
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
                                    MuonTag=cms.InputTag('flashggSelectedMuons'),
                                    VertexTag=cms.InputTag('offlineSlimmedPrimaryVertices'),
-                                   METTag=cms.InputTag('flashggMets'),
+                                   METTag=cms.InputTag('flashggMetsCorr'),
                                    rhoTag = cms.InputTag('fixedGridRhoFastjetAll'),
                                    looseLeptonPtThreshold = cms.double(10.),
                                    muonEtaThreshold = cms.double(2.4),

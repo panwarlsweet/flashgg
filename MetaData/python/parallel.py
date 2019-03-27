@@ -190,11 +190,13 @@ class LsfJob(object):
         
         self.cmd = cmd
         script = ""
+      #  script += "#$ -l h=t3wn[1-2][0-9]\n"   #tmp for scratch on wn
         script += "#!/bin/bash\n"
         
         script += "cd " + os.environ['CMSSW_BASE']+"\n"
         script += "eval `scram runtime -sh`"+"\n"
         script += "cd " + os.getcwd()+"\n"
+        script += 'echo "Job $JOB_ID, pwd: $PWD, wd: $WD, cmssw base: $CMSSW_BASE" >> information_printout.txt\n'
         
         if os.environ.get('X509_USER_PROXY',None):
             script += "export X509_USER_PROXY=%s\n" % os.environ['X509_USER_PROXY']
@@ -268,6 +270,7 @@ class WorkNodeJob(object):
         
         self.cmd = cmd
         script = ""
+     #   script += "#$ -l h=t3wn[1-2][0-9]\n"   #tmp for scratch on wn
         script += "#!/bin/bash\n"
         
         # get specific preamble needed by the runner
@@ -553,8 +556,10 @@ class SGEJob(LsfJob):
         # domain-specific configuration
         if mydomain == "psi.ch":
             ret += "source $VO_CMS_SW_DIR/cmsset_default.sh\n"
-            ret += "mkdir -p /scratch/$(whoami)/sgejob-$JOB_ID\n"
-            ret += "cd /scratch/$(whoami)/sgejob-$JOB_ID\n"
+            ret += "export WORKDIR=$TMPDIR/sgejob-$JOB_ID\n"
+            ret += "mkdir -p $WORKDIR\n"
+            ret += "cd $WORKDIR\n"
+            ret += 'echo "Current directory is $WORKDIR"\n'
             ret += "source $VO_CMS_SW_DIR/cmsset_default.sh"
         if mydomain == "hep.ph.ic.ac.uk":
             ret += "mkdir -p $TMP/sgejob-$JOB_ID\n"
