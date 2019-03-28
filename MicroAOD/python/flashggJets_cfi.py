@@ -17,6 +17,15 @@ flashggDeepCSVc  = 'pfDeepCSVJetTags:probc'
 flashggDeepCSVudsg = 'pfDeepCSVJetTags:probudsg'
 flashggDeepCSV= 'pfDeepCSV'
 
+flashggDeepFlavourb = 'pfDeepFlavourJetTags:probb'
+flashggDeepFlavourbb = 'pfDeepFlavourJetTags:probbb'
+flashggDeepFlavourc  = 'pfDeepFlavourJetTags:probc'
+flashggDeepFlavouruds = 'pfDeepFlavourJetTags:probuds'
+flashggDeepFlavourg  = 'pfDeepFlavourJetTags:probg'
+flashggDeepFlavourlepb = 'pfDeepFlavourJetTags:problepb'
+flashggDeepFlavour = 'pfDeepFlavour'
+
+
 maxJetCollections = 12
 #qgDatabaseVersion = 'v1' # check https://twiki.cern.ch/twiki/bin/viewauth/CMS/QGDataBaseVersion
 if os.environ["CMSSW_VERSION"].count("CMSSW_9") or os.environ["CMSSW_VERSION"].count("CMSSW_10"):
@@ -106,7 +115,7 @@ def addFlashggPFCHSJets(process,
     elSource       = cms.InputTag("slimmedElectrons"),
     muSource       = cms.InputTag("slimmedMuons"),
     runIVF         = True,
-    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg ],
+    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, flashggDeepFlavourb, flashggDeepFlavourbb, flashggDeepFlavourc, flashggDeepFlavouruds,flashggDeepFlavourlepb, flashggDeepFlavourg ],
     jetCorrections = ('AK4PFchs', JECs, 'None'),
     genJetCollection = cms.InputTag('slimmedGenJets'),
     genParticles     = cms.InputTag('prunedGenParticles'),
@@ -164,7 +173,7 @@ def addFlashggPFCHSJets(process,
                                ComputeRegVars = cms.bool(True),
                                MinPtForEneSum = cms.double(0.),
                                MaxEtaForEneSum = cms.double(2.5),
-                               NJetsForEneSum = cms.uint32(0),
+                               NJetsForEneSum = cms.uint32(0),                           
                                MiniAodJetTag = cms.InputTag("slimmedJets")
                                )
   setattr( process, 'flashggPFCHSJets'+ label, flashggJets)
@@ -234,7 +243,7 @@ def addFlashggPuppiJets(process,
     elSource       = cms.InputTag("slimmedElectrons"),
     muSource       = cms.InputTag("slimmedMuons"),
     runIVF         = True,
-    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, ],
+    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, flashggDeepFlavourb, flashggDeepFlavourbb, flashggDeepFlavourc, flashggDeepFlavouruds,flashggDeepFlavourlepb, flashggDeepFlavourg ],
     jetCorrections     = ('AK4PFPuppi',['L1FastJet',  'L2Relative', 'L3Absolute'], 'None'),
     genJetCollection   = cms.InputTag('slimmedGenJets'),
     genParticles       = cms.InputTag('prunedGenParticles'),

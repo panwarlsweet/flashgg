@@ -13,6 +13,14 @@ from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepCSVbb
 from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepCSVc
 from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepCSVudsg
 
+from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepFlavourb
+from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepFlavourbb
+from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepFlavourc
+from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepFlavouruds
+from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepFlavourlepb
+from flashgg.MicroAOD.flashggJets_cfi            import flashggDeepFlavourg
+
+
 def addFlashggPF(process, doQGTagging =  True, label ='', debug = False):
   
   from RecoJets.JetProducers.ak4PFJets_cfi  import ak4PFJets
@@ -31,7 +39,7 @@ def addFlashggPF(process, doQGTagging =  True, label ='', debug = False):
     elSource       = cms.InputTag("slimmedElectrons"),
     muSource       = cms.InputTag("slimmedMuons"),
     runIVF         = True,
-    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, ],
+    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, flashggDeepFlavourb, flashggDeepFlavourbb, flashggDeepFlavourc, flashggDeepFlavouruds,flashggDeepFlavourlepb, flashggDeepFlavourg],
     jetCorrections     = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
     genJetCollection   = cms.InputTag('slimmedGenJets'),
     genParticles       = cms.InputTag('prunedGenParticles'),
@@ -105,7 +113,7 @@ def addStandardPuppiJets(process,
     elSource       = cms.InputTag("slimmedElectrons"),
     muSource       = cms.InputTag("slimmedMuons"),
     runIVF         = True,
-    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, ],
+    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, flashggDeepFlavourb, flashggDeepFlavourbb, flashggDeepFlavourc, flashggDeepFlavouruds,flashggDeepFlavourlepb, flashggDeepFlavourg],
     jetCorrections     = ('AK4PFchs',['L1FastJet',  'L2Relative', 'L3Absolute'], 'None'),
     genJetCollection   = cms.InputTag('slimmedGenJets'),
     genParticles       = cms.InputTag('prunedGenParticles'),
