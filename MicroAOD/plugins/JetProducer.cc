@@ -92,6 +92,7 @@ namespace flashgg {
     void JetProducer::produce( Event &evt, const EventSetup & )
     {
         
+        
         // input jets
         Handle<View<pat::Jet> > jets;
         evt.getByToken( jetToken_, jets );
@@ -99,6 +100,11 @@ namespace flashgg {
 
         Handle<View<pat::Jet> > miniaodJets;
         evt.getByToken( miniaodJetToken_, miniaodJets );
+         
+        for(auto j = miniaodJets->begin(); j != miniaodJets->end(); ++j){
+            if(j->pt() < 10.) continue;
+            std::cout << "jetpT : " << j->pt() << std::endl;
+            std::cout << "DeepFlavour = " << j->bDiscriminator("pfDeepFlavourJetTags:probb") << std::endl;}
         
         // input DiPhoton candidates
         Handle<View<DiPhotonCandidate> > diPhotons;

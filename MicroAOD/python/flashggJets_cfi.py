@@ -7,6 +7,7 @@ import FWCore.ParameterSet.Config as cms
 from PhysicsTools.PatAlgos.tools.jetTools        import addJetCollection
 from CondCore.DBCommon.CondDBSetup_cfi import *
 
+
 import os
 
 flashggBTag = 'pfCombinedInclusiveSecondaryVertexV2BJetTags'
@@ -38,10 +39,11 @@ def addFlashggPFCHSJets(process,
                         vertexIndex = 0, 
                         #doQGTagging = True, 
                         label ='', 
-                        debug = False):
+                        debug = True):
 
 
-  if os.environ["CMSSW_VERSION"].count("CMSSW_9"): # Currently editing the line below
+  if os.environ["CMSSW_VERSION"].count("CMSSW_9") or os.environ["CMSSW_VERSION"].count("CMSSW_10"): # Currently editing the line below
+    print "test1............"
     setattr(process,'pfCHSLeg' + label,cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV(%i)"%vertexIndex)))
   else:
     setattr(process, 'selectedMuons' + label, cms.EDFilter("CandPtrSelector", 
@@ -93,7 +95,8 @@ def addFlashggPFCHSJets(process,
  
   #Import RECO jet producer for ak4 PF and GEN jet
   from RecoJets.JetProducers.ak4PFJets_cfi  import ak4PFJets
-  if os.environ["CMSSW_VERSION"].count("CMSSW_9"):
+  if os.environ["CMSSW_VERSION"].count("CMSSW_9") or os.environ["CMSSW_VERSION"].count("CMSSW_10"):
+    print "test2..........."
     setattr(process, 'ak4PFJetsCHSLeg' + label, ak4PFJets.clone ( src = 'pfCHSLeg' + label, doAreaFastjet = True))
   else:  
     setattr(process, 'ak4PFJetsCHSLeg' + label, ak4PFJets.clone ( src = 'pfNoElectronsCHSLeg' + label, doAreaFastjet = True))
@@ -115,7 +118,7 @@ def addFlashggPFCHSJets(process,
     elSource       = cms.InputTag("slimmedElectrons"),
     muSource       = cms.InputTag("slimmedMuons"),
     runIVF         = True,
-    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, flashggDeepFlavourb, flashggDeepFlavourbb, flashggDeepFlavourc, flashggDeepFlavouruds,flashggDeepFlavourlepb, flashggDeepFlavourg ],
+    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, flashggDeepFlavourb],
     jetCorrections = ('AK4PFchs', JECs, 'None'),
     genJetCollection = cms.InputTag('slimmedGenJets'),
     genParticles     = cms.InputTag('prunedGenParticles'),
@@ -153,7 +156,7 @@ def addFlashggPFCHSJets(process,
 
   from RecoJets.JetProducers.PileupJetIDParams_cfi import full_80x_chs
   from RecoJets.JetProducers.PileupJetIDParams_cfi import full_81x_chs
-  if os.environ["CMSSW_VERSION"].count("CMSSW_9"):
+  if os.environ["CMSSW_VERSION"].count("CMSSW_9") or os.environ["CMSSW_VERSION"].count("CMSSW_10"):
     pujidparam = full_81x_chs
   if os.environ["CMSSW_VERSION"].count("CMSSW_8"):
     pujidparam = full_80x_chs
@@ -176,6 +179,7 @@ def addFlashggPFCHSJets(process,
                                NJetsForEneSum = cms.uint32(0),                           
                                MiniAodJetTag = cms.InputTag("slimmedJets")
                                )
+  
   setattr( process, 'flashggPFCHSJets'+ label, flashggJets)
 
   # randomize Jets
@@ -243,7 +247,7 @@ def addFlashggPuppiJets(process,
     elSource       = cms.InputTag("slimmedElectrons"),
     muSource       = cms.InputTag("slimmedMuons"),
     runIVF         = True,
-    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg, flashggDeepFlavourb, flashggDeepFlavourbb, flashggDeepFlavourc, flashggDeepFlavouruds,flashggDeepFlavourlepb, flashggDeepFlavourg ],
+    btagDiscriminators = [ flashggBTag, flashggCMVABTag , flashggDeepCSVb, flashggDeepCSVbb, flashggDeepCSVc, flashggDeepCSVudsg],
     jetCorrections     = ('AK4PFPuppi',['L1FastJet',  'L2Relative', 'L3Absolute'], 'None'),
     genJetCollection   = cms.InputTag('slimmedGenJets'),
     genParticles       = cms.InputTag('prunedGenParticles'),
