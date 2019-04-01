@@ -721,6 +721,7 @@ if customize.doBJetRegression:
     process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
 #    process.bbggtree.inputTagJets=cms.VInputTag(bregJets)
     process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
+#    process.p.replace(process.jetSystematicsSequence,process.flashggUnpackedJets*process.jetSystematicsSequence+process.bregProducers)  #tried but no difference
 
 
 

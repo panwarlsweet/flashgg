@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 def variablesToDump(customize):
     var_workspace = [
-#             "Mjj := dijet().M()"
+         #    "Mjj := dijet().M()",
              "eventNumber := eventNumber()",
             "ttHScore := ttHScore()",
              "HHbbggMVA := MVA()"
