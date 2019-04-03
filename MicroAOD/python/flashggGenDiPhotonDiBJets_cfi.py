@@ -4,5 +4,6 @@ flashggGenDiPhotonDiBJets = cms.EDProducer('FlashggGenDiPhotonDiJetProducer',
                                      src=cms.InputTag('flashggGenPhotonsExtra'),
                                      jets=cms.InputTag('flashggHiggsBJets'),
                                      flashggMets=cms.InputTag('flashggMets'),
+                                     flashggHiggsBJets=cms.InputTag('flashggHiggsBJets'),
                                      )
 

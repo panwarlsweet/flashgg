@@ -16,7 +16,7 @@ namespace flashgg {
     public:
         GenDiPhoton();
         GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>);
-        GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Met>);
+        GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Met>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>);
         ~GenDiPhoton();
 
         virtual GenDiPhoton *clone() const { return ( new GenDiPhoton( *this ) ); }
@@ -27,10 +27,13 @@ namespace flashgg {
         const reco::GenJet & leadingJet() const { return *leadingJet_; };
         const reco::GenJet & subLeadingJet() const { return *subLeadingJet_; }
 
+        const reco::GenJet & leadGenJetNu() const { return *leadGenJetNu_; };            //// extra object for bregression study 
+        const reco::GenJet & subleadGenJetNu() const { return *subleadGenJetNu_; }       //// extra object for bregression study 
+
         const flashgg::GenPhotonExtra& leadingExtra() const { return leadingPhoton_; };
         const flashgg::GenPhotonExtra& subLeadingExtra() const { return subLeadingPhoton_; }
 
-        const flashgg::Met& Met() const { return Met_; }
+        const flashgg::Met& Met() const { return Met_; }  //// extra object for bregression study 
         
         float sumPt() const { return  leadingPhoton_.cand().pt() + subLeadingPhoton_.cand().pt(); }
         bool operator <( const GenDiPhoton &b ) const { return ( sumPt() < b.sumPt() ); }
@@ -38,7 +41,8 @@ namespace flashgg {
 
         float sumHt() const { return  sumPt() + leadingJet().pt() + subLeadingJet().pt(); }
         
-        LorentzVector dijet() const; 
+        LorentzVector dijet() const;
+        LorentzVector dijetNu() const; //// extra object for bregression study 
         
         void setTag(const std::string & tag) { tag_ = tag; }
         std::string tag() const { return tag_; }
@@ -59,8 +63,11 @@ namespace flashgg {
         
         edm::Ptr<reco::GenJet> leadingJet_;
         edm::Ptr<reco::GenJet> subLeadingJet_;
+
+        edm::Ptr<reco::GenJet> leadGenJetNu_;   //// extra object for bregression study 
+        edm::Ptr<reco::GenJet> subleadGenJetNu_; //// extra object for bregression study 
         
-        flashgg::Met Met_;
+        flashgg::Met Met_;  //// extra object for bregression study 
         int cat_;
         std::string tag_;
         edm::Ptr<DiPhotonTagBase> recoTagObj_;

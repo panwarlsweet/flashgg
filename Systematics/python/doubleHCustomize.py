@@ -201,7 +201,22 @@ def addGenAnalysis(customize,process,tagList):
                     "subleadJet_eta := subLeadingJet.eta",
                     "subleadJet_phi := subLeadingJet.phi",
                     "subleadJet_e  := subLeadingJet.energy",
-                     
+
+                    "leadgenJetNu_px := leadGenJetNu.px",
+                    "leadgenJetNu_py := leadGenJetNu.py",
+                    "leadgenJetNu_pz := leadGenJetNu.pz",
+                    "leadgenJetNu_pt := leadGenJetNu.pt",
+                    "leadgenJetNu_eta := leadGenJetNu.eta",
+                    "leadgenJetNu_phi := leadGenJetNu.phi",
+                    "leadgenJetNu_e  := leadGenJetNu.energy",
+                    "subleadgenJetNu_px := subleadGenJetNu.px",
+                    "subleadgenJetNu_py := subleadGenJetNu.py",
+                    "subleadgenJetNu_pz := subleadGenJetNu.pz",
+                    "subleadgenJetNu_pt := subleadGenJetNu.pt",
+                    "subleadgenJetNu_eta := subleadGenJetNu.eta",
+                    "subleadgenJetNu_phi := subleadGenJetNu.phi",
+                    "subleadgenJetNu_e  := subleadGenJetNu.energy",
+
                     "Met_CorPx := Met.getCorPx",
                     "Met_CorPy := Met.getCorPy",
                     "Met_CorPt := Met.getCorPt",

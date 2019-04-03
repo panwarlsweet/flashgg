@@ -15,13 +15,19 @@ GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<fl
     computeP4AndOrder();
 }
 
-GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<flashgg::GenPhotonExtra> photon2, edm::Ptr<reco::GenJet> jet1, edm::Ptr<reco::GenJet> jet2, edm::Ptr<flashgg::Met> Met )
+GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<flashgg::GenPhotonExtra> photon2, edm::Ptr<reco::GenJet> jet1, edm::Ptr<reco::GenJet> jet2, edm::Ptr<flashgg::Met> Met, edm::Ptr<reco::GenJet> jetNu1, edm::Ptr<reco::GenJet> jetNu2 )
     : GenDiPhoton(photon1,photon2)
 {
     leadingJet_ = jet1;
     subLeadingJet_ = jet2;
+
+    //// extra object for bregression study
+    leadGenJetNu_ = jetNu1;
+    subleadGenJetNu_ = jetNu2;
     Met_ = *Met;
+
     if( leadingJet_->pt() < subLeadingJet_->pt() ) { std::swap(leadingJet_,subLeadingJet_); }
+    if( leadGenJetNu_->pt() < subleadGenJetNu_->pt() ) { std::swap(leadGenJetNu_,subleadGenJetNu_); }
 }
 
 void GenDiPhoton::computeP4AndOrder()
@@ -35,6 +41,11 @@ void GenDiPhoton::computeP4AndOrder()
 GenDiPhoton::LorentzVector GenDiPhoton::dijet() const
 {
     return leadingJet().p4() + subLeadingJet().p4();
+}
+//// extra object for bregression study
+GenDiPhoton::LorentzVector GenDiPhoton::dijetNu() const
+{
+    return leadGenJetNu().p4() + subleadGenJetNu().p4();
 }
 
 

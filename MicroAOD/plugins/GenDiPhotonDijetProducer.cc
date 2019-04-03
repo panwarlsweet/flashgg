@@ -32,6 +32,7 @@ namespace flashgg {
         EDGetTokenT<View<GenPhotonExtra> > genPhotonToken_;
         EDGetTokenT<View<reco::GenJet> > genJetToken_;
         EDGetTokenT<View<Met> > metToken_;
+        EDGetTokenT<View<reco::GenJet> > genJetNuToken_;
         bool overlapRemoval_;
 
     };
@@ -39,7 +40,8 @@ namespace flashgg {
     GenDiPhotonDiJetProducer::GenDiPhotonDiJetProducer( const ParameterSet &iConfig ) :
         genPhotonToken_( consumes<View<flashgg::GenPhotonExtra> >( iConfig.getParameter<InputTag> ( "src" ) ) ),
         genJetToken_( consumes<View<reco::GenJet> >( iConfig.getParameter<InputTag> ( "jets" ) ) ),
-        metToken_( consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ( "flashggMets" ) ) ),
+        metToken_( consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ( "flashggMets" ) ) ),   //// adding for regresion
+        genJetNuToken_( consumes<View<reco::GenJet> >( iConfig.getParameter<InputTag> ( "flashggHiggsBJets" ) ) ), //// adding for regresion  
         overlapRemoval_(false)
     {
         if( iConfig.exists("overlapRemoval") ) { 
@@ -56,8 +58,12 @@ namespace flashgg {
         Handle<View<reco::GenJet> > jets;
         evt.getByToken( genJetToken_, jets );
 
-        Handle<View<flashgg::Met> > mets;
-        evt.getByToken( metToken_, mets );
+        Handle<View<flashgg::Met> > mets;       //// adding for regresion  
+        evt.getByToken( metToken_, mets );      //// adding for regresion  
+
+        Handle<View<reco::GenJet> > genjetsnu;       //// adding for regresion    
+        evt.getByToken( genJetNuToken_, genjetsnu );   //// adding for regresion    
+        
 
         std::unique_ptr<vector<GenDiPhoton> > diphotons( new vector<GenDiPhoton> );
         for( size_t ii = 0 ; ii < photons->size() ; ++ii ) {
@@ -75,11 +81,21 @@ namespace flashgg {
                 }
                 if( seljets.size() >= 2 ) { 
                     auto jet0 = seljets[0], jet1 = seljets[1];
-                    for( size_t kk = 0 ; kk < mets->size() ; ++kk ) {
-                        auto met = mets->ptrAt( kk );
-                        diphotons->push_back(GenDiPhoton(pi,pj,jet0,jet1,met));
-                                         }
-                }
+
+                    ///////// adding met and gentjets with nu for regression study
+                    if (genjetsnu->size() >= 2){
+                    for( size_t p = 0 ; p < genjetsnu->size() ; ++p ) {
+                        auto pn = genjetsnu->ptrAt(p);
+                        for( size_t q = p + 1 ; q < genjetsnu->size() ; ++q ) {
+                            auto qn = genjetsnu->ptrAt(q);
+                            for( size_t kk = 0 ; kk < mets->size() ; ++kk ) {
+                              auto met = mets->ptrAt( kk );
+                              diphotons->push_back(GenDiPhoton(pi,pj,jet0,jet1,met,pn,qn));
+                            }
+                        }
+                    }
+                  }
+               }
             }
         }
         
