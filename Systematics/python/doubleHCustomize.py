@@ -211,9 +211,10 @@ def addGenAnalysis(customize,process,tagList):
     
     genVariables = ["mgg := mass",
                     "mbb := dijet.mass",
-                    "mhh := sqrt( pow(energy+dijet.energy,2) - pow(px+dijet.px,2) - pow(py+dijet.py,2) - pow(pz+dijet.pz,2))",                    
+                    "mjj_nu := dijetNu.mass",
+                    "mhh := sqrt( pow(energy+dijet.energy,2) - pow(px+dijet.px,2) - pow(py+dijet.py,2) - pow(pz+dijet.pz,2))",
+                    "mhh_nu := sqrt( pow(energy+dijetNu.energy,2) - pow(px+dijetNu.px,2) - pow(py+dijetNu.py,2) - pow(pz+dijetNu.pz,2))",
 
-                    
                     "leadPho_px := leadingPhoton.px",
                     "leadPho_py := leadingPhoton.py",
                     "leadPho_pz := leadingPhoton.pz",

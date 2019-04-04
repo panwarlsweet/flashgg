@@ -94,7 +94,6 @@ namespace flashgg {
                 jec_unc_->setJetEta(y.eta());
                 jec_unc_->setJetPt(jec_adjust*y.pt()); 
                 unc = jec_unc_->getUncertainty(true);
-                std::cout  << "testing this ..........." << std::endl;
             }
             float scale = jec_adjust + syst_shift*unc;
             if( debug_ ) {

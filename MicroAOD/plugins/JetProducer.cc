@@ -151,6 +151,10 @@ namespace flashgg {
             // Copy over userFloats, userInts, and bDiscriminators from MINIAOD jet collection to 0th vertex
             if (jetCollectionIndex_ == 0) {
                 bool matched = false;
+
+                //// floats for deep flavour
+                float deepflavb = 0.0, deepflavbb = 0.0, deepflavc = 0.0, deepflavg = 0.0, deepflavuds = 0.0, deepflavlepb = 0.0;
+                
                 for( unsigned int j = 0 ; j < miniaodJets->size() ; j++ ) {
                     if (reco::deltaR(miniaodJets->ptrAt(j)->eta(),miniaodJets->ptrAt(j)->phi(),fjet.eta(),fjet.phi()) < 0.1) {
                         matched = true;
@@ -171,7 +175,28 @@ namespace flashgg {
                             fjet.addBDiscriminatorPair(std::make_pair(string("mini_")+(x->first),x->second));
                         }
                     }
+
+                    //////// accessing DeepFlavour from miniaod and adding to flashgg jet collection as userfloat
+
+                    deepflavb    =  miniaodJets->ptrAt(j)->bDiscriminator("pfDeepFlavourJetTags:probb");
+                    deepflavbb   =  miniaodJets->ptrAt(j)->bDiscriminator("pfDeepFlavourJetTags:probbb");
+                    deepflavc    =  miniaodJets->ptrAt(j)->bDiscriminator("pfDeepFlavourJetTags:probc");
+                    deepflavuds  =  miniaodJets->ptrAt(j)->bDiscriminator("pfDeepFlavourJetTags:probuds");
+                    deepflavg    =  miniaodJets->ptrAt(j)->bDiscriminator("pfDeepFlavourJetTags:probg");
+                    deepflavlepb =  miniaodJets->ptrAt(j)->bDiscriminator("pfDeepFlavourJetTags:problepb");
+
+                    fjet.addUserFloat("pfDeepFlavourJetTags:probb", deepflavb);
+                    fjet.addUserFloat("pfDeepFlavourJetTags:probbb", deepflavbb);
+                    fjet.addUserFloat("pfDeepFlavourJetTags:probc", deepflavc);
+                    fjet.addUserFloat("pfDeepFlavourJetTags:probuds", deepflavuds);
+                    fjet.addUserFloat("pfDeepFlavourJetTags:probg", deepflavg);
+                    fjet.addUserFloat("pfDeepFlavourJetTags:problepb", deepflavlepb);
+
+                    if(debug_){
+                        cout << "flashgg jet deepflav = " << fjet.userFloat("pfDeepFlavourJetTags:probb") << " " << fjet.userFloat("pfDeepFlavourJetTags:probbb") << " " << fjet.userFloat("pfDeepFlavourJetTags:probc") << " " << fjet.userFloat("pfDeepFlavourJetTags:probuds") << " " << fjet.userFloat("pfDeepFlavourJetTags:probg") << endl; 
+                    }
                 }
+
                 if (!matched) {
                     std::cout << " NO MATCH for 0th vertex jet " << i << " ptRaw,eta is " << fjet.correctedP4("Uncorrected").pt() << " " << fjet.eta() << std::endl;
                 }

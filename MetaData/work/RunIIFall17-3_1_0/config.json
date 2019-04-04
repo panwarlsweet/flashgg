@@ -1,0 +1,33 @@
+{
+    "checkIfOnT2": false, 
+    "crabTemplate": "/afs/cern.ch/work/l/lata/HH_bbyy/create_MicroAOD/CMSSW_9_4_9/src/flashgg/MetaData/work/crabConfig_TEMPLATE.py", 
+    "verbose": false, 
+    "campaign": "RunIIFall17-3_1_0", 
+    "lumiMask": null, 
+    "unitsPerJob": 1, 
+    "extraPyCfgParam": null, 
+    "checkNFiles": false, 
+    "samples_src": "sig_samples.json", 
+    "label": null, 
+    "outputPath": "/store/group/phys_higgs/cmshgg/lata/flashgg", 
+    "mkPilot": true, 
+    "parameterSet": "/afs/cern.ch/work/l/lata/HH_bbyy/create_MicroAOD/CMSSW_9_4_9/src/flashgg/MicroAOD/test/microAODstd.py", 
+    "globalTags": "campaigns/globalTagsLookup.json", 
+    "createCrabConfig": true, 
+    "samples": {
+        "data": [
+            ""
+        ], 
+        "bkg": [
+            "/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM"
+        ], 
+        "sig": [
+            ""
+        ]
+    }, 
+    "lumisPerJob": 10, 
+    "outputSite": "T2_CH_CERN", 
+    "flashggVersion": "3_1_0", 
+    "task_dir": "RunIIFall17-3_1_0", 
+    "__opts__": null
+}
