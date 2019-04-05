@@ -152,9 +152,10 @@ def variablesToDumpData(customize):
            #  "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
            #  "sigmaMJets := getSigmaMOverMJets()",
              "HHbbggMVA := MVA()",
-           #  "MX := MX()",
-           #  "Mjj := dijet().M()",
-           #  "eventNumber := eventNumber()",
+             "diHiggs_mass := getdiHiggsP4().M()",
+             "MX := MX()",
+             "Mjj := dijet().M()",
+             "eventNumber := eventNumber()",
             "ttHScore := ttHScore()"
              ]
    return variables

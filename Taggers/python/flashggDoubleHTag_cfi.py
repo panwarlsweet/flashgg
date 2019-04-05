@@ -79,7 +79,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
                                    doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
-                                   doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
+                                   doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                   # MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017.root"),#FIXME, this should be optional, is it?
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
@@ -92,7 +92,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
                                    MuonTag=cms.InputTag('flashggSelectedMuons'),
                                    VertexTag=cms.InputTag('offlineSlimmedPrimaryVertices'),
-                                   METTag=cms.InputTag('flashggMetsCorr'),
+                                   METTag=cms.InputTag('flashggMets'),
                                    rhoTag = cms.InputTag('fixedGridRhoFastjetAll'),
                                    looseLeptonPtThreshold = cms.double(10.),
                                    muonEtaThreshold = cms.double(2.4),
