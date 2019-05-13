@@ -54,8 +54,8 @@ namespace flashgg {
 
 
         this->setMakesWeight( true );
-
-        std::string btag_algo = bTag_=="pfDeepCSV" ? "DeepCSV" : "CSVv2";
+    
+        std::string btag_algo = bTag_=="pfDeepJet" ? "DeepJet" : "DeepCSV";    //// DeepJet =  DeepFlavour
         calibReshape_ = BTagCalibration(btag_algo, conf.getParameter<edm::FileInPath>("bTagCalibrationFile").fullPath());
     }
 
@@ -134,7 +134,8 @@ namespace flashgg {
             bool JetBTagStatus = false;
             float JetBDiscriminator;
         
-            if(bTag_=="pfDeepCSV") JetBDiscriminator = obj.bDiscriminator("pfDeepCSVJetTags:probb")+ obj.bDiscriminator("pfDeepCSVJetTags:probbb"); 
+            if(bTag_=="pfDeepJet") JetBDiscriminator = obj.bDiscriminator("mini_pfDeepFlavourJetTags:probb")+ obj.bDiscriminator("mini_pfDeepFlavourJetTags:probbb")+ obj.bDiscriminator("mini_pfDeepFlavourJetTags:problepb"); 
+            else if(bTag_=="pfDeepCSV") JetBDiscriminator = obj.bDiscriminator("pfDeepCSVJetTags:probb")+ obj.bDiscriminator("pfDeepCSVJetTags:probbb"); //JM
             else JetBDiscriminator= obj.bDiscriminator(bTag_.c_str());
 
             if(JetBDiscriminator > bDiscriminator_ ) JetBTagStatus = true;
