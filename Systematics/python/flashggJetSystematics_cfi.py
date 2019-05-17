@@ -167,6 +167,7 @@ class jetSystematicsCustomize:
       num = jetInputTag.productInstanceLabel
       newName = 'flashggJetSystematics'+num
       bTagger = self.metaConditions['bTagger']
+      eta = self.metaConditions['eta'] 
       setattr(self.process, newName,
               cms.EDProducer('FlashggJetSystematicProducer',
                              src = jetInputTag,
@@ -195,7 +196,7 @@ class jetSystematicsCustomize:
                                                      cms.PSet( MethodName = cms.string("FlashggJetBTagWeight"),
                                                                Label = cms.string("JetBTagCutWeight"),
                                                                NSigmas = cms.vint32(-1,1),
-                                                               OverallRange = cms.string("pt>25.0&&abs(eta)<2.4"),
+                                                               OverallRange = cms.string("pt>25.0&&abs(eta)<" + str(eta)),
                                                                BinList = getattr(self, self.metaConditions['bTagEffBins']),
                                                                #bTag = cms.string(flashggBTag),
                                                                bTag = cms.string(str(bTagger)),
@@ -207,7 +208,7 @@ class jetSystematicsCustomize:
                                                      cms.PSet( MethodName = cms.string("FlashggJetBTagReshapeWeight"),
                                                                Label = cms.string("JetBTagReshapeWeight"),
                                                                NSigmas = cms.vint32(-1,1),
-                                                               OverallRange = cms.string("pt>25.0&&abs(eta)<2.4"),
+                                                               OverallRange = cms.string("pt>25.0&&abs(eta)<" + str(eta)),
                                                                BinList = getattr(self, self.metaConditions['bTagEffBins']),
                                                                #                                                          bTag = cms.string(flashggBTag),
                                                                bTag = cms.string(str(bTagger)), 
