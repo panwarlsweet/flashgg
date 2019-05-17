@@ -1,5 +1,4 @@
 minimalVariables = ["CMS_hgg_mass[160,100,180]:=diPhoton().mass",
-		    "CMS_hjj_mass[120,70,190]:=dijet().M()",
                     "dZ[40,-20.,20.]:=(tagTruth().genPV().z-diPhoton().vtx().z)", # store actual value
                                                                                #when doing systematics, variables need to have a binning
                                                                                #specified, otherwise the rooDataHist end up empty.
@@ -28,7 +27,7 @@ defaultHistograms=["CMS_hgg_mass>>mass(160,100,180)",
                                      "maxEta>>maxEta[0.,0.1,0.2,0.3,0.4,0.6,0.8,1.0,1.2,1.4442,1.566,1.7,1.8,2.,2.2,2.3,2.5]"
                                      ]
 
-systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","CMS_hjj_mass[120,70,190]:=dijet().M()","leadingJet_pt := leadJet().pt"]#,"centralObjectWeight[1,-999999.,999999.] := centralWeight"]
+systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass"]#,"centralObjectWeight[1,-999999.,999999.] := centralWeight"]
 systematicHistograms=["CMS_hgg_mass>>mass(160,100,180)"]
 
 systematicVariablesHTXS = systematicVariables+["stage0cat[72,9.5,81.5] := tagTruth().HTXSstage0cat"]
