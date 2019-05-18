@@ -101,7 +101,7 @@ namespace flashgg {
             //}
     //}
         
-        evt.put( std::move( diphotons ) );
+        evt.put( std::move( dijets ) );
     }
 }
 
