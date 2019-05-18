@@ -5,6 +5,7 @@
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "flashgg/DataFormats/interface/GenDiPhoton.h"
+#include "flashgg/DataFormats/interface/GenDiJet.h" //Lata
 #include "flashgg/DataFormats/interface/DiPhotonCandidate.h"
 #include "flashgg/DataFormats/interface/DiPhotonMVAResult.h"
 #include "flashgg/DataFormats/interface/NoTag.h"
@@ -88,6 +89,15 @@ namespace  {
         edm::Wrapper<edm::Ptr<flashgg::GenDiPhoton> >       wrp_ptr_fgg_gdip;
         std::vector<edm::Ptr<flashgg::GenDiPhoton> >        vec_ptr_fgg_gdip;
         edm::Wrapper<std::vector<edm::Ptr<flashgg::GenDiPhoton> > >   wrp_vec_ptr_fgg_gdip;
+
+        flashgg::GenDiJet                                        fgg_gdij;
+        edm::Wrapper<flashgg::GenDiJet>                      wrp_fgg_gdij;
+        std::vector<flashgg::GenDiJet>                       vec_fgg_gdij;
+        edm::Wrapper<std::vector<flashgg::GenDiJet> >    wrp_vec_fgg_gdij;
+        edm::Ptr<flashgg::GenDiJet>                          ptr_fgg_gdij;
+        edm::Wrapper<edm::Ptr<flashgg::GenDiJet> >       wrp_ptr_fgg_gdij;
+        std::vector<edm::Ptr<flashgg::GenDiJet> >        vec_ptr_fgg_gdij;
+        edm::Wrapper<std::vector<edm::Ptr<flashgg::GenDiJet> > >   wrp_vec_ptr_fgg_gdij;
 
         //-----------J. Tao from IHEP-Beijing--------------
         flashgg::DiMuonCandidate                                        fgg_dim;

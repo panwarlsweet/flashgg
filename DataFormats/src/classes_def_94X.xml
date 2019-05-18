@@ -190,6 +190,7 @@
 <class name="edm::Wrapper<edm::Ptr<flashgg::DiPhotonCandidate> >"/>
 <class name="std::vector<edm::Ptr<flashgg::DiPhotonCandidate> >"/>
 <class name="edm::Wrapper<std::vector<edm::Ptr<flashgg::DiPhotonCandidate> > >"/>
+<class name="flashgg::GenDiJet"/>
 <class name="flashgg::GenDiPhoton" ClassVersion="14">
     <version ClassVersion="14" checksum="4279499823"/>
     <version ClassVersion="13" checksum="1089709935"/>
@@ -215,9 +216,12 @@
 <class name="edm::RefVector<std::vector<flashgg::Photon>,flashgg::Photon,edm::refhelper::FindUsingAdvance<std::vector<flashgg::Photon>,flashgg::Photon> >"/>
 <class name="edm::Wrapper<edm::RefVector<std::vector<flashgg::Photon>,flashgg::Photon,edm::refhelper::FindUsingAdvance<std::vector<flashgg::Photon>,flashgg::Photon> > >"/>
 
-
-
-
+<class name="std::vector<flashgg::GenDiJet>"/>
+<class name="edm::Wrapper<std::vector<flashgg::GenDiJet> >"/>
+<class name="edm::Ptr<flashgg::GenDiJet>"/>
+<class name="edm::Wrapper<edm::Ptr<flashgg::GenDiJet> >"/>
+<class name="std::vector<edm::Ptr<flashgg::GenDiJet> >"/>
+<class name="edm::Wrapper<std::vector<edm::Ptr<flashgg::GenDiJet> > >"/>
 
 <class name="std::vector<flashgg::GenDiPhoton>"/>
 <class name="edm::Wrapper<std::vector<flashgg::GenDiPhoton> >"/>

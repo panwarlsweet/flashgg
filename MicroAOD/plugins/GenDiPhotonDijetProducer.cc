@@ -8,7 +8,7 @@
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "flashgg/DataFormats/interface/Met.h"
 #include "flashgg/DataFormats/interface/GenDiPhoton.h"
-
+#include "flashgg/DataFormats/interface/GenDiJet.h"
 #include "flashgg/DataFormats/interface/GenPhotonExtra.h"
 
 #include "TMVA/Reader.h"
@@ -65,39 +65,41 @@ namespace flashgg {
         evt.getByToken( genJetNuToken_, genjetsnu );   //// adding for regresion    
         
 
-        std::unique_ptr<vector<GenDiPhoton> > diphotons( new vector<GenDiPhoton> );
-        for( size_t ii = 0 ; ii < photons->size() ; ++ii ) {
-            auto pi = photons->ptrAt( ii );
-            for( size_t jj = ii + 1 ; jj < photons->size() ; ++jj ) {
-                auto pj = photons->ptrAt( jj );
+        // std::unique_ptr<vector<GenDiPhoton> > diphotons( new vector<GenDiPhoton> );
+        std::unique_ptr<vector<GenDiJet> > dijets( new vector<GenDiJet> );
+        //for( size_t ii = 0 ; ii < photons->size() ; ++ii ) {
+        //  auto pi = photons->ptrAt( ii );
+        //  for( size_t jj = ii + 1 ; jj < photons->size() ; ++jj ) {
+        //      auto pj = photons->ptrAt( jj );
                 std::vector<edm::Ptr<reco::GenJet> > seljets;
                 for( size_t ij = 0 ; ij < jets->size() ; ++ij ) {
                     auto jet = jets->ptrAt( ij );
-                    if( ! overlapRemoval_ || 
-                        ( reco::deltaR(*jet,pi->cand()) > 0.3 
-                          && reco::deltaR(*jet,pj->cand()) > 0.3 ) ) {
+                    // if( ! overlapRemoval_ || 
+                    //  ( reco::deltaR(*jet,pi->cand()) > 0.3 
+                    //    && reco::deltaR(*jet,pj->cand()) > 0.3 ) ) {
                         seljets.push_back(jet);
-                    }
+                        //}
                 }
                 if( seljets.size() >= 2 ) { 
                     auto jet0 = seljets[0], jet1 = seljets[1];
 
                     ///////// adding met and gentjets with nu for regression study
-                    if (genjetsnu->size() >= 2){
-                    for( size_t p = 0 ; p < genjetsnu->size() ; ++p ) {
-                        auto pn = genjetsnu->ptrAt(p);
-                        for( size_t q = p + 1 ; q < genjetsnu->size() ; ++q ) {
-                            auto qn = genjetsnu->ptrAt(q);
+                    //if (genjetsnu->size() >= 2){
+                    //   for( size_t p = 0 ; p < genjetsnu->size() ; ++p ) {
+                    //  auto pn = genjetsnu->ptrAt(p);
+                    //  for( size_t q = p + 1 ; q < genjetsnu->size() ; ++q ) {
+                    //      auto qn = genjetsnu->ptrAt(q);
                             for( size_t kk = 0 ; kk < mets->size() ; ++kk ) {
                               auto met = mets->ptrAt( kk );
-                              diphotons->push_back(GenDiPhoton(pi,pj,jet0,jet1,met,pn,qn));
-                            }
+                              
+                              dijets->push_back(GenDiJet(jet0,jet1,met,jet0,jet1));
+
+                          }
                         }
-                    }
                   }
-               }
-            }
-        }
+                //   }
+            //}
+    //}
         
         evt.put( std::move( diphotons ) );
     }
