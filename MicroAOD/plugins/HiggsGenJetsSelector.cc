@@ -45,7 +45,7 @@ namespace flashgg {
         genPartToken_( consumes<View<reco::GenParticle> >( iConfig.getParameter<InputTag> ( "src" ) ) ),
         genJetToken_( consumes<View<reco::GenJet> >( iConfig.getParameter<InputTag> ( "jets" ) ) ),
         genNuToken_( consumes<View<reco::Candidate> >( iConfig.getParameter<InputTag> ( "nus" ) ) ),
-        usePartons_( true )
+        usePartons_( false )
     {
         if( iConfig.exists("usePartons") ) { 
             usePartons_ = iConfig.getParameter<bool>("usePartons");
@@ -71,13 +71,13 @@ namespace flashgg {
             auto ipart = genParts->ptrAt(ip);
             if( ipart->motherRefVector().size() == 0 ) { continue; }
             bool higgschild = false;
-            for( auto mom : ipart->motherRefVector() ) {
+            /*for( auto mom : ipart->motherRefVector() ) {
                 if( mom->pdgId() == 25 ) { 
                     higgschild  = true;
                     break;
                 }
-            }
-            if( ! higgschild ) { continue; }
+                }*/
+            //if( ! higgschild ) { continue; }
             if( ipart->pdgId() == 5 && bq.isNull() ) { bq = ipart; }
             else if( ipart->pdgId() == -5 && bbarq.isNull() ) { bbarq = ipart; } // FIXME handle duplicates
         }

@@ -83,18 +83,18 @@ namespace flashgg {
                     auto jet0 = seljets[0], jet1 = seljets[1];
 
                     ///////// adding met and gentjets with nu for regression study
-                    if (genjetsnu->size() >= 2){
+    
                     for( size_t p = 0 ; p < genjetsnu->size() ; ++p ) {
-                        auto pn = genjetsnu->ptrAt(p);
-                        for( size_t q = p + 1 ; q < genjetsnu->size() ; ++q ) {
-                            auto qn = genjetsnu->ptrAt(q);
+                      auto pn = genjetsnu->ptrAt(p);
+                      for( size_t q = p + 1 ; q < genjetsnu->size() ; ++q ) {
+                          auto qn = genjetsnu->ptrAt(q);
                             for( size_t kk = 0 ; kk < mets->size() ; ++kk ) {
                               auto met = mets->ptrAt( kk );
                               diphotons->push_back(GenDiPhoton(pi,pj,jet0,jet1,met,pn,qn));
                             }
+                          }
                         }
-                    }
-                  }
+                            //}
                }
             }
         }
