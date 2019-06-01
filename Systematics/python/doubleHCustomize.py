@@ -169,8 +169,9 @@ def addGenAnalysis(customize,process,tagList):
     
     genVariables = ["mgg := mass",
                     "mbb := dijet.mass",
+                    "mbbNu := dijetNu.mass",
                     "mhh := sqrt( pow(energy+dijet.energy,2) - pow(px+dijet.px,2) - pow(py+dijet.py,2) - pow(pz+dijet.pz,2))",                    
-
+                    "mhhNu := sqrt( pow(energy+dijetNu.energy,2) - pow(px+dijetNu.px,2) - pow(py+dijetNu.py,2) - pow(pz+dijetNu.pz,2))",
                     
                     "leadPho_px := leadingPhoton.px",
                     "leadPho_py := leadingPhoton.py",
@@ -202,20 +203,21 @@ def addGenAnalysis(customize,process,tagList):
                     "subleadJet_phi := subLeadingJet.phi",
                     "subleadJet_e  := subLeadingJet.energy",
 
-                    "leadgenJetNu_px := leadGenJetNu.px",
-                    "leadgenJetNu_py := leadGenJetNu.py",
-                    "leadgenJetNu_pz := leadGenJetNu.pz",
-                    "leadgenJetNu_pt := leadGenJetNu.pt",
-                    "leadgenJetNu_eta := leadGenJetNu.eta",
-                    "leadgenJetNu_phi := leadGenJetNu.phi",
-                    "leadgenJetNu_e  := leadGenJetNu.energy",
-                    "subleadgenJetNu_px := subleadGenJetNu.px",
-                    "subleadgenJetNu_py := subleadGenJetNu.py",
-                    "subleadgenJetNu_pz := subleadGenJetNu.pz",
-                    "subleadgenJetNu_pt := subleadGenJetNu.pt",
-                    "subleadgenJetNu_eta := subleadGenJetNu.eta",
-                    "subleadgenJetNu_phi := subleadGenJetNu.phi",
-                    "subleadgenJetNu_e  := subleadGenJetNu.energy",
+                    "bgenJetNu_1_px := leadGenJetNu.px",
+                    "bgenJetNu_1_py := leadGenJetNu.py",
+                    "bgenJetNu_1_pz := leadGenJetNu.pz",
+                    "bgenJetNu_1_pt := leadGenJetNu.pt",
+                    "bgenJetNu_1_eta := leadGenJetNu.eta",
+                    "bgenJetNu_1_phi := leadGenJetNu.phi",
+                    "bgenJetNu_1_e  := leadGenJetNu.energy",
+
+                    "bgenJetNu_2_px := subleadGenJetNu.px",
+                    "bgenJetNu_2_py := subleadGenJetNu.py",
+                    "bgenJetNu_2_pz := subleadGenJetNu.pz",
+                    "bgenJetNu_2_pt := subleadGenJetNu.pt",
+                    "bgenJetNu_2_eta := subleadGenJetNu.eta",
+                    "bgenJetNu_2_phi := subleadGenJetNu.phi",
+                    "bgenJetNu_2_e  := subleadGenJetNu.energy",
 
                     "Met_CorPx := Met.getCorPx",
                     "Met_CorPy := Met.getCorPy",
@@ -225,6 +227,18 @@ def addGenAnalysis(customize,process,tagList):
                     "Met_py := Met.py",
                     "Met_pt := Met.pt",
                     "Met_phi:= Met.phi",
+
+                    "recoJet_1_pt := recoJet1.pt",
+                    "recoJet_1_eta := recoJet1.eta",
+                    "recoJet_1_phi := recoJet1.phi",
+                    "recoJet_1_e  := recoJet1.energy",
+
+                    "recoJet_2_pt := recoJet2.pt",
+                    "recoJet_2_eta := recoJet2.eta",
+                    "recoJet_2_phi := recoJet2.phi",
+                    "recoJet_2_e  := recoJet2.energy",
+
+                    "reco_mjj := reco_dijet.mass"
                     ]
     
     ## define categories for gen-level dumper

@@ -46,7 +46,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
                                    MinJetPt   = cms.double(25.),
                                    MaxJetEta   = cms.double(2.5),
-                                   MJJBoundaries = cms.vdouble(70.,190.),
+                                   MJJBoundaries = cms.vdouble(0.,2000.),
                                   # BTagType = cms.untracked.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'), #string for btag algorithm
                                  #c  BTagType = cms.untracked.string('pfDeepCSVJetTags:probb'), #string for btag algorithm
                                    BTagType = cms.vstring('pfDeepCSVJetTags:probb','pfDeepCSVJetTags:probbb'), #string for btag algorithm

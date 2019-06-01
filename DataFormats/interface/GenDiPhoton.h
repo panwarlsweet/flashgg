@@ -5,18 +5,19 @@
 #include "flashgg/DataFormats/interface/GenPhotonExtra.h"
 #include "DataFormats/Common/interface/Ptr.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
+#include "flashgg/DataFormats/interface/Jet.h"
 #include "flashgg/DataFormats/interface/Met.h"
 #include "flashgg/DataFormats/interface/WeightedObject.h"
 #include "flashgg/DataFormats/interface/DiPhotonTagBase.h"
 
 namespace flashgg {
 
-    class GenDiPhoton : public reco::LeafCandidate, public WeightedObject
+    class GenDiPhoton : public DiPhotonTagBase, public reco::LeafCandidate//, public WeightedObject
     {
     public:
         GenDiPhoton();
         GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>);
-        GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Met>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>);
+        GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Met>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::DiPhotonCandidate>);
         ~GenDiPhoton();
 
         virtual GenDiPhoton *clone() const { return ( new GenDiPhoton( *this ) ); }
@@ -35,6 +36,9 @@ namespace flashgg {
 
         const flashgg::Met& Met() const { return Met_; }  //// extra object for bregression study 
         
+        const flashgg::Jet & recoJet1() const { return *leadJet_; } 
+        const flashgg::Jet & recoJet2() const { return *subleadJet_; } 
+        
         float sumPt() const { return  leadingPhoton_.cand().pt() + subLeadingPhoton_.cand().pt(); }
         bool operator <( const GenDiPhoton &b ) const { return ( sumPt() < b.sumPt() ); }
         bool operator >( const GenDiPhoton &b ) const { return ( sumPt() > b.sumPt() ); }
@@ -43,7 +47,8 @@ namespace flashgg {
         
         LorentzVector dijet() const;
         LorentzVector dijetNu() const; //// extra object for bregression study 
-        
+        const LorentzVector &reco_dijet() const { return reco_dijet_; }
+
         void setTag(const std::string & tag) { tag_ = tag; }
         std::string tag() const { return tag_; }
         bool isTagged(const std::string & cmp) const { return tag_ == cmp; }
@@ -68,6 +73,10 @@ namespace flashgg {
         edm::Ptr<reco::GenJet> subleadGenJetNu_; //// extra object for bregression study 
         
         flashgg::Met Met_;  //// extra object for bregression study 
+
+        edm::Ptr<flashgg::Jet> leadJet_, subleadJet_;
+        LorentzVector reco_dijet_;
+
         int cat_;
         std::string tag_;
         edm::Ptr<DiPhotonTagBase> recoTagObj_;
