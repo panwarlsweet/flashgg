@@ -4,7 +4,7 @@ from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
 flashggGenDiPhotonDiBJets = cms.EDProducer('FlashggGenDiPhotonDiJetProducer',
                                      src=cms.InputTag('flashggGenPhotonsExtra'),
                                      jets=cms.InputTag('slimmedGenJets'),
-                                     flashggMets=cms.InputTag('flashggMetsCorr'),
+                                     flashggMets=cms.InputTag('flashggMets'),
                                      flashggHiggsBJets=cms.InputTag('flashggHiggsBJets'),
                                      flashggDiPhotonTag=cms.InputTag('flashggPreselectedDiPhotons'),
                                      flashggJets=UnpackedJetCollectionVInputTag,

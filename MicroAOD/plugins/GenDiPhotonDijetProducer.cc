@@ -137,7 +137,7 @@ namespace flashgg {
                                   for( size_t l = 0 ; l < recojets->size() ; ++l ) {
                                    auto lr = recojets->ptrAt(l);
 
-                                   if ( lr->pt() < 25. || fabs(lr->eta()) > 2.5 ) continue;
+				      if ( lr->pt() < 0. || fabs(lr->eta()) > 2.5 ) continue;
      
                                       btag1 = lr->bDiscriminator("pfDeepCSVJetTags:probb") + lr->bDiscriminator("pfDeepCSVJetTags:probbb"); // btaggable jets
 

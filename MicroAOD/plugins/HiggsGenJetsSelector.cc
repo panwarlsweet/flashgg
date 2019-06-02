@@ -120,14 +120,14 @@ namespace flashgg {
         auto constituents = jet.getJetConstituents();
         auto specific = jet.getSpecific();
         auto vertex = jet.vertex();
-/*        for(size_t in = 0; in<nus.size(); in++) {
+        for(size_t in = 0; in<nus.size(); in++) {
             auto inu = nus.ptrAt(in);
             if( reco::deltaR(*inu, jet) < 0.4 ) { // FIXME make configurable
                 constituents.push_back(inu);
                 specific.m_InvisibleEnergy += inu->energy();
                 p4 += inu->p4();
                 }
-            }*/
+            }
         
                 return reco::GenJet(p4,vertex,specific,constituents);
     }
