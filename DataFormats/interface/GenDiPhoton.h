@@ -9,6 +9,7 @@
 #include "flashgg/DataFormats/interface/Met.h"
 #include "flashgg/DataFormats/interface/WeightedObject.h"
 #include "flashgg/DataFormats/interface/DiPhotonTagBase.h"
+#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 
 namespace flashgg {
 
@@ -17,7 +18,7 @@ namespace flashgg {
     public:
         GenDiPhoton();
         GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>);
-        GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Met>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::DiPhotonCandidate>);
+        GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<flashgg::GenPhotonExtra>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, std::vector<edm::Ptr<pat::PackedGenParticle> >, double, double, edm::Ptr<flashgg::Met>, edm::Ptr<reco::GenJet>, edm::Ptr<reco::GenJet>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::DiPhotonCandidate>);
         ~GenDiPhoton();
 
         virtual GenDiPhoton *clone() const { return ( new GenDiPhoton( *this ) ); }
@@ -33,6 +34,8 @@ namespace flashgg {
 
         const flashgg::GenPhotonExtra& leadingExtra() const { return leadingPhoton_; };
         const flashgg::GenPhotonExtra& subLeadingExtra() const { return subLeadingPhoton_; }
+            
+        const std::vector<edm::Ptr<pat::PackedGenParticle> >& Nus() const { return Nus_; }  //// extra object for bregression study
 
         const flashgg::Met& Met() const { return Met_; }  //// extra object for bregression study 
         
@@ -44,6 +47,10 @@ namespace flashgg {
         bool operator >( const GenDiPhoton &b ) const { return ( sumPt() > b.sumPt() ); }
 
         float sumHt() const { return  sumPt() + leadingJet().pt() + subLeadingJet().pt(); }
+
+        double sumNuPt() const{return sumNuPt_;}
+
+        double sumNuPhi() const {return sumNuPhi_;}
         
         LorentzVector dijet() const;
         LorentzVector dijetNu() const; //// extra object for bregression study 
@@ -72,7 +79,10 @@ namespace flashgg {
         edm::Ptr<reco::GenJet> leadGenJetNu_;   //// extra object for bregression study 
         edm::Ptr<reco::GenJet> subleadGenJetNu_; //// extra object for bregression study 
         
-        flashgg::Met Met_;  //// extra object for bregression study 
+        std::vector<edm::Ptr<pat::PackedGenParticle> > Nus_; //// extra object for bregression study
+        double  sumNuPt_;
+        double  sumNuPhi_;
+        flashgg::Met Met_;  //// extra object for bregression study
 
         edm::Ptr<flashgg::Jet> leadJet_, subleadJet_;
         LorentzVector reco_dijet_;

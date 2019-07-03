@@ -15,7 +15,7 @@ GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<fl
     computeP4AndOrder();
 }
 
-GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<flashgg::GenPhotonExtra> photon2, edm::Ptr<reco::GenJet> jet1, edm::Ptr<reco::GenJet> jet2, edm::Ptr<flashgg::Met> Met, edm::Ptr<reco::GenJet> jetNu1, edm::Ptr<reco::GenJet> jetNu2, edm::Ptr<flashgg::Jet> recoJet1, edm::Ptr<flashgg::Jet> recoJet2, edm::Ptr<flashgg::DiPhotonCandidate> diPho)
+GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<flashgg::GenPhotonExtra> photon2, edm::Ptr<reco::GenJet> jet1, edm::Ptr<reco::GenJet> jet2, std::vector<edm::Ptr<pat::PackedGenParticle> > Nus, double sumNuPt, double  sumNuPhi,edm::Ptr<flashgg::Met> Met, edm::Ptr<reco::GenJet> jetNu1, edm::Ptr<reco::GenJet> jetNu2, edm::Ptr<flashgg::Jet> recoJet1, edm::Ptr<flashgg::Jet> recoJet2, edm::Ptr<flashgg::DiPhotonCandidate> diPho)
     : GenDiPhoton(photon1,photon2) 
 {
     dipho_ = diPho;
@@ -26,6 +26,9 @@ GenDiPhoton::GenDiPhoton( edm::Ptr<flashgg::GenPhotonExtra> photon1, edm::Ptr<fl
     //// extra object for bregression study
     leadGenJetNu_ = jetNu1;
     subleadGenJetNu_ = jetNu2;
+    Nus_ = Nus;
+    sumNuPt_ = sumNuPt;
+    sumNuPhi_ = sumNuPhi;
     Met_ = *Met;
     reco_dijet_ = leadJet_->p4() + subleadJet_->p4();
     if( leadingJet_->pt() < subLeadingJet_->pt() ) { std::swap(leadingJet_,subLeadingJet_); }

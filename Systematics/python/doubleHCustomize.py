@@ -238,7 +238,10 @@ def addGenAnalysis(customize,process,tagList):
                     "recoJet_2_phi := recoJet2.phi",
                     "recoJet_2_e  := recoJet2.energy",
 
-                    "reco_mjj := reco_dijet.mass"
+                    "reco_mjj := reco_dijet.mass",
+
+                    "SumPt_Nu :=  sumNuPt()",
+                    "SumPhi_Nu := sumNuPhi()"
                     ]
     
     ## define categories for gen-level dumper

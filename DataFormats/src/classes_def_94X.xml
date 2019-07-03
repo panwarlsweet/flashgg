@@ -190,7 +190,10 @@
 <class name="edm::Wrapper<edm::Ptr<flashgg::DiPhotonCandidate> >"/>
 <class name="std::vector<edm::Ptr<flashgg::DiPhotonCandidate> >"/>
 <class name="edm::Wrapper<std::vector<edm::Ptr<flashgg::DiPhotonCandidate> > >"/>
-<class name="flashgg::GenDiPhoton" ClassVersion="17">
+<class name="flashgg::GenDiPhoton" ClassVersion="20">
+    <version ClassVersion="20" checksum="3214828794"/>
+    <version ClassVersion="19" checksum="3562888861"/>
+    <version ClassVersion="18" checksum="3980385812"/>
     <version ClassVersion="17" checksum="1325502750"/>
     <version ClassVersion="16" checksum="1756352519"/>
     <version ClassVersion="15" checksum="4097876998"/>

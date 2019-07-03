@@ -31,6 +31,7 @@ namespace flashgg {
 
         EDGetTokenT<View<GenPhotonExtra> > genPhotonToken_;
         EDGetTokenT<View<reco::GenJet> > genJetToken_;
+        EDGetTokenT<View<pat::PackedGenParticle> > genNuToken_;
         EDGetTokenT<View<Met> > metToken_;
         EDGetTokenT<View<reco::GenJet> > genJetNuToken_;
         std::vector<edm::EDGetTokenT<View<flashgg::Jet> > >  recoJetToken_;
@@ -42,7 +43,8 @@ namespace flashgg {
     GenDiPhotonDiJetProducer::GenDiPhotonDiJetProducer( const ParameterSet &iConfig ) :
         genPhotonToken_( consumes<View<flashgg::GenPhotonExtra> >( iConfig.getParameter<InputTag> ( "src" ) ) ),
         genJetToken_( consumes<View<reco::GenJet> >( iConfig.getParameter<InputTag> ( "jets" ) ) ),
-        metToken_( consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ( "flashggMets" ) ) ),   //// adding for regresion
+        genNuToken_( consumes<View<pat::PackedGenParticle> >( iConfig.getParameter<InputTag> ( "flashggGenNus" ) ) ),
+        metToken_( consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ( "flashggMets" ) ) ),   //// adding for regresion  
         genJetNuToken_( consumes<View<reco::GenJet> >( iConfig.getParameter<InputTag> ( "flashggHiggsBJets" ) ) ), //// adding for regresion  
         //        recoJetToken_( consumes<View<flashgg::Jet> >( iConfig.getParameter<InputTag> ( "flashggJets" ) ) ),
 	    diPhotonToken_( consumes<View<flashgg::DiPhotonCandidate> >( iConfig.getParameter<InputTag> ( "flashggDiPhotonTag" ) ) ),
@@ -65,6 +67,9 @@ namespace flashgg {
         Handle<View<reco::GenJet> > jets;
         evt.getByToken( genJetToken_, jets );
 
+        Handle<View<pat::PackedGenParticle> > genNus;  //// adding for regresion
+        evt.getByToken( genNuToken_, genNus );  //// adding for regresion 
+
         Handle<View<flashgg::Met> > mets;       //// adding for regresion  
         evt.getByToken( metToken_, mets );      //// adding for regresion  
 
@@ -75,6 +80,7 @@ namespace flashgg {
         evt.getByToken( diPhotonToken_, diPhos );
 
         double btag1=0.,  btag2=0.;// ref_bTag = -999., sum_bTag = 0.;
+        double sumNuPt = 0., sumNuPhi = 0.;
         //        int NGenJet=0, NB_GenJet=0, NRecoJet=0, Nneutrino=0, Nbquark=0;
         
         
@@ -106,6 +112,12 @@ namespace flashgg {
 
                       for( size_t q = p + 1 ; q < genjetsnu->size() ; ++q ) {
                           auto qn = genjetsnu->ptrAt(q);
+                          std::vector<edm::Ptr<pat::PackedGenParticle> > nus;
+
+                          for( size_t r = 0 ; r < genNus->size() ; ++r ) {
+                              auto nu = genNus->ptrAt(r);
+                              nus.push_back(nu);
+                              sumNuPt += nu->pt(); sumNuPhi += nu->phi();
 
                             for( size_t kk = 0 ; kk < mets->size() ; ++kk ) {
                               auto met = mets->ptrAt( kk );
@@ -175,9 +187,10 @@ namespace flashgg {
                                   }
                                   if (!hasRecoDiJet)  continue; //selecting events with one DiJet object with highest bTag score from each event
         
-                                  diphotons->push_back(GenDiPhoton(pi,pj,jet0,jet1,met,pn,qn,recoJet1,recoJet2,dipho)); 
+                                  diphotons->push_back(GenDiPhoton(pi,pj,jet0,jet1,nus,sumNuPt,sumNuPhi,met,pn,qn,recoJet1,recoJet2,dipho)); 
                               }
                             }
+                          }
                       }
                     }                           
                 }
