@@ -395,7 +395,7 @@ MCScaleHighR9EB = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale"),
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("full5x5_r9>0.94&&abs(superCluster.eta)<1.5"),
           BinList = photonScaleUncertBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -405,7 +405,7 @@ MCScaleLowR9EB = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale"),
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("full5x5_r9<0.94&&abs(superCluster.eta)<1.5"),
           BinList = photonScaleUncertBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -415,7 +415,7 @@ MCScaleHighR9EE = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale"),
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("full5x5_r9>0.94&&abs(superCluster.eta)>=1.5"),
           BinList = photonScaleUncertBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -425,7 +425,7 @@ MCScaleLowR9EE = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale"),
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("full5x5_r9<0.94&&abs(superCluster.eta)>=1.5"),
           BinList = photonScaleUncertBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -435,7 +435,7 @@ MaterialCentralBarrel = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonSc
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("abs(superCluster.eta)<1.0"),
           BinList = materialBinsMoriond17,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -445,7 +445,7 @@ MaterialOuterBarrel = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScal
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("abs(superCluster.eta)>=1.0&&abs(superCluster.eta)<1.5"),
           BinList = materialBinsMoriond17,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -455,7 +455,7 @@ MaterialForward = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale"),
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("abs(superCluster.eta)>=1.5"),
           BinList = materialBinsMoriond17,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -465,7 +465,7 @@ FNUFEB = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale"),
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("abs(superCluster.eta)<1.5"),
           BinList = FNUFBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -475,7 +475,7 @@ FNUFEE = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale"),
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("abs(superCluster.eta)>=1.5"),
           BinList = FNUFBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -485,7 +485,7 @@ ShowerShapeHighR9EB = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScal
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("full5x5_r9>0.94&&abs(superCluster.eta)<1.5"),
           BinList = showerShapeBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -495,7 +495,7 @@ ShowerShapeHighR9EE = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScal
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("full5x5_r9>0.94&&abs(superCluster.eta)>=1.5"),
           BinList = showerShapeBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -505,7 +505,7 @@ ShowerShapeLowR9EB = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("full5x5_r9<=0.94&&abs(superCluster.eta)<1.5"),
           BinList = showerShapeBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -515,7 +515,7 @@ ShowerShapeLowR9EE = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale
           NSigmas = cms.vint32(-1,1),
           OverallRange = cms.string("full5x5_r9<=0.94&&abs(superCluster.eta)>=1.5"),
           BinList = showerShapeBins,
-          ApplyCentralValue = cms.bool(False),
+          ApplyCentralValue = cms.bool(True),
           Debug = cms.untracked.bool(False)
           )
 
@@ -588,7 +588,7 @@ MvaShift = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonMvaTransform"),
           CorrectionFile = cms.FileInPath("flashgg/MicroAOD/data/transformationIDMVA_v2.root"),
           BinList = mvaShiftBins,
           Debug = cms.untracked.bool(False),
-          ApplyCentralValue = cms.bool(False)
+          ApplyCentralValue = cms.bool(True)
           )
 
 PreselSF = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonWeight"),
@@ -650,7 +650,7 @@ SigmaEOverEShift = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonSigEOve
           OverallRange = cms.string("1"),
           BinList = sigmaEOverEShiftBins,
           Debug = cms.untracked.bool(False),
-          ApplyCentralValue = cms.bool(False)
+          ApplyCentralValue = cms.bool(True)
           )
 
 SigmaEOverESmearing = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonSigEoverESmearing"),
@@ -776,7 +776,7 @@ MCScaleHighR9EB_EGM = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScal
          OverallRange = cms.string("full5x5_r9>0.94&&abs(superCluster.eta)<1.5"),
          BinList = emptyBins,
          CorrectionFile = scalesAndSmearingsPrefix,
-         ApplyCentralValue = cms.bool(False),
+         ApplyCentralValue = cms.bool(True),
          UncertaintyBitMask = cms.string("011"),#cms.string("110"),
          ExaggerateShiftUp = cms.bool(False),
          Debug = cms.untracked.bool(False)
@@ -789,7 +789,7 @@ MCScaleLowR9EB_EGM = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale
          OverallRange = cms.string("full5x5_r9<0.94&&abs(superCluster.eta)<1.5"),
          BinList = emptyBins,
          CorrectionFile = scalesAndSmearingsPrefix,
-         ApplyCentralValue = cms.bool(False),
+         ApplyCentralValue = cms.bool(True),
          UncertaintyBitMask = cms.string("011"),#cms.string("110"),
          ExaggerateShiftUp = cms.bool(False),
          Debug = cms.untracked.bool(False)
@@ -802,7 +802,7 @@ MCScaleHighR9EE_EGM = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScal
          OverallRange = cms.string("full5x5_r9>0.94&&abs(superCluster.eta)>=1.5"),
          BinList = emptyBins,
          CorrectionFile = scalesAndSmearingsPrefix,
-         ApplyCentralValue = cms.bool(False),
+         ApplyCentralValue = cms.bool(True),
          UncertaintyBitMask = cms.string("011"),#cms.string("110"),
          ExaggerateShiftUp = cms.bool(False),
          Debug = cms.untracked.bool(False)
@@ -815,7 +815,7 @@ MCScaleLowR9EE_EGM = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale
          OverallRange = cms.string("full5x5_r9<0.94&&abs(superCluster.eta)>=1.5"),
          BinList = emptyBins,
          CorrectionFile = scalesAndSmearingsPrefix,
-         ApplyCentralValue = cms.bool(False),
+         ApplyCentralValue = cms.bool(True),
          UncertaintyBitMask = cms.string("011"),#cms.string("110"),
          ExaggerateShiftUp = cms.bool(False),
          Debug = cms.untracked.bool(False)
@@ -828,7 +828,7 @@ MCScaleGain6EB_EGM = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale
          OverallRange = cms.string("hasSwitchToGain6&&abs(superCluster.eta)<1.5"),
          BinList = emptyBins,
          CorrectionFile = scalesAndSmearingsPrefix,
-         ApplyCentralValue = cms.bool(False),
+         ApplyCentralValue = cms.bool(True),
          ExaggerateShiftUp = cms.bool(False),
          UncertaintyBitMask = cms.string("100"),#cms.string("001"), # this should be a bit mask, don't know how to make it in python now
          Debug = cms.untracked.bool(False)
@@ -841,7 +841,7 @@ MCScaleGain1EB_EGM = cms.PSet( PhotonMethodName = cms.string("FlashggPhotonScale
          OverallRange = cms.string("hasSwitchToGain1&&abs(superCluster.eta)<1.5"),
          BinList = emptyBins,
          CorrectionFile = scalesAndSmearingsPrefix,
-         ApplyCentralValue = cms.bool(False),
+         ApplyCentralValue = cms.bool(True),
          ExaggerateShiftUp = cms.bool(False),
          UncertaintyBitMask = cms.string("100"),#cms.string("001"), # this should be a bit mask, don't know how to make it in python now
          Debug = cms.untracked.bool(False)
