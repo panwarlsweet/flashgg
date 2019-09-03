@@ -136,10 +136,17 @@ class DoubleHCustomize():
             "ttH_etajet1 := etajet1()",
             "ttH_etajet2 := etajet2()",
             "ttH_phijet1 := phijet1()",
-            "ttH_phijet2 := phijet2()"
+            "ttH_phijet2 := phijet2()",
+            "ttDecay_ID := ttDecay_ID()",
+            "ttX_DeepJet_CTag_Jet1 := Cdiscr_jet1()",
+            "ttX_DeepJet_CTag_Jet2 := Cdiscr_jet2()",
+            "ttX_DeepJet_CvsL_Jet1 := CvsLdiscr_jet1()",
+            "ttX_DeepJet_CvsL_Jet2 := CvsLdiscr_jet2()",
+            "ttX_MT_leadpho_met := MT_leadpho_met()",
+            "ttX_MT_subleadpho_met := MT_subleadpho_met()",
+            "ttX_MT_dipho_met := MT_dipho_met()",
             ]
-    
-    
+        
         if self.customize.doDoubleHttHKiller : 
              variables +=[
                "ttHScore := ttHScore()",

@@ -501,6 +501,84 @@ namespace flashgg {
                 for (int i = 0; i < 8; i++)
                     PL_VectorVar_[i].resize(7); // List of particles. 8 objects. Each object has 7 attributes.
 
+                edm::Handle<View<reco::GenParticle> > genParticles;
+                evt.getByToken( genParticleToken_, genParticles );
+                unsigned int count_W = 0, W1=0, W2=0;
+                for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ){
+                    int pdgid = genParticles->ptrAt( genLoop )->pdgId();
+                    int dpdgidW1[2] = {0,0};
+                    int dpdgidW2[2] = {0,0};
+                    if(fabs(pdgid)==24){
+                        count_W++;
+                        if(count_W==1){
+                            W1=genLoop;
+                            continue;
+                        }
+                        else if(count_W==2){
+                            W2=genLoop;
+                            if( genParticles->ptrAt( W1 )->numberOfDaughters()==2 and genParticles->ptrAt( W2 )->numberOfDaughters()==2){
+                                dpdgidW1[0]=genParticles->ptrAt(W1)->daughter(0)->pdgId();
+                                dpdgidW1[1]=genParticles->ptrAt(W1)->daughter(1)->pdgId();
+                                dpdgidW2[0]=genParticles->ptrAt(W2)->daughter(0)->pdgId();
+                                dpdgidW2[1]=genParticles->ptrAt(W2)->daughter(1)->pdgId();
+                                //// tt->full hadronic decay modes                                                                                                                                                                                                                                                                                                              
+                                if((fabs(dpdgidW1[0])==4||fabs(dpdgidW1[1])==4) and (abs(dpdgidW2[0])==4||fabs(dpdgidW2[1])==4)){ // looking for W->cs W->cs                                                                                                                                                                                                                    
+                                    ttHVars["ttDecay_ID"]=301;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==4||fabs(dpdgidW1[1])==4) and (abs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) or ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (abs(dpdgidW2[0])==4||fabs(dpdgidW2[1])==4) ) ){
+                                    //looking for W->cs W->ud                                                                                                                                                                                                                                                                                                                   
+                                    ttHVars["ttDecay_ID"]=302;
+                                }
+                                if((fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (abs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2)){ // looking for W->ud W->ud                                                                                                                                                                                                                    
+                                    ttHVars["ttDecay_ID"]=303;
+                                }
+                                // tt->Semileptonic decay mode                                                                                                                                                                                                                                                                                                                  
+                                if( ( (fabs(dpdgidW1[0])==4||fabs(dpdgidW1[1])==4) and (fabs(dpdgidW2[0])==11||fabs(dpdgidW2[1])==11) ) or ( (fabs(dpdgidW1[0])==11||fabs(dpdgidW1[1])==11) and (fabs(dpdgidW2[0])==4||fabs(dpdgidW2[1])==4) ) ){ // looking for W->cs W->e nu                                                                                                  
+                                    ttHVars["ttDecay_ID"]=201;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==4||fabs(dpdgidW1[1])==4) and (fabs(dpdgidW2[0])==13||fabs(dpdgidW2[1])==13) ) or ( (fabs(dpdgidW1[0])==13||fabs(dpdgidW1[1])==13) and (fabs(dpdgidW2[0])==4||fabs(dpdgidW2[1])==4) ) ){ // looking for W->cs W->mu nu                                                                                                 
+                                    ttHVars["ttDecay_ID"]=202;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==4||fabs(dpdgidW1[1])==4) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15) ) or ( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==4||fabs(dpdgidW2[1])==4) ) ){ // looking for W->cs W->tau nu                                                                                                
+                                    ttHVars["ttDecay_ID"]=203;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==11||fabs(dpdgidW2[1])==11) ) or ( (fabs(dpdgidW1[0])==11||fabs(dpdgidW1[1])==11) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->cs W->e nu                                                                                                  
+                                    ttHVars["ttDecay_ID"]=204;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==13||fabs(dpdgidW2[1])==13) ) or ( (fabs(dpdgidW1[0])==13||fabs(dpdgidW1[1])==13) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->cs W->mu nu                                                                                                
+                                    ttHVars["ttDecay_ID"]=205;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15) ) or ( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->cs W->tau nu                                                                                                
+                                    ttHVars["ttDecay_ID"]=206;
+                                }
+                                // tt->Fully leptonic decay mode                                                                                                                                                                                                                                                                                                                
+                                if( (fabs(dpdgidW1[0])==11||fabs(dpdgidW1[1])==11) and (fabs(dpdgidW2[0])==11||fabs(dpdgidW2[1])==11) ){
+                                    // looking for W-> e nu W-> e nu                                                                                                                                                                                                                                                                                                            
+                                    ttHVars["ttDecay_ID"]=101;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==11||fabs(dpdgidW1[1])==11) and (fabs(dpdgidW2[0])==13||fabs(dpdgidW2[1])==13) ) or ( (fabs(dpdgidW1[0])==13||fabs(dpdgidW1[1])==13) and (fabs(dpdgidW2[0])==11||fabs(dpdgidW2[1])==11) ) ){ // looking for W->e nu W->mu nu                                                                                           
+                                    ttHVars["ttDecay_ID"]=102;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==11||fabs(dpdgidW1[1])==11) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15) ) or ( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==11||fabs(dpdgidW2[1])==11) ) ){ // looking for W->e nu W->tau nu                                                                                          
+                                    ttHVars["ttDecay_ID"]=103;
+                                }
+                                if( (fabs(dpdgidW1[0])==13||fabs(dpdgidW1[1])==13) and (fabs(dpdgidW2[0])==13||fabs(dpdgidW2[1])==13)){
+                                    // looking for W->mu nu W->mu nu                                                                                                                                                                                                                                                                                                            
+                                    ttHVars["ttDecay_ID"]=104;
+                                }
+                                if( ( (fabs(dpdgidW1[0])==13||fabs(dpdgidW1[1])==13) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15) ) or ( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==13||fabs(dpdgidW2[1])==13) ) ){ // looking for W->mu nu W->tau nu                                                                                         
+                                    ttHVars["ttDecay_ID"]=105;
+                                }
+                                if( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15)){
+                                    // looking for W->mu nu W->mu nu                                                                                                                                                                                                                                                                                                            
+                                    ttHVars["ttDecay_ID"]=106;
+                                }
+                            }
+                        }
+                        else break;
+                    }
+                }
+
                 float sumEt=0.,njets=0.;
                 njets = cleaned_jets.size();
                 std::vector<flashgg::Jet> cleanedDR_jets;
@@ -514,12 +592,33 @@ namespace flashgg {
                     cleanedDR_jets.push_back(*jet);
                 }
                 ttHVars["sumET"] = sumEt;
+
+                /// highest C-tagged jet pair                                                                                                                                                                     
+                double sumCTag_ref=-99.;  double sumCTag=0.;
+                for( size_t ijet=0; ijet < cleanedDR_jets.size()-1;++ijet){
+                    auto jet_1 =  cleanedDR_jets[ijet];
+                    for( size_t jjet=ijet+1; jjet < cleanedDR_jets.size();++jjet){
+                        auto jet_2 = cleanedDR_jets[jjet];
+                        sumCTag=jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                        if (sumCTag > sumCTag_ref) {
+                            sumCTag_ref = sumCTag;
+                            ttHVars["Cdiscr_jet1"]=jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                            ttHVars["CvsLdiscr_jet1"]=jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
+                            ttHVars["Cdiscr_jet2"]=jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                            ttHVars["CvsLdiscr_jet2"]=jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
+                        }
+                        else continue;
+                    }
+                }
                 edm::Handle<View<flashgg::Met> > METs;
                 evt.getByToken( METToken_, METs );
                 if( METs->size() != 1 )
                 { std::cout << "WARNING number of MET is not equal to 1" << std::endl; }
                 Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
                 auto p4MET=theMET->p4();
+                ttHVars["MT_leadpho_met"]=(theMET->p4() + leadPho->p4()).Mt();
+                ttHVars["MT_subleadpho_met"]=(theMET->p4() + subleadPho->p4()).Mt();
+                ttHVars["MT_dipho_met"]=(theMET->p4() + dipho->p4()).Mt();
                 ttHVars["MET"]=p4MET.pt();
                 ttHVars["phiMET"]=p4MET.phi();
 
@@ -652,7 +751,14 @@ namespace flashgg {
                 tag_obj.etajet2_ = ttHVars["etajet2"];
                 tag_obj.phijet1_ = ttHVars["phijet1"];
                 tag_obj.phijet2_ = ttHVars["phijet2"];
-                
+                tag_obj.ttDecay_ID_ = ttHVars["ttDecay_ID"];
+                tag_obj.Cdiscr_jet1_= ttHVars["Cdiscr_jet1"];
+                tag_obj.CvsLdiscr_jet1_= ttHVars["CvsLdiscr_jet1"];
+                tag_obj.Cdiscr_jet2_= ttHVars["Cdiscr_jet2"];
+                tag_obj.CvsLdiscr_jet2_= ttHVars["CvsLdiscr_jet2"];
+                tag_obj.MT_leadpho_met_= ttHVars["MT_leadpho_met"];
+                tag_obj.MT_subleadpho_met_= ttHVars["MT_subleadpho_met"];
+                tag_obj.MT_dipho_met_= ttHVars["MT_dipho_met"];
                 StandardizeHLF();
                 
                 //10 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',

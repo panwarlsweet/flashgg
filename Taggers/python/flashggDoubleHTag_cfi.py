@@ -75,7 +75,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    reweight_producer = cms.string(reweight_settings.reweight_producer),
                                    reweight_names = cms.vstring(reweight_settings.reweight_names),
 
-                                   dottHTagger=cms.bool(False), #whether to do ttH killer. 
+                                   dottHTagger=cms.bool(True), #whether to do ttH killer. 
 
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
                                    MuonTag=cms.InputTag('flashggSelectedMuons'),
