@@ -595,17 +595,22 @@ namespace flashgg {
 
                 /// highest C-tagged jet pair                                                                                                                                                                     
                 double sumCTag_ref=-99.;  double sumCTag=0.;
-                for( size_t ijet=0; ijet < cleanedDR_jets.size()-1;++ijet){
-                    auto jet_1 =  cleanedDR_jets[ijet];
-                    for( size_t jjet=ijet+1; jjet < cleanedDR_jets.size();++jjet){
-                        auto jet_2 = cleanedDR_jets[jjet];
-                        sumCTag=jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
+                    auto jet_1 =  cleaned_jets[ijet];
+                    for( size_t jjet=ijet+1; jjet < cleaned_jets.size();++jjet){
+                        auto jet_2 = cleaned_jets[jjet];
+                        if( reco::deltaR(*jet_1, *leadJet)< vetoConeSize_) continue;
+                        if( reco::deltaR(*jet_2, *leadJet)< vetoConeSize_) continue;
+                        if( reco::deltaR(*jet_1, *subleadJet)< vetoConeSize_) continue;
+                        if( reco::deltaR(*jet_2, *subleadJet)< vetoConeSize_) continue;
+
+                        sumCTag=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
                         if (sumCTag > sumCTag_ref) {
                             sumCTag_ref = sumCTag;
-                            ttHVars["Cdiscr_jet1"]=jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probc");
-                            ttHVars["CvsLdiscr_jet1"]=jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_1.bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
-                            ttHVars["Cdiscr_jet2"]=jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probc");
-                            ttHVars["CvsLdiscr_jet2"]=jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_2.bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
+                            ttHVars["Cdiscr_jet1"]=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                            ttHVars["CvsLdiscr_jet1"]=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
+                            ttHVars["Cdiscr_jet2"]=jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                            ttHVars["CvsLdiscr_jet2"]=jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
                         }
                         else continue;
                     }
