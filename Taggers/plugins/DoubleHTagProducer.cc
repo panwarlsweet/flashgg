@@ -500,11 +500,11 @@ namespace flashgg {
                 PL_VectorVar_.resize(8);
                 for (int i = 0; i < 8; i++)
                     PL_VectorVar_[i].resize(7); // List of particles. 8 objects. Each object has 7 attributes.
-
-                edm::Handle<View<reco::GenParticle> > genParticles;
-                evt.getByToken( genParticleToken_, genParticles );
-                unsigned int count_W = 0, W1=0, W2=0;
-                for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ){
+                if( ! evt.isRealData() ) {
+                  edm::Handle<View<reco::GenParticle> > genParticles;
+                  evt.getByToken( genParticleToken_, genParticles );
+                  unsigned int count_W = 0, W1=0, W2=0;
+                  for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ){
                     int pdgid = genParticles->ptrAt( genLoop )->pdgId();
                     int dpdgidW1[2] = {0,0};
                     int dpdgidW2[2] = {0,0};
@@ -577,14 +577,30 @@ namespace flashgg {
                         }
                         else break;
                     }
+                  }
                 }
 
-                float sumEt=0.,njets=0.;
+                float sumEt=0.,njets=0., sumPT_Had=0., dR_bb=0., dRi = 0;
                 njets = cleaned_jets.size();
                 std::vector<flashgg::Jet> cleanedDR_jets;
                 std::vector<flashgg::Jet> cleaned_physical_jets; // for Xtt calculation who doesn't take edm::Ptr
+                TLorentzVector C_jet, I_jet;
+                
+                dR_bb = reco::deltaR(*leadJet, *subleadJet) ;
+                float Phi_C = (leadJet->p4().phi() + subleadJet->p4().phi())*0.5;
+                float Eta_C = (leadJet->p4().eta() + subleadJet->p4().eta())*0.5;
+                float Pt_C  = (leadJet->p4().pt() + subleadJet->p4().pt())*0.5;
+                float E_C   = (leadJet->p4().energy() + subleadJet->p4().energy())*0.5;
+
+                C_jet.SetPtEtaPhiE(Pt_C, Eta_C, Phi_C, E_C);
+
                 for( size_t ijet=0; ijet < cleaned_jets.size();++ijet){
                     auto jet = cleaned_jets[ijet];
+
+                    I_jet.SetPtEtaPhiE(jet->p4().pt(), jet->p4().eta(), jet->p4().phi(), jet->p4().energy());
+                    dRi = C_jet.DeltaR(I_jet) ;
+                    if( (dR_bb/2) > dRi ) sumPT_Had += jet->p4().pt();
+ 
                     cleaned_physical_jets.push_back(*jet);
                     if( reco::deltaR(*jet, *leadJet)< vetoConeSize_) continue;
                     if( reco::deltaR(*jet, *subleadJet)< vetoConeSize_) continue;
@@ -592,9 +608,10 @@ namespace flashgg {
                     cleanedDR_jets.push_back(*jet);
                 }
                 ttHVars["sumET"] = sumEt;
+                ttHVars["sumPT_Had_Act"] = sumPT_Had;
 
                 /// highest C-tagged jet pair                                                                                                                                                                     
-                double sumCTag_ref=-99.;  double sumCTag=0.;
+                double sumDeepJetCTag_ref=-99., sumDeepCSVCTag_ref=-99.;  double sumDeepJetCTag=0., sumDeepCSVCTag=0;
                 for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
                     auto jet_1 =  cleaned_jets[ijet];
                     for( size_t jjet=ijet+1; jjet < cleaned_jets.size();++jjet){
@@ -603,16 +620,28 @@ namespace flashgg {
                         if( reco::deltaR(*jet_2, *leadJet)< vetoConeSize_) continue;
                         if( reco::deltaR(*jet_1, *subleadJet)< vetoConeSize_) continue;
                         if( reco::deltaR(*jet_2, *subleadJet)< vetoConeSize_) continue;
-
-                        sumCTag=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
-                        if (sumCTag > sumCTag_ref) {
-                            sumCTag_ref = sumCTag;
-                            ttHVars["Cdiscr_jet1"]=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
-                            ttHVars["CvsLdiscr_jet1"]=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
-                            ttHVars["Cdiscr_jet2"]=jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
-                            ttHVars["CvsLdiscr_jet2"]=jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
+                        float deepjet_jet1 = jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
+                        float deepjet_jet2 = jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probuds") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probg"));
+                        float deepcsv_jet1 = jet_1->bDiscriminator("pfDeepCSVJetTags:probc")/(jet_1->bDiscriminator("pfDeepCSVJetTags:probc") + jet_1->bDiscriminator("pfDeepCSVJetTags:probudsg"));
+                        float deepcsv_jet2 = jet_2->bDiscriminator("pfDeepCSVJetTags:probc")/(jet_2->bDiscriminator("pfDeepCSVJetTags:probc") + jet_2->bDiscriminator("pfDeepCSVJetTags:probudsg"));
+                        /// Highest DeepJet C-Tagged
+                        sumDeepJetCTag = deepjet_jet1 + deepjet_jet2;
+                        if (sumDeepJetCTag > sumDeepJetCTag_ref) {
+                            sumDeepJetCTag_ref = sumDeepJetCTag;
+                            ttHVars["deepjetCdiscr_jet1"]=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                            ttHVars["deepjetCvsLdiscr_jet1"]= deepjet_jet1;
+                            ttHVars["deepjetCdiscr_jet2"]=jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                            ttHVars["deepjetCvsLdiscr_jet2"]=deepjet_jet2;
                         }
-                        else continue;
+                        /// Highest DeepCSV C-Tagged                                                                                                                                                                                                                                      
+                        sumDeepCSVCTag = deepcsv_jet1 +deepcsv_jet2;
+                        if (sumDeepCSVCTag > sumDeepCSVCTag_ref) {
+                            sumDeepCSVCTag_ref = sumDeepCSVCTag;
+                            ttHVars["deepcsvCdiscr_jet1"]=jet_1->bDiscriminator("pfDeepCSVJetTags:probc");
+                            ttHVars["deepcsvCvsLdiscr_jet1"]= deepcsv_jet1;
+                            ttHVars["deepcsvCdiscr_jet2"]=jet_2->bDiscriminator("pfDeepCSVJetTags:probc");
+                            ttHVars["deepcsvCvsLdiscr_jet2"]=deepcsv_jet2;
+                        }
                     }
                 }
                 edm::Handle<View<flashgg::Met> > METs;
@@ -757,13 +786,18 @@ namespace flashgg {
                 tag_obj.phijet1_ = ttHVars["phijet1"];
                 tag_obj.phijet2_ = ttHVars["phijet2"];
                 tag_obj.ttDecay_ID_ = ttHVars["ttDecay_ID"];
-                tag_obj.Cdiscr_jet1_= ttHVars["Cdiscr_jet1"];
-                tag_obj.CvsLdiscr_jet1_= ttHVars["CvsLdiscr_jet1"];
-                tag_obj.Cdiscr_jet2_= ttHVars["Cdiscr_jet2"];
-                tag_obj.CvsLdiscr_jet2_= ttHVars["CvsLdiscr_jet2"];
+                tag_obj.deepjetCdiscr_jet1_= ttHVars["deepjetCdiscr_jet1"];
+                tag_obj.deepjetCvsLdiscr_jet1_= ttHVars["deepjetCvsLdiscr_jet1"];
+                tag_obj.deepjetCdiscr_jet2_= ttHVars["deepjetCdiscr_jet2"];
+                tag_obj.deepjetCvsLdiscr_jet2_= ttHVars["deepjetCvsLdiscr_jet2"];
+                tag_obj.deepcsvCdiscr_jet1_= ttHVars["deepcsvCdiscr_jet1"];
+                tag_obj.deepcsvCvsLdiscr_jet1_= ttHVars["deepcsvCvsLdiscr_jet1"];
+                tag_obj.deepcsvCdiscr_jet2_= ttHVars["deepcsvCdiscr_jet2"];
+                tag_obj.deepcsvCvsLdiscr_jet2_= ttHVars["deepcsvCvsLdiscr_jet2"];
                 tag_obj.MT_leadpho_met_= ttHVars["MT_leadpho_met"];
                 tag_obj.MT_subleadpho_met_= ttHVars["MT_subleadpho_met"];
                 tag_obj.MT_dipho_met_= ttHVars["MT_dipho_met"];
+                tag_obj.sumPT_Had_Act_ = ttHVars["sumPT_Had_Act"];
                 StandardizeHLF();
                 
                 //10 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',

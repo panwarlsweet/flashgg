@@ -138,13 +138,18 @@ class DoubleHCustomize():
             "ttH_phijet1 := phijet1()",
             "ttH_phijet2 := phijet2()",
             "ttDecay_ID := ttDecay_ID()",
-            "ttX_DeepJet_CTag_Jet1 := Cdiscr_jet1()",
-            "ttX_DeepJet_CTag_Jet2 := Cdiscr_jet2()",
-            "ttX_DeepJet_CvsL_Jet1 := CvsLdiscr_jet1()",
-            "ttX_DeepJet_CvsL_Jet2 := CvsLdiscr_jet2()",
+            "ttX_DeepJet_CTag_Jet1 := deepjetCdiscr_jet1()",
+            "ttX_DeepJet_CTag_Jet2 := deepjetCdiscr_jet2()",
+            "ttX_DeepJet_CvsL_Jet1 := deepjetCvsLdiscr_jet1()",
+            "ttX_DeepJet_CvsL_Jet2 := deepjetCvsLdiscr_jet2()",
+            "ttX_DeepCSV_CTag_Jet1 := deepcsvCdiscr_jet1()",
+            "ttX_DeepCSV_CTag_Jet2 := deepcsvCdiscr_jet2()",
+            "ttX_DeepCSV_CvsL_Jet1 := deepcsvCvsLdiscr_jet1()",
+            "ttX_DeepCSV_CvsL_Jet2 := deepcsvCvsLdiscr_jet2()",
             "ttX_MT_leadpho_met := MT_leadpho_met()",
             "ttX_MT_subleadpho_met := MT_subleadpho_met()",
             "ttX_MT_dipho_met := MT_dipho_met()",
+            "sumPT_Had_Act := sumPT_Had_Act()",
             ]
         
         if self.customize.doDoubleHttHKiller : 

@@ -54,7 +54,7 @@ namespace flashgg {
         double eventNumber() const { return eventNumber_; }
 
         float ttHScore_;
-        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, ttDecay_ID_, Cdiscr_jet1_, Cdiscr_jet2_, CvsLdiscr_jet1_, CvsLdiscr_jet2_, MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_; 
+        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_; 
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
         float phiMET() const {return phiMET_;}
@@ -89,13 +89,18 @@ namespace flashgg {
         float fabs_CosThetaStar_CS() const {return fabs_CosThetaStar_CS_;}
         float fabs_CosTheta_bb() const {return fabs_CosTheta_bb_;}
         int ttDecay_ID() const {return ttDecay_ID_;}
-        float Cdiscr_jet1() const {return Cdiscr_jet1_;}
-        float Cdiscr_jet2() const {return Cdiscr_jet2_;}
-        float CvsLdiscr_jet1() const {return CvsLdiscr_jet1_;}
-        float CvsLdiscr_jet2() const {return CvsLdiscr_jet2_;}
+        float deepjetCdiscr_jet1() const {return deepjetCdiscr_jet1_;}
+        float deepjetCdiscr_jet2() const {return deepjetCdiscr_jet2_;}
+        float deepjetCvsLdiscr_jet1() const {return deepjetCvsLdiscr_jet1_;}
+        float deepjetCvsLdiscr_jet2() const {return deepjetCvsLdiscr_jet2_;}
+        float deepcsvCdiscr_jet1() const {return deepcsvCdiscr_jet1_;}
+        float deepcsvCdiscr_jet2() const {return deepcsvCdiscr_jet2_;}
+        float deepcsvCvsLdiscr_jet1() const {return deepcsvCvsLdiscr_jet1_;}
+        float deepcsvCvsLdiscr_jet2() const {return deepcsvCvsLdiscr_jet2_;}
         float MT_leadpho_met() const {return MT_leadpho_met_;}
         float MT_subleadpho_met() const {return MT_subleadpho_met_;}
         float MT_dipho_met() const {return MT_dipho_met_;}
+        float sumPT_Had_Act() const {return sumPT_Had_Act_;}
 
     private:
         double mva_, MX_, genMhh_;
