@@ -14,7 +14,7 @@
    cmsenv
    git cms-init
    cd $CMSSW_BASE/src 
-   git clone -b dev_legacy_runII https://github.com/cms-analysis/flashgg 
+   git clone -b ttXKiller_variables git@github.com:panwarlsweet/flashgg.git
    source flashgg/setup_flashgg.sh
    #+END_EXAMPLE
 
@@ -32,7 +32,7 @@
    voms-proxy-init -voms cms --valid 168:00
    cp /tmp/MYPROXY ~/
    export X509_USER_PROXY=~/MYPROXY
-   fggRunJobs.py --load legacy_runII_v1_YEAR.json -d test_legacy_YEAR workspaceStd.py -n 300 -q workday --no-copy-proxy
+   fggRunJobs.py --load TT.json -d ttX_ttXkiller flashgg/Systematics/test/workspaceStd.py maxEvents=-1 doubleHTagsOnly=True doDoubleHTag=True doBJetRegression=True doSystematics=False doPdfWeights=False dumpWorkspace=False dumpTrees=True useAAA=1 metaConditions=/afs/cern.ch/work/l/lata/HHbbgg_analysis/CMSSW_10_5_0/src/flashgg/MetaData/data/MetaConditions/Era2016_RR-17Jul2018_v1.json doDoubleHttHKiller=True ttHKillerSaveInputVariables=True -n 5000  -q tomorrow --no-copy-proxy --no-use-tarball 
    #+END_EXAMPLE
 
    *Note: 2018 workflow is just a skeleton, only scales and smearings are known to be correct.*
