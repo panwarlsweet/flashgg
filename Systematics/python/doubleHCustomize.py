@@ -138,12 +138,12 @@ class DoubleHCustomize():
             "ttH_phijet1 := phijet1()",
             "ttH_phijet2 := phijet2()",
             "ttDecay_ID := ttDecay_ID()",
-            "ttX_DeepJet_CTag_Jet1 := deepjetCdiscr_jet1()",
-            "ttX_DeepJet_CTag_Jet2 := deepjetCdiscr_jet2()",
+            "ttX_DeepJet_CvsB_Jet1 := deepjetCdiscr_jet1()",
+            "ttX_DeepJet_CvsB_Jet2 := deepjetCdiscr_jet2()",
             "ttX_DeepJet_CvsL_Jet1 := deepjetCvsLdiscr_jet1()",
             "ttX_DeepJet_CvsL_Jet2 := deepjetCvsLdiscr_jet2()",
-            "ttX_DeepCSV_CTag_Jet1 := deepcsvCdiscr_jet1()",
-            "ttX_DeepCSV_CTag_Jet2 := deepcsvCdiscr_jet2()",
+            "ttX_DeepCSV_CvsB_Jet1 := deepcsvCdiscr_jet1()",
+            "ttX_DeepCSV_CvsB_Jet2 := deepcsvCdiscr_jet2()",
             "ttX_DeepCSV_CvsL_Jet1 := deepcsvCvsLdiscr_jet1()",
             "ttX_DeepCSV_CvsL_Jet2 := deepcsvCvsLdiscr_jet2()",
             "ttX_MT_leadpho_met := MT_leadpho_met()",
@@ -226,6 +226,7 @@ class DoubleHCustomize():
         self.process.flashggDoubleHTag.ttHKiller_std = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_std"])
         self.process.flashggDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_listmean"])
         self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
+        self.process.flashggDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
 
         ## remove single Higgs tags
 

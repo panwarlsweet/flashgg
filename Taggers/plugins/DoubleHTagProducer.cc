@@ -628,18 +628,19 @@ namespace flashgg {
                         sumDeepJetCTag = deepjet_jet1 + deepjet_jet2;
                         if (sumDeepJetCTag > sumDeepJetCTag_ref) {
                             sumDeepJetCTag_ref = sumDeepJetCTag;
-                            ttHVars["deepjetCdiscr_jet1"]=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+                            ttHVars["deepjetCdiscr_jet1"]=jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probb") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:probbb") + jet_1->bDiscriminator("mini_pfDeepFlavourJetTags:problepb") );
                             ttHVars["deepjetCvsLdiscr_jet1"]= deepjet_jet1;
-                            ttHVars["deepjetCdiscr_jet2"]=jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc");
+
+                            ttHVars["deepjetCdiscr_jet2"]=jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc")/(jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probc") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probb") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:probbb") + jet_2->bDiscriminator("mini_pfDeepFlavourJetTags:problepb") );
                             ttHVars["deepjetCvsLdiscr_jet2"]=deepjet_jet2;
                         }
                         /// Highest DeepCSV C-Tagged                                                                                                                                                                                                                                      
                         sumDeepCSVCTag = deepcsv_jet1 +deepcsv_jet2;
                         if (sumDeepCSVCTag > sumDeepCSVCTag_ref) {
                             sumDeepCSVCTag_ref = sumDeepCSVCTag;
-                            ttHVars["deepcsvCdiscr_jet1"]=jet_1->bDiscriminator("pfDeepCSVJetTags:probc");
+                            ttHVars["deepcsvCdiscr_jet1"]=jet_1->bDiscriminator("pfDeepCSVJetTags:probc")/(jet_1->bDiscriminator("pfDeepCSVJetTags:probc") + jet_1->bDiscriminator("pfDeepCSVJetTags:probb") + jet_1->bDiscriminator("pfDeepCSVJetTags:probbb"));
                             ttHVars["deepcsvCvsLdiscr_jet1"]= deepcsv_jet1;
-                            ttHVars["deepcsvCdiscr_jet2"]=jet_2->bDiscriminator("pfDeepCSVJetTags:probc");
+                            ttHVars["deepcsvCdiscr_jet2"]=jet_2->bDiscriminator("pfDeepCSVJetTags:probc")/(jet_2->bDiscriminator("pfDeepCSVJetTags:probc") + jet_2->bDiscriminator("pfDeepCSVJetTags:probb") + jet_2->bDiscriminator("pfDeepCSVJetTags:probbb"));
                             ttHVars["deepcsvCvsLdiscr_jet2"]=deepcsv_jet2;
                         }
                     }

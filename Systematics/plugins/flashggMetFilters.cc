@@ -3,7 +3,7 @@
 flashggMetFilters::flashggMetFilters(const edm::ParameterSet& iConfig)
 {
     filtersInputTag = iConfig.getParameter<InputTag>("filtersInputTag");
-    filtersToken = consumes<edm::TriggerResults>(edm::InputTag(filtersInputTag.label(), "", "PAT")); 
+    filtersToken = consumes<edm::TriggerResults>(edm::InputTag(filtersInputTag.label(), "", "FLASHggMicroAOD")); 
 
     requiredFilterNames = iConfig.getUntrackedParameter<std::vector<std::string>>("requiredFilterNames");
 }
