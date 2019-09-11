@@ -542,13 +542,13 @@ namespace flashgg {
                                 if( ( (fabs(dpdgidW1[0])==4||fabs(dpdgidW1[1])==4) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15) ) or ( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==4||fabs(dpdgidW2[1])==4) ) ){ // looking for W->cs W->tau nu                                                                                                
                                     ttHVars["ttDecay_ID"]=203;
                                 }
-                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==11||fabs(dpdgidW2[1])==11) ) or ( (fabs(dpdgidW1[0])==11||fabs(dpdgidW1[1])==11) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->cs W->e nu                                                                                                  
+                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==11||fabs(dpdgidW2[1])==11) ) or ( (fabs(dpdgidW1[0])==11||fabs(dpdgidW1[1])==11) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->ud W->e nu                                                                                                  
                                     ttHVars["ttDecay_ID"]=204;
                                 }
-                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==13||fabs(dpdgidW2[1])==13) ) or ( (fabs(dpdgidW1[0])==13||fabs(dpdgidW1[1])==13) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->cs W->mu nu                                                                                                
+                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==13||fabs(dpdgidW2[1])==13) ) or ( (fabs(dpdgidW1[0])==13||fabs(dpdgidW1[1])==13) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->ud W->mu nu                                                                                                
                                     ttHVars["ttDecay_ID"]=205;
                                 }
-                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15) ) or ( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->cs W->tau nu                                                                                                
+                                if( ( (fabs(dpdgidW1[0])==2||fabs(dpdgidW1[1])==2) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15) ) or ( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==2||fabs(dpdgidW2[1])==2) ) ){ // looking for W->ud W->tau nu                                                                                                
                                     ttHVars["ttDecay_ID"]=206;
                                 }
                                 // tt->Fully leptonic decay mode                                                                                                                                                                                                                                                                                                                
@@ -570,7 +570,7 @@ namespace flashgg {
                                     ttHVars["ttDecay_ID"]=105;
                                 }
                                 if( (fabs(dpdgidW1[0])==15||fabs(dpdgidW1[1])==15) and (fabs(dpdgidW2[0])==15||fabs(dpdgidW2[1])==15)){
-                                    // looking for W->mu nu W->mu nu                                                                                                                                                                                                                                                                                                            
+                                    // looking for W->tau nu W->tau nu                                                                                                                                                                                                                                                                                                            
                                     ttHVars["ttDecay_ID"]=106;
                                 }
                             }
