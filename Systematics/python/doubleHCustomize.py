@@ -167,7 +167,7 @@ class DoubleHCustomize():
 
 
     def systematicVariables(self):
-      systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()"]
+      systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()","EGMLeadingPhotonIDMVA := diPhoton.leadingPhoton.userFloat('EGMPhotonMVA')","EGMLeadingPhotonIDMVA := diPhoton.leadingPhoton.userFloat('EGMPhotonMVA')","leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE","subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE","sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))"]
       
       if self.customize.doubleHReweight > 0: 
          for num in range(0,12):  #12 benchmarks
@@ -314,22 +314,22 @@ class DoubleHCustomize():
                         "mhh := sqrt( pow(energy+dijet.energy,2) - pow(px+dijet.px,2) - pow(py+dijet.py,2) - pow(pz+dijet.pz,2))",                    
 
 
-                        "leadPho_px := leadingPhoton.px",
-                        "leadPho_py := leadingPhoton.py",
-                        "leadPho_pz := leadingPhoton.pz",
+                        "leadPho_pt := leadingPhoton.pt",
+                        "leadPho_eta := leadingPhoton.eta",
+                        "leadPho_phi := leadingPhoton.phi",
                         "leadPho_e  := leadingPhoton.energy",
-                        "subleadPho_px := subLeadingPhoton.px",
-                        "subleadPho_py := subLeadingPhoton.py",
-                        "subleadPho_pz := subLeadingPhoton.pz",
+                        "subleadPho_pt := subLeadingPhoton.pt",
+                        "subleadPho_eta := subLeadingPhoton.eta",
+                        "subleadPho_phi := subLeadingPhoton.phi",
                         "subleadPho_e  := subLeadingPhoton.energy",
 
-                        "leadJet_px := leadingJet.px",
-                        "leadJet_py := leadingJet.py",
-                        "leadJet_pz := leadingJet.pz",
+                        "leadJet_pt := leadingJet.pt",
+                        "leadJet_eta := leadingJet.eta",
+                        "leadJet_phi := leadingJet.phi",
                         "leadJet_e  := leadingJet.energy",
-                        "subleadJet_px := subLeadingJet.px",
-                        "subleadJet_py := subLeadingJet.py",
-                        "subleadJet_pz := subLeadingJet.pz",
+                        "subleadJet_pt := subLeadingJet.pt",
+                        "subleadJet_eta := subLeadingJet.eta",
+                        "subleadJet_phi := subLeadingJet.phi",
                         "subleadJet_e  := subLeadingJet.energy",
 
                         ]
