@@ -110,8 +110,8 @@
     "doubleHTag":
     {
 	"jetID" : "Loose",
-	"weightsFile" : "flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml",
-	"MVAFlatteningFileName" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017.root",
+	"weightsFile" : "flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml",
+	"MVAFlatteningFileName" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root",
 	"MVAscalingValue" : 1.0,
 	"NodesReweightingFileName" : "flashgg/Taggers/data/HHTagger/HHreweight_2016nodes_08072019.root",
         "ttHWeightfile" : "flashgg/Taggers/data/ttHKiller/Keras2017_converted_allnode.pb",
