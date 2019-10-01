@@ -248,6 +248,10 @@ if customize.doDoubleHTag:
     hhc = flashgg.Systematics.doubleHCustomize.DoubleHCustomize(process, customize, customize.metaConditions)
     minimalVariables += hhc.variablesToDump()
     systematicVariables = hhc.systematicVariables()
+#####################################Only if needed, tmp fix for Data#########################
+    if customize.processId == "Data":
+         minimalNonSignalVariables += hhc.variablesToDumpData()
+###################################################################################################
 
 process.flashggTHQLeptonicTag.processId = cms.string(str(customize.processId))
 

@@ -103,7 +103,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                       # here the syntax is VarNameInTMVA := expression
                       [
-                       "Mjj := dijet().M()",
+#                       "Mjj := dijet().M()",
                        "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
                        "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
                        "absCosThetaStar_CS := abs(getCosThetaStar_CS)",
