@@ -14,7 +14,7 @@
    cmsenv
    git cms-init
    cd $CMSSW_BASE/src 
-   git clone -b Run2_setup git@github.com:panwarlsweet/flashgg.git
+   git clone -b mass_regression git@github.com:panwarlsweet/flashgg.git
    source flashgg/setup_flashgg.sh
    #+END_EXAMPLE
 
