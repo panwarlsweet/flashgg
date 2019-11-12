@@ -42,9 +42,9 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    PhotonIDCut = cms.double(0.2),#this is loose id for 2016
                                    PhotonElectronVeto =cms.untracked.vint32(1, 1), #0: Pho1, 1: Pho2
 
-                                   MinJetPt   = cms.double(25.),
+                                   MinJetPt   = cms.double(0.),
                                    MaxJetEta  = cms.double(MaxJetEta),
-                                   MJJBoundaries = cms.vdouble(70.,190.),
+                                   MJJBoundaries = cms.vdouble(0.,2000.),
                                    #BTagType = cms.vstring('pfDeepCSVJetTags:probb','pfDeepCSVJetTags:probbb'), #string for btag algorithm
                                    BTagType = cms.vstring('mini_pfDeepFlavourJetTags:probb','mini_pfDeepFlavourJetTags:probbb','mini_pfDeepFlavourJetTags:problepb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),
@@ -82,6 +82,12 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    VertexTag=cms.InputTag('offlineSlimmedPrimaryVertices'),
                                    METTag=cms.InputTag('flashggMets'),
                                    rhoTag = cms.InputTag('fixedGridRhoFastjetAll'),
+
+                                   reg_genpar=cms.InputTag('flashggPrunedGenParticles'),
+                                   genjets=cms.InputTag('slimmedGenJets'),
+                                   nus=cms.InputTag('flashggGenNeutrinos'),
+                                   genpho=cms.InputTag('flashggGenPhotonsExtra'),
+                                   
                                    looseLeptonPtThreshold = cms.double(10.),
                                    muonEtaThreshold = cms.double(2.4),
                                    muPFIsoSumRelThreshold = cms.double(0.25),

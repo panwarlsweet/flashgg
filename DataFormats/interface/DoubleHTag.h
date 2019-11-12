@@ -54,7 +54,7 @@ namespace flashgg {
         double eventNumber() const { return eventNumber_; }
 
         float ttHScore_;
-        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_; 
+        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_, mbbNu_, mbbNoNu_, recoJet_1_pt_, recoJet_1_eta_, recoJet_1_phi_, recoJet_1_mass_, recoJet_1_e_, recoJet_1_DeepCSV_, recoJet_1_DeepJet_, recoJet_2_pt_, recoJet_2_eta_, recoJet_2_phi_, recoJet_2_mass_, recoJet_2_e_, recoJet_2_DeepCSV_, recoJet_2_DeepJet_, reco_mjj_, reco_MET_, reco_phiMET_, reco_Mbbgg_, nbGenJetsNu_, nGenJets_, nNus_, bgenJetNoNu_1_pt_, bgenJetNoNu_2_pt_, bgenJetNu_1_pt_, bgenJetNu_2_pt_; 
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
         float phiMET() const {return phiMET_;}
@@ -101,6 +101,33 @@ namespace flashgg {
         float MT_subleadpho_met() const {return MT_subleadpho_met_;}
         float MT_dipho_met() const {return MT_dipho_met_;}
         float sumPT_Had_Act() const {return sumPT_Had_Act_;}
+        float reg_mbbNu() const {return mbbNu_;}
+        float reg_mbbNoNu() const {return mbbNoNu_;}
+        float reg_bgenJetNoNu_1_pt() const {return bgenJetNoNu_1_pt_;}
+        float reg_bgenJetNoNu_2_pt() const {return bgenJetNoNu_2_pt_;}
+        float reg_bgenJetNu_1_pt() const {return bgenJetNu_1_pt_;}
+        float reg_bgenJetNu_2_pt() const {return bgenJetNu_2_pt_;}
+        float reg_reco_mjj() const {return reco_mjj_;}
+        float reg_recoJet_1_pt() const {return recoJet_1_pt_;}
+        float reg_recoJet_1_eta() const {return recoJet_1_eta_;}
+        float reg_recoJet_1_phi() const {return recoJet_1_phi_;}
+        float reg_recoJet_1_e() const {return recoJet_1_e_;}
+        float reg_recoJet_1_DeepCSV() const {return recoJet_1_DeepCSV_;}
+        float reg_recoJet_1_DeepJet() const {return recoJet_1_DeepJet_;}
+        float reg_recoJet_1_mass() const {return recoJet_1_mass_;}
+        float reg_recoJet_2_pt() const {return recoJet_2_pt_;}
+        float reg_recoJet_2_eta() const {return recoJet_2_eta_;}
+        float reg_recoJet_2_phi() const {return recoJet_2_phi_;}
+        float reg_recoJet_2_e() const {return recoJet_2_e_;}
+        float reg_recoJet_2_mass() const {return recoJet_2_mass_;}
+        float reg_recoJet_2_DeepCSV() const {return recoJet_2_DeepCSV_;}
+        float reg_recoJet_2_DeepJet() const {return recoJet_2_DeepJet_;}
+        float reg_MET() const {return reco_MET_;}
+        float reg_MET_phi() const {return reco_phiMET_;}
+        float reg_reco_Mbbgg() const {return reco_Mbbgg_;}
+        float nGenJets() const {return nGenJets_;}
+        float nbGenJetsNu() const {return nbGenJetsNu_;}
+        float nNus() const {return nNus_;}
 
     private:
         double mva_, MX_, genMhh_;
