@@ -126,7 +126,7 @@
     "doubleHTag":
     {
 	"jetID" : "Tight2017",
-        "weightsFile" : "flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml",
+        "weightsFile" : "flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml",
         "MVAFlatteningFileName" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root",
 	"MVAscalingValue" :1.011026,
 	"NodesReweightingFileName" : "flashgg/Taggers/data/HHTagger/HHreweight_2017nodes_08072019.root",
