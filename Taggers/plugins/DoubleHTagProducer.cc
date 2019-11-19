@@ -406,13 +406,7 @@ namespace flashgg {
                 auto ipart = genParts->ptrAt(ip);
                 if( ipart->motherRefVector().size() == 0 ) { continue; }
                 bool higgschild = false;
-                for( auto mom : ipart->motherRefVector() ) {
-                    if( mom->pdgId() == 25 ) { 
-                        higgschild  = true;
-                        break;
-                    }
-                }
-                if( ! higgschild ) { continue; }
+                
                 if( ipart->pdgId() == 5 && bq.isNull() ) { bq = ipart; }
                 else if( ipart->pdgId() == -5 && bbarq.isNull() ) { bbarq = ipart; } // FIXME handle duplicates
             }
