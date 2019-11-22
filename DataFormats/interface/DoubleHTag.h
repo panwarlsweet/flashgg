@@ -36,6 +36,30 @@ namespace flashgg {
 
         const flashgg::Jet & leadJet() const { return *leadJet_; } 
         const flashgg::Jet & subleadJet() const { return *subleadJet_; } 
+      //Addition for the VBFHH analysis: *********************************
+        void setdijetVBF_mass(double x) { dijetVBF_mass_ = x;}
+        double dijetVBF_mass() const {return dijetVBF_mass_ ;}
+        void setDelta_eta( double x) { Delta_eta_ = x; }
+        double Delta_eta() const {return Delta_eta_;}
+        void setN_jet(double x) {N_ = x;}
+        double N() const {return N_ ;}
+        void setDeepCSV_lead(double x) { DeepCSV_lead_ = x;}
+        double DeepCSV_lead() const {return DeepCSV_lead_ ;}
+        void setDeepCSV_sublead(double x) { DeepCSV_sublead_ = x;}
+        double DeepCSV_sublead() const {return DeepCSV_sublead_ ;}
+        void setleadVBF_eta(double x) { leadVBF_eta_ = x;}
+        double leadVBF_eta() const {return leadVBF_eta_;}
+        void setsubleadVBF_eta(double x) { subleadVBF_eta_ = x;}
+        double subleadVBF_eta() const {return subleadVBF_eta_;}
+        void setleadVBF_phi(double x) { leadVBF_phi_ = x;}
+        double leadVBF_phi() const {return leadVBF_phi_;}
+        void setsubleadVBF_phi(double x) { subleadVBF_phi_ = x;}
+        double subleadVBF_phi() const {return subleadVBF_phi_;}
+        void setleadVBF_pt(double x) { leadVBF_pt_ = x;}
+        double leadVBF_pt() const {return leadVBF_pt_;}
+        void setsubleadVBF_pt(double x) { subleadVBF_pt_ = x;}
+        double subleadVBF_pt() const {return subleadVBF_pt_;}
+       //*****************************************************************
         
         const LorentzVector & dijet() const { return dijet_; }
 
@@ -103,7 +127,7 @@ namespace flashgg {
         float sumPT_Had_Act() const {return sumPT_Had_Act_;}
 
     private:
-        double mva_, MX_, genMhh_;
+        double mva_, MX_, genMhh_, dijetVBF_mass_, Delta_eta_, N_, DeepCSV_lead_, DeepCSV_sublead_, leadVBF_eta_, subleadVBF_eta_, leadVBF_phi_, subleadVBF_phi_, leadVBF_pt_, subleadVBF_pt_;
         vector<float> benchmark_reweights_;
  //       std::vector<float> mva_prob_;
          long eventNumber_;
