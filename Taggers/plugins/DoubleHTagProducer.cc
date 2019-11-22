@@ -516,7 +516,7 @@ namespace flashgg {
             //dijet pair selection. Do pair according to pt and choose the pair with highest b-tag
             double sumbtag_ref = -999;
             bool hasDijet = false;
-            edm::Ptr<flashgg::Jet>  jet1, jet2;
+            edm::Ptr<flashgg::Jet>  jet1, jet2, jet3, jet4;
             for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
                 auto jet_1 = cleaned_jets[ijet];
                 for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
@@ -538,7 +538,56 @@ namespace flashgg {
 
             auto & leadJet = jet1; 
             auto & subleadJet = jet2; 
- 
+           // These addition is corresponding to the VBFHH analysis: 
+           // The varivbles are : Number of Jets, Forward lead & sublead jet eta, pt and phi, dijet mass and their eta difference. 
+            double dijetVBF_mass = -10.0;
+            double Delta_eta = -10.0;
+            double DeepCSV_lead= -2.0;
+            double DeepCSV_sublead= -2.0;
+            double leadVBF_eta= -10.0;
+            double subleadVBF_eta= -10.0;
+            double leadVBF_pt= 0.0;
+            double subleadVBF_pt= 0.0;
+            double leadVBF_phi=0.0;
+            double subleadVBF_phi=0.0;
+            double N=0;
+            if(hasDijet){
+            for( size_t ijet=0; ijet < jets->size()-1; ++ijet ){
+                auto jet_5 = jets->ptrAt(ijet);
+                if(jet_5->pt()>minJetPt_ && jet_5->eta()<5 ){
+                        N++;
+                  }
+               }
+cout << "Number of Jets" << N << endl;
+           if(jets->size() >=4){
+             for( size_t ijet=0; ijet < jets->size()-1; ++ijet ){
+                auto jet_3 = jets->ptrAt(ijet);
+             for( size_t kjet=ijet+1; kjet < jets->size(); ++kjet ){
+                auto jet_4 = jets->ptrAt(kjet);
+                   if(jet_3->pt()>minJetPt_ && jet_4->pt()>minJetPt_){
+                   if(jet_3->eta()<5 && jet_4->eta()<5 ){
+                   if(jet_3 != jet1 || jet_3 != jet2) {
+                   if(jet_4 != jet1 || jet_4 != jet2) {
+                       auto temp_dijetVBF_mass = (jet_3->p4()+jet_4->p4()).mass();
+                          if (temp_dijetVBF_mass > dijetVBF_mass) {
+                             dijetVBF_mass= temp_dijetVBF_mass;
+                             jet3 = jet_3;
+                             jet4 = jet_4;
+                            } }} }}
+                        }
+                      }
+    Delta_eta=abs(jet3->eta()-jet4->eta());
+    cout << jet3->bDiscriminator(bTagType_[0]) << endl;
+    DeepCSV_lead= jet3->bDiscriminator(bTagType_[0])+jet3->bDiscriminator(bTagType_[1]);
+    DeepCSV_sublead= jet4->bDiscriminator(bTagType_[0])+jet4->bDiscriminator(bTagType_[1]);
+    leadVBF_eta=jet3->eta();
+    subleadVBF_eta=jet4->eta();
+    leadVBF_phi=jet3->phi();
+    subleadVBF_phi=jet4->phi();
+    leadVBF_pt=jet3->pt();
+    subleadVBF_pt=jet4->pt();
+            }
+}
             // prepare tag object
             DoubleHTag tag_obj( dipho, leadJet, subleadJet );
             tag_obj.setDiPhotonIndex( candIndex );
@@ -552,6 +601,19 @@ namespace flashgg {
             // compute extra variables here
             tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass() - tag_obj.diPhoton()->mass() + 250. );
             tag_obj.setGenMhh( genMhh );
+            //Addition for the VBFHH analysis:
+            tag_obj.setdijetVBF_mass( dijetVBF_mass );
+            tag_obj.setDelta_eta( Delta_eta );
+            tag_obj.setDeepCSV_lead( DeepCSV_lead);
+            tag_obj.setDeepCSV_sublead( DeepCSV_sublead);
+            tag_obj.setleadVBF_eta( leadVBF_eta );
+            tag_obj.setsubleadVBF_eta( subleadVBF_eta );
+            tag_obj.setleadVBF_pt( leadVBF_pt );
+            tag_obj.setsubleadVBF_pt( subleadVBF_pt);
+            tag_obj.setleadVBF_phi( leadVBF_phi);
+            tag_obj.setsubleadVBF_phi( subleadVBF_phi);
+            tag_obj.setN_jet(N);
+            //***************************************
             if (doReweight_>0) tag_obj.setBenchmarkReweight( reweight_values );
             
             if(doSigmaMDecorr_){

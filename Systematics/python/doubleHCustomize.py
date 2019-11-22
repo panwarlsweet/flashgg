@@ -85,6 +85,19 @@ class DoubleHCustomize():
             "subleadingJet_mass := subleadJet().p4().M()",
             "subleadingJet_hflav := subleadJet().hadronFlavour()",
             "subleadingJet_pflav := subleadJet().partonFlavour()",
+            #Addition of Variables for the VBFHH analysis.
+            "VBF_mjj := dijetVBF_mass()",
+            "Delta_eta_VBF_jet := Delta_eta()",
+            "DeepCSV_lead := DeepCSV_lead()",
+            "DeepCSV_sublead := DeepCSV_sublead()",
+            "leadVBF_pt := leadVBF_pt()",
+            "subleadVBF_pt := subleadVBF_pt()",
+            "leadVBF_eta := leadVBF_eta()",
+            "subleadVBF_eta := subleadVBF_eta()",
+            "leadVBF_phi := leadVBF_phi()",
+            "subleadVBF_phi := subleadVBF_phi()",
+            "N_jet := N()",
+
         ]
         if self.customize.doBJetRegression : variables +=[
                 "leadingJet_bRegNNCorr := leadJet().userFloat('bRegNNCorr')",
@@ -242,7 +255,19 @@ class DoubleHCustomize():
             "subleadingJet_mass := subleadJet().p4().M()",
             "subleadingJet_hflav := subleadJet().hadronFlavour()",
             "subleadingJet_pflav := subleadJet().partonFlavour()",
-             ]
+            #Addtion of the variables for the VBFHH analysis. 
+            "VBF_mjj := dijetVBF_mass()",
+            "Delta_eta_VBF_jet := Delta_eta()",
+            "DeepCSV_lead := DeepCSV_lead()",
+            "DeepCSV_sublead := DeepCSV_sublead()",
+            "leadVBF_pt := leadVBF_pt()",
+            "subleadVBF_pt := subleadVBF_pt()",
+            "leadVBF_eta := leadVBF_eta()",
+            "subleadVBF_eta := subleadVBF_eta()",
+            "leadVBF_phi := leadVBF_phi()",
+            "subleadVBF_phi := subleadVBF_phi()",
+            "N_jet := N()",
+           ]
         if self.customize.doDoubleHttHKiller : variables +=[
             "ttHScore := ttHScore()",
            ]
