@@ -23,6 +23,14 @@
 
 #include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
 
+#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/Common/interface/Ptr.h"
+#include "DataFormats/Candidate/interface/LeafCandidate.h"
+#include "flashgg/DataFormats/interface/GenPhotonExtra.h"
+#include "flashgg/DataFormats/interface/GenDiPhoton.h"
+#include "DataFormats/Math/interface/deltaR.h"
+
 #include <vector>
 #include <algorithm>
 #include "TGraph.h"
@@ -41,6 +49,7 @@ namespace flashgg {
         DoubleHTagProducer( const ParameterSet & );
     private:
         void produce( Event &, const EventSetup & ) override;
+        reco::GenJet addNeutrinos( const reco::GenJet &, const View<reco::Candidate> &);
         int chooseCategory( float mva, float mx );
         float EvaluateNN();
         bool isclose(double a, double b, double rel_tol, double abs_tol);        
@@ -57,9 +66,14 @@ namespace flashgg {
         std::vector<edm::EDGetTokenT<edm::View<DiPhotonCandidate> > > diPhotonTokens_;
 
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
+        EDGetTokenT<View<reco::GenParticle> > genPartToken_;
+        EDGetTokenT<View<reco::GenJet> > genJetToken_;
+        EDGetTokenT<View<reco::Candidate> > genNuToken_;
+        EDGetTokenT<View<GenPhotonExtra> > genPhotonToken_;
 
         std::vector< std::string > systematicsLabels;
         std::map<std::string, float> ttHVars;
+        std::map<std::string, float> MRegVars;
 
         double minLeadPhoPt_, minSubleadPhoPt_;
         bool scalingPtCuts_, doPhotonId_, doMVAFlattening_, doCategorization_, dottHTagger_;
@@ -126,11 +140,17 @@ namespace flashgg {
         tensorflow::GraphDef* graphDef_ttH;
         tensorflow::Session* session_ttH;
 
+        bool overlapRemoval_;
+
     };
 
     DoubleHTagProducer::DoubleHTagProducer( const ParameterSet &iConfig ) :
       //  diPhotonToken_( consumes<View<flashgg::DiPhotonCandidate> >( iConfig.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
         genParticleToken_( consumes<View<reco::GenParticle> >( iConfig.getParameter<InputTag> ( "GenParticleTag" ) ) ),
+        genPartToken_( consumes<View<reco::GenParticle> >( iConfig.getParameter<InputTag> ( "reg_genpar" ) ) ),
+        genJetToken_( consumes<View<reco::GenJet> >( iConfig.getParameter<InputTag> ( "genjets" ) ) ),
+        genNuToken_( consumes<View<reco::Candidate> >( iConfig.getParameter<InputTag> ( "nus" ) ) ),
+        genPhotonToken_( consumes<View<flashgg::GenPhotonExtra> >( iConfig.getParameter<InputTag> ( "genpho" ) ) ),
         minLeadPhoPt_( iConfig.getParameter<double> ( "MinLeadPhoPt" ) ),
         minSubleadPhoPt_( iConfig.getParameter<double> ( "MinSubleadPhoPt" ) ),
         scalingPtCuts_( iConfig.getParameter<bool> ( "ScalingPtCuts" ) ),
@@ -142,9 +162,14 @@ namespace flashgg {
         JetIDLevel_( iConfig.getParameter<string> ( "JetIDLevel"   ) ),
         cc_( consumesCollector() ),
         globalVariablesComputer_(iConfig.getParameter<edm::ParameterSet>("globalVariables"), cc_),
-        mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesComputer_)
-        //mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"))
+        mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesComputer_),
+        overlapRemoval_(false)
     {
+        //mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"))
+        if( iConfig.exists("overlapRemoval") ) { 
+            overlapRemoval_ = iConfig.getParameter<bool>("overlapRemoval");
+        }
+    
         mjjBoundaries_ = iConfig.getParameter<vector<double > >( "MJJBoundaries" ); 
         mvaBoundaries_ = iConfig.getParameter<vector<double > >( "MVABoundaries" );
         mxBoundaries_ = iConfig.getParameter<vector<double > >( "MXBoundaries" );
@@ -333,10 +358,14 @@ namespace flashgg {
         // prepare output
         std::unique_ptr<vector<TagTruthBase> > truths( new vector<TagTruthBase> );
         edm::RefProd<vector<TagTruthBase> > rTagTruth = evt.getRefBeforePut<vector<TagTruthBase> >();
+        std::unique_ptr<vector<reco::GenJet> > hjets( new vector<reco::GenJet> );   
+        std::unique_ptr<vector<reco::GenJet> > hjets_nonu( new vector<reco::GenJet> );
 
         // MC truth
         TagTruthBase truth_obj;
         double genMhh=0.;
+        MRegVars["nGenJets"] = -99.;
+        MRegVars["nNus"]  = -99.;
         if( ! evt.isRealData() ) {
             Handle<View<reco::GenParticle> > genParticles;
             std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
@@ -364,6 +393,59 @@ namespace flashgg {
             }
             truth_obj.setGenPV( higgsVtx );
             truths->push_back( truth_obj );
+
+            ////////// for regression: clustering of genjets with neutrinos ////////////
+            Handle<View<reco::GenParticle> > genParts;
+            evt.getByToken( genPartToken_, genParts );
+
+            Handle<View<reco::GenJet> > genjets;
+            evt.getByToken( genJetToken_, genjets );
+
+            Handle<View<reco::Candidate> > genNus;
+            evt.getByToken( genNuToken_, genNus );
+
+            MRegVars["nGenJets"] = genjets->size();
+            MRegVars["nNus"] = genNus->size();
+
+            edm::Ptr<reco::GenParticle> bq, bbarq;
+
+            for( size_t ip = 0 ; ip < genParts->size() ; ++ip ) {
+                auto ipart = genParts->ptrAt(ip);
+                if( ipart->motherRefVector().size() == 0 ) { continue; }
+    
+                if( ipart->pdgId() == 5 && bq.isNull() ) { bq = ipart; }
+                else if( ipart->pdgId() == -5 && bbarq.isNull() ) { bbarq = ipart; } // FIXME handle duplicates
+            }
+            // std::cout << "found b quarks " << bq.isNull() << " " << bbarq.isNull() << std::endl;
+
+            if( !(bq.isNull()||bbarq.isNull()) ) {
+                edm::Ptr<reco::GenJet> bj, bbarj;
+                float bjDr = 0.4, bbarjDr = 0.4; // FIXME make configurable
+                float minbbarDr = 999., minbDr = 999.;
+                for( size_t ij = 0 ; ij < genjets->size() ; ++ij ) {                
+                    auto ijet = genjets->ptrAt( ij );
+                    float bDr = reco::deltaR(*ijet,*bq);
+                    if( bDr < bjDr ) {
+                        bj = ijet;
+                        bjDr = bDr;
+                    }
+                    float bbarDr = reco::deltaR(*ijet,*bbarq);
+                    if( bbarDr < bbarjDr ) {
+                        bbarj = ijet;
+                        bbarjDr = bbarDr;
+                    }
+                    minbDr = std::min( bDr, minbDr );
+                    minbbarDr = std::min( bbarDr, minbbarDr );
+                }
+                if(! bj.isNull() ) { 
+                    hjets->push_back(addNeutrinos(*bj,*genNus));
+                    hjets_nonu->push_back(*bj);
+                }
+                if(! bbarj.isNull() ) { 
+                    hjets->push_back(addNeutrinos(*bbarj,*genNus));  
+                    hjets_nonu->push_back(*bbarj);
+                }
+            }
         }
 
       // read diphotons
@@ -549,6 +631,77 @@ cout << "Number of Jets" << N << endl;
 
             tag_obj.setEventNumber(evt.id().event() );
             tag_obj.setMVA( mva );
+
+            /////////  matching of nu clustered b-genjets with tagged reco_jets///////
+            MRegVars["nbGenJetsNu"] = -99.;
+            MRegVars["mbbNu"] = -999.;
+            MRegVars["mbbNoNu"] = -999.;
+            MRegVars["bgenJetNu_1_pt"] = -999.;
+            MRegVars["bgenJetNu_2_pt"] = -999.;
+            MRegVars["bgenJetNoNu_1_pt"] = -999.;
+            MRegVars["bgenJetNoNu_2_pt"] = -999.;
+            if( ! evt.isRealData() ) {
+
+                MRegVars["nbGenJetsNu"] = hjets->size();
+                
+                Handle<View<flashgg::GenPhotonExtra> > photons;
+                evt.getByToken( genPhotonToken_, photons );
+                std::vector<reco::GenJet>  selgenjetsnu;
+                std::vector<reco::GenJet>  selgenjets_nonu;
+                for( size_t ii = 0 ; ii < photons->size() ; ++ii ) {
+                    auto pi = photons->ptrAt( ii );
+
+                    for( size_t jj = ii + 1 ; jj < photons->size() ; ++jj ) {
+                        auto pj = photons->ptrAt( jj );
+
+                        for( size_t ij = 0 ; ij < hjets->size() ; ++ij ) {
+                            auto bjet = hjets->at(ij);
+
+                            if( ! overlapRemoval_ || 
+                                ( reco::deltaR(bjet,pi->cand()) > 0.3 
+                                  && reco::deltaR(bjet,pj->cand()) > 0.3 ) ) {
+                            
+                                selgenjetsnu.push_back(bjet);
+                                 
+                            }                            
+                        }
+                        for( size_t im = 0 ; im < hjets_nonu->size() ; ++im ) {
+                            auto bjet_nonu = hjets_nonu->at(im);
+
+                            if( ! overlapRemoval_ ||
+                                ( reco::deltaR(bjet_nonu,pi->cand()) > 0.3
+                                  && reco::deltaR(bjet_nonu,pj->cand()) > 0.3 ) ) {
+                             
+                                selgenjets_nonu.push_back(bjet_nonu);
+                         
+                            }
+                        }
+                    }
+                }
+                float dR11=0., dR12=0., dR21=0., dR22=0.;
+                if( selgenjetsnu.size() >= 2 && selgenjets_nonu.size() >= 2) {
+                    dR11 = abs(reco::deltaR(selgenjetsnu[0], *leadJet));
+                    dR12 = abs(reco::deltaR(selgenjetsnu[0], *subleadJet));
+                    dR21 = abs(reco::deltaR(selgenjetsnu[1], *leadJet));
+                    dR22 = abs(reco::deltaR(selgenjetsnu[1], *subleadJet));
+                    float dRmin1 = std::min( dR11, dR21 );
+                    float dRmin2 = std::min( dR12, dR22 );
+                    if ( dRmin1 < 0.3 && dRmin2 < 0.3 )
+                        if( (dRmin1 == dR11 && dRmin2 == dR22 ) || (dRmin1 == dR21 && dRmin2 == dR12 ) )
+                        {
+                            MRegVars["mbbNu"] = (selgenjetsnu[0].p4()+selgenjetsnu[1].p4()).M();
+                            MRegVars["mbbNoNu"] = (selgenjets_nonu[0].p4()+selgenjets_nonu[1].p4()).M();
+                            MRegVars["bgenJetNu_1_pt"] = selgenjetsnu[0].p4().pt();
+                            MRegVars["bgenJetNu_2_pt"] = selgenjetsnu[1].p4().pt();
+                            MRegVars["bgenJetNoNu_1_pt"] = selgenjets_nonu[0].p4().pt();
+                            MRegVars["bgenJetNoNu_2_pt"] = selgenjets_nonu[1].p4().pt();
+                            
+                        }
+                }
+                    
+            }
+        
+
            
 
 
@@ -861,6 +1014,12 @@ cout << "Number of Jets" << N << endl;
                 tag_obj.MT_subleadpho_met_= ttHVars["MT_subleadpho_met"];
                 tag_obj.MT_dipho_met_= ttHVars["MT_dipho_met"];
                 tag_obj.sumPT_Had_Act_ = ttHVars["sumPT_Had_Act"];
+                tag_obj.mbbNu_ = MRegVars["mbbNu"];
+                tag_obj.mbbNoNu_ = MRegVars["mbbNoNu"];
+                tag_obj.bgenJetNu_1_pt_ = MRegVars["bgenJetNu_1_pt"];
+                tag_obj.bgenJetNu_2_pt_ = MRegVars["bgenJetNu_2_pt"];
+                tag_obj.bgenJetNoNu_1_pt_ = MRegVars["bgenJetNoNu_1_pt"];
+                tag_obj.bgenJetNoNu_2_pt_ = MRegVars["bgenJetNoNu_2_pt"];
                 StandardizeHLF();
                 
                 //10 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
@@ -1055,6 +1214,24 @@ cout << "Number of Jets" << N << endl;
         return NNscore;
     }
     
+    reco::GenJet DoubleHTagProducer::addNeutrinos( const reco::GenJet & jet, const View<reco::Candidate> & nus)
+    {
+        auto p4 = jet.p4();
+        auto constituents = jet.getJetConstituents();
+        auto specific = jet.getSpecific();
+        auto vertex = jet.vertex();
+        for(size_t in = 0; in<nus.size(); in++) {
+            auto inu = nus.ptrAt(in);
+            if( reco::deltaR(*inu, jet) < 0.4 ) { // FIXME make configurable
+                constituents.push_back(inu);
+                specific.m_InvisibleEnergy += inu->energy();
+                p4 += inu->p4();
+            }
+        }
+
+        return reco::GenJet(p4,vertex,specific,constituents);
+    }
+
 }
 
 typedef flashgg::DoubleHTagProducer FlashggDoubleHTagProducer;

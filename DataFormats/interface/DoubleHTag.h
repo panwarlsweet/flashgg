@@ -78,7 +78,7 @@ namespace flashgg {
         double eventNumber() const { return eventNumber_; }
 
         float ttHScore_;
-        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_; 
+        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_, bgenJetNoNu_1_pt_, bgenJetNoNu_2_pt_, bgenJetNu_1_pt_, bgenJetNu_2_pt_, mbbNu_, mbbNoNu_; 
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
         float phiMET() const {return phiMET_;}
@@ -125,6 +125,12 @@ namespace flashgg {
         float MT_subleadpho_met() const {return MT_subleadpho_met_;}
         float MT_dipho_met() const {return MT_dipho_met_;}
         float sumPT_Had_Act() const {return sumPT_Had_Act_;}
+        float reg_mbbNu() const {return mbbNu_;}
+        float reg_mbbNoNu() const {return mbbNoNu_;}
+        float reg_bgenJetNoNu_1_pt() const {return bgenJetNoNu_1_pt_;}
+        float reg_bgenJetNoNu_2_pt() const {return bgenJetNoNu_2_pt_;}
+        float reg_bgenJetNu_1_pt() const {return bgenJetNu_1_pt_;}
+        float reg_bgenJetNu_2_pt() const {return bgenJetNu_2_pt_;}
 
     private:
         double mva_, MX_, genMhh_, dijetVBF_mass_, Delta_eta_, N_, DeepCSV_lead_, DeepCSV_sublead_, leadVBF_eta_, subleadVBF_eta_, leadVBF_phi_, subleadVBF_phi_, leadVBF_pt_, subleadVBF_pt_;
