@@ -91,7 +91,14 @@ class DoubleHCustomize():
                 "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
                 "subleadingJet_bRegNNCorr := subleadJet().userFloat('bRegNNCorr')",
                 "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
-                "sigmaMJets := getSigmaMOverMJets()"
+                "sigmaMJets := getSigmaMOverMJets()",
+                "mbbNu := reg_mbbNu()",
+                "mbbNoNu := reg_mbbNoNu()",
+                "bgenJetNu_1_pt := reg_bgenJetNu_1_pt()",
+                "bgenJetNu_2_pt := reg_bgenJetNu_2_pt()",
+                "bgenJetNoNu_1_pt := reg_bgenJetNoNu_1_pt()",
+                "bgenJetNoNu_2_pt := reg_bgenJetNoNu_2_pt()",
+
         ]
         if self.customize.doubleHReweight > 0: 
             for num in range(0,12):  #12 benchmarks + 1 SM
