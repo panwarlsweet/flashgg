@@ -76,6 +76,7 @@ class DoubleHCustomize():
             "leadingJet_eta := leadJet().eta",
             "leadingJet_phi := leadJet().phi",
             "leadingJet_mass := leadJet().p4().M()",
+            "leadingJet_e := leadJet().energy",
             "leadingJet_hflav := leadJet().hadronFlavour()",
             "leadingJet_pflav := leadJet().partonFlavour()",
 
@@ -83,6 +84,7 @@ class DoubleHCustomize():
             "subleadingJet_eta := subleadJet().eta",
             "subleadingJet_phi := subleadJet().phi",
             "subleadingJet_mass := subleadJet().p4().M()",
+            "subleadingJet_e := subleadJet().energy",
             "subleadingJet_hflav := subleadJet().hadronFlavour()",
             "subleadingJet_pflav := subleadJet().partonFlavour()",
             #Addition of Variables for the VBFHH analysis.
@@ -250,6 +252,7 @@ class DoubleHCustomize():
             "leadingJet_eta := leadJet().eta",
             "leadingJet_phi := leadJet().phi",
             "leadingJet_mass := leadJet().p4().M()",
+            "leadingJet_e := leadJet().energy",
             "leadingJet_hflav := leadJet().hadronFlavour()",
             "leadingJet_pflav := leadJet().partonFlavour()",
 
@@ -257,8 +260,12 @@ class DoubleHCustomize():
             "subleadingJet_eta := subleadJet().eta",
             "subleadingJet_phi := subleadJet().phi",
             "subleadingJet_mass := subleadJet().p4().M()",
+            "subleadingJet_e := subleadJet().energy",
             "subleadingJet_hflav := subleadJet().hadronFlavour()",
             "subleadingJet_pflav := subleadJet().partonFlavour()",
+            "ttH_sumET := sumET()",
+            "ttH_MET := MET()",
+            "ttH_phiMET := phiMET()",
             #Addtion of the variables for the VBFHH analysis. 
             "VBF_mjj := dijetVBF_mass()",
             "Delta_eta_VBF_jet := Delta_eta()",
