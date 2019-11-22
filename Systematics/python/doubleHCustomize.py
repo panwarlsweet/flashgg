@@ -76,6 +76,7 @@ class DoubleHCustomize():
             "leadingJet_eta := leadJet().eta",
             "leadingJet_phi := leadJet().phi",
             "leadingJet_mass := leadJet().p4().M()",
+            "leadingJet_e := leadJet().energy",
             "leadingJet_hflav := leadJet().hadronFlavour()",
             "leadingJet_pflav := leadJet().partonFlavour()",
 
@@ -83,6 +84,7 @@ class DoubleHCustomize():
             "subleadingJet_eta := subleadJet().eta",
             "subleadingJet_phi := subleadJet().phi",
             "subleadingJet_mass := subleadJet().p4().M()",
+            "subleadingJet_e := subleadJet().energy",
             "subleadingJet_hflav := subleadJet().hadronFlavour()",
             "subleadingJet_pflav := subleadJet().partonFlavour()",
         ]
@@ -199,7 +201,7 @@ class DoubleHCustomize():
 	    "MX := MX()",
             "Mjj := dijet().M()",
 	    "eventNumber := eventNumber()",
-	    "MET := MET()",
+            "MET := MET()",
 	    "diHiggs_mass := getdiHiggsP4().M()",
             "leadingJet_puJetIdMVA := leadJet().puJetIdMVA()",
             "subleadingJet_puJetIdMVA := subleadJet().puJetIdMVA()",
@@ -226,6 +228,7 @@ class DoubleHCustomize():
             "leadingJet_eta := leadJet().eta",
             "leadingJet_phi := leadJet().phi",
             "leadingJet_mass := leadJet().p4().M()",
+            "leadingJet_e := leadJet().energy",
             "leadingJet_hflav := leadJet().hadronFlavour()",
             "leadingJet_pflav := leadJet().partonFlavour()",
 
@@ -233,8 +236,12 @@ class DoubleHCustomize():
             "subleadingJet_eta := subleadJet().eta",
             "subleadingJet_phi := subleadJet().phi",
             "subleadingJet_mass := subleadJet().p4().M()",
+            "subleadingJet_e := subleadJet().energy",
             "subleadingJet_hflav := subleadJet().hadronFlavour()",
             "subleadingJet_pflav := subleadJet().partonFlavour()",
+            "ttH_sumET := sumET()",
+            "ttH_MET := MET()",
+            "ttH_phiMET := phiMET()",
              ]
         if self.customize.doDoubleHttHKiller : variables +=[
             "ttHScore := ttHScore()",
