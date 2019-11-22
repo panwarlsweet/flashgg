@@ -65,6 +65,12 @@ customize.options.register('ttHKillerSaveInputVariables',
                            VarParsing.VarParsing.varType.bool,
                            'ttHKillerSaveInputVariables'
                            )
+customize.options.register('massRegressionSaveTestVariables',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'massRegressionSaveTestVariables'
+                           )
 customize.options.register('doDoubleHGenAnalysis',
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,

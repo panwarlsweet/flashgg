@@ -105,6 +105,10 @@ class DoubleHCustomize():
                 "subleadingJet_bRegNNCorr := subleadJet().userFloat('bRegNNCorr')",
                 "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
                 "sigmaMJets := getSigmaMOverMJets()",
+
+        ]
+
+        if self.customize.massRegressionSaveTestVariables : variables +=[
                 "mbbNu := reg_mbbNu()",
                 "mbbNoNu := reg_mbbNoNu()",
                 "bgenJetNu_1_pt := reg_bgenJetNu_1_pt()",
@@ -290,6 +294,7 @@ class DoubleHCustomize():
         self.process.flashggDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_listmean"])
         self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
         self.process.flashggDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
+        self.process.flashggDoubleHTag.MRegTestVar = cms.bool(self.customize.massRegressionSaveTestVariables) 
 
         ## remove single Higgs tags
 
