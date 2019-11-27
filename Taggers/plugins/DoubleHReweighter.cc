@@ -76,7 +76,6 @@ namespace flashgg {
             if (!(hist_SM_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected SM histogram."<<std::endl;
             hist_inputMix_ = (TH2F*)f_weights_->Get("allHHNodeMap2D");
             if (!(hist_inputMix_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected input histogram for mix of nodes."<<std::endl;
-    
         for (unsigned int num=0;num<NUM_benchmarks;num++)
              if (num==(numberSMbenchmark-1)) produces<float>("benchmarkSM");
              else if (num==(numberBoxbenchmark-1)) produces<float>("benchmarkBox");
@@ -121,16 +120,16 @@ namespace flashgg {
         double c2 = benchmarks_map_.getParameter<vector<double>>("c2")[targetNode];  
         double cg = benchmarks_map_.getParameter<vector<double>>("cg")[targetNode] ;  
         double c2g = benchmarks_map_.getParameter<vector<double>>("c2g")[targetNode];  
-        double effBSM = nEvSM * functionGF(kl,kt,c2,cg,c2g,Acoeffs)/functionGF(kl,kt,c2,cg,c2g,A_13TeV_SM_);
+        double effBSM = (nEvSM * functionGF(kl,kt,c2,cg,c2g,Acoeffs))/functionGF(kl,kt,c2,cg,c2g,A_13TeV_SM_);
     
         if (effBSM/denom < 0) {
             return 0;
         } // In case of very small negative weights, which can happen
-        w = (effBSM/denom/getNormalisation(kl, kt, c2, cg, c2g, hist_inputMix_)) ;
+        w = ((effBSM/denom)/getNormalisation(kl, kt, c2, cg, c2g, hist_inputMix_)) ;
 
        return w;
     }
-
+    
     float DoubleHReweighter::getNormalisation(float kl, float kt, float c2, float cg, float c2g, TH2F* h_all)
     {
         float sumofweights = 0.;
@@ -144,7 +143,7 @@ namespace flashgg {
                 for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic){
                     Acoeffs.push_back((hists_params_[ic])->GetBinContent(binmhh, bincost));
                 }
-                sumofweights += nEvSM * functionGF(kl,kt,c2,cg,c2g,Acoeffs)/functionGF(kl,kt,c2,cg,c2g,A_13TeV_SM_);
+                sumofweights += (nEvSM * functionGF(kl,kt,c2,cg,c2g,Acoeffs))/functionGF(kl,kt,c2,cg,c2g,A_13TeV_SM_);
             }
         }
         return sumofweights;
@@ -181,7 +180,7 @@ namespace flashgg {
             H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
             H2.SetPtEtaPhiE(selHiggses[1]->p4().pt(),selHiggses[1]->p4().eta(),selHiggses[1]->p4().phi(),selHiggses[1]->p4().energy());
             float gen_mHH  = (H1+H2).M();
-            float gen_cosTheta = getCosThetaStar_CS(H1,H2);   
+            float gen_cosTheta = getCosThetaStar_CS(H1,H2);
             // Now, lets fill in the weigts for the 12 benchmarks.
             for (unsigned int n=0; n<NUM_benchmarks; n++){ 
                 NRWeights.push_back(getWeight(n, gen_mHH, gen_cosTheta));
