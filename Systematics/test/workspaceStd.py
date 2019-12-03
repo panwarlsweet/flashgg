@@ -71,6 +71,12 @@ customize.options.register('massRegressionSaveTestVariables',
                            VarParsing.VarParsing.varType.bool,
                            'massRegressionSaveTestVariables'
                            )
+customize.options.register('doVBFHHAnalysis',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'doVBFHHAnalysis'
+                           )
 customize.options.register('doDoubleHGenAnalysis',
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,

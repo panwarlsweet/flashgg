@@ -87,6 +87,8 @@ class DoubleHCustomize():
             "subleadingJet_e := subleadJet().energy",
             "subleadingJet_hflav := subleadJet().hadronFlavour()",
             "subleadingJet_pflav := subleadJet().partonFlavour()",
+        ]
+        if self.customize.doVBFHHAnalysis : variables +=[
             #Addition of Variables for the VBFHH analysis.
             "VBF_mjj := dijetVBF_mass()",
             "Delta_eta_VBF_jet := Delta_eta()",
@@ -266,6 +268,8 @@ class DoubleHCustomize():
             "ttH_sumET := sumET()",
             "ttH_MET := MET()",
             "ttH_phiMET := phiMET()",
+           ]
+        if self.customize.doVBFHHAnalysis : variables +=[
             #Addtion of the variables for the VBFHH analysis. 
             "VBF_mjj := dijetVBF_mass()",
             "Delta_eta_VBF_jet := Delta_eta()",
@@ -302,6 +306,7 @@ class DoubleHCustomize():
         self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
         self.process.flashggDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
         self.process.flashggDoubleHTag.MRegTestVar = cms.bool(self.customize.massRegressionSaveTestVariables) 
+        self.process.flashggDoubleHTag.doVBFHH = cms.bool(self.customize.doVBFHHAnalysis)
 
         ## remove single Higgs tags
 

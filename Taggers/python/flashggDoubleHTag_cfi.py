@@ -76,7 +76,8 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    reweight_names = cms.vstring(reweight_settings.reweight_names),
 
                                    dottHTagger=cms.bool(True), #whether to do ttH killer. 
-                                   MRegTestVar=cms.bool(True), #whether to do save mass reg test variables.       
+                                   MRegTestVar=cms.bool(True), #whether to do save mass reg test variables.
+                                   doVBFHH=cms.bool(True), #to fill VBH HH specific variables
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
                                    MuonTag=cms.InputTag('flashggSelectedMuons'),
                                    VertexTag=cms.InputTag('offlineSlimmedPrimaryVertices'),
