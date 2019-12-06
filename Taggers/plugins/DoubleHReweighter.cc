@@ -44,7 +44,7 @@ namespace flashgg {
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
         int doReweight_;
         edm::FileInPath weightsFile_;  // file with prepared histograms needed for reweighting
-        const unsigned int NUM_benchmarks = 95;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15 
+        const unsigned int NUM_benchmarks = 96;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15, 81 kl scan points = [-6, 10] with spacing 0.2 
         const unsigned int numberSMbenchmark = 13;  // index of SM benchmark 
         const unsigned int numberBoxbenchmark = 14;  // index of SM benchmark 
         const unsigned int numberFakebenchmark = 15;  // index of SM benchmark 
@@ -131,8 +131,8 @@ namespace flashgg {
         if (effBSM/denom < 0) {
             return 0;
         } // In case of very small negative weights, which can happen
-        w = ((effBSM/denom)/getNormalisation(kl, kt, c2, cg, c2g, hist_inputMix_)) ;
-
+      //  w = ((effBSM/denom)/getNormalisation(kl, kt, c2, cg, c2g, hist_inputMix_)) ;
+	w = (effBSM/denom);
        return w;
     }
 
@@ -154,8 +154,8 @@ namespace flashgg {
         if (effBSM/denom < 0) {
             return 0;
         } // In case of very small negative weights, which can happen                                                                                                                                                                  
-        w = ((effBSM/denom)/getNormalisation(kl, 1., 0., 0., 0., hist_inputMix_)) ;
-
+       // w = ((effBSM/denom)/getNormalisation(kl, 1., 0., 0., 0., hist_inputMix_)) ;
+        w = (effBSM/denom);
         return w;
     }
     
