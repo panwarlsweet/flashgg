@@ -30,6 +30,8 @@ namespace flashgg {
         double MX() const { return MX_; }
         void setGenMhh(double x) { genMhh_ = x; }
         double genMhh() const { return genMhh_; }
+        void setGenCosThetaStar_CS(double x) { genCosThetaStar_CS_ = x; }
+        double genCosThetaStar_CS() const { return genCosThetaStar_CS_; }
         float ttHScore() const { return ttHScore_; }
         double diphotonPtOverM() const {return diPhoton()->pt()/mass(); }
         double dijetPtOverM() const {return dijet().pt()/mass(); }
@@ -133,7 +135,9 @@ namespace flashgg {
         float reg_bgenJetNu_2_pt() const {return bgenJetNu_2_pt_;}
 
     private:
-        double mva_, MX_, genMhh_, dijetVBF_mass_, Delta_eta_, N_, DeepCSV_lead_, DeepCSV_sublead_, leadVBF_eta_, subleadVBF_eta_, leadVBF_phi_, subleadVBF_phi_, leadVBF_pt_, subleadVBF_pt_;
+
+        double mva_, MX_, genMhh_,genCosThetaStar_CS_, dijetVBF_mass_, Delta_eta_, N_, DeepCSV_lead_, DeepCSV_sublead_, leadVBF_eta_, subleadVBF_eta_, leadVBF_phi_, subleadVBF_phi_, leadVBF_pt_, subleadVBF_pt_;
+
         vector<float> benchmark_reweights_;
  //       std::vector<float> mva_prob_;
          long eventNumber_;
