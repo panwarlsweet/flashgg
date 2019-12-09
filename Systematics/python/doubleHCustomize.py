@@ -92,12 +92,39 @@ class DoubleHCustomize():
                 "subleadingJet_hflav := subleadJet().hadronFlavour()",
                 "subleadingJet_pflav := subleadJet().partonFlavour()",
             ]
+        
+        if self.customize.doVBFHHAnalysis : variables +=[
+             #Addition of Variables for the VBFHH analysis.
+              "VBF_mjj := dijetVBF_mass()",
+              "Delta_eta_VBF_jet := Delta_eta()",
+              "DeepCSV_lead := DeepCSV_lead()",
+              "DeepCSV_sublead := DeepCSV_sublead()",
+              "leadVBF_pt := leadVBF_pt()",
+              "subleadVBF_pt := subleadVBF_pt()",
+              "leadVBF_eta := leadVBF_eta()",
+              "subleadVBF_eta := subleadVBF_eta()",
+              "leadVBF_phi := leadVBF_phi()",
+              "subleadVBF_phi := subleadVBF_phi()",
+              "N_jet := N()",
+
+        ]
         if self.customize.doBJetRegression and self.customize.doubleHTagsOnly: variables +=[
                 "leadingJet_bRegNNCorr := leadJet().userFloat('bRegNNCorr')",
                 "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
                 "subleadingJet_bRegNNCorr := subleadJet().userFloat('bRegNNCorr')",
                 "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
-                "sigmaMJets := getSigmaMOverMJets()"
+                "sigmaMJets := getSigmaMOverMJets()",
+
+        ]
+
+        if self.customize.massRegressionSaveTestVariables : variables +=[
+                "mbbNu := reg_mbbNu()",
+                "mbbNoNu := reg_mbbNoNu()",
+                "bgenJetNu_1_pt := reg_bgenJetNu_1_pt()",
+                "bgenJetNu_2_pt := reg_bgenJetNu_2_pt()",
+                "bgenJetNoNu_1_pt := reg_bgenJetNoNu_1_pt()",
+                "bgenJetNoNu_2_pt := reg_bgenJetNoNu_2_pt()",
+
         ]
         if self.customize.doubleHReweight > 0: 
             for num in range(0,12):  #12 benchmarks + 1 SM
@@ -109,6 +136,8 @@ class DoubleHCustomize():
             var_workspace += ["benchmark_reweight_SM := getBenchmarkReweight(12)"]
             var_workspace += ["benchmark_reweight_box := getBenchmarkReweight(13)"]
             var_workspace += ["benchmark_reweight_2017fake := getBenchmarkReweight(14)"]
+            for KL in range(1,82):
+                variables += ["KL%d := getBenchmarkReweight(%d)"%(KL, (KL+14))]
 
         if self.customize.ttHKillerSaveInputVariables : variables += [
             "ttH_sumET := sumET()",
@@ -142,10 +171,22 @@ class DoubleHCustomize():
             "ttH_etajet1 := etajet1()",
             "ttH_etajet2 := etajet2()",
             "ttH_phijet1 := phijet1()",
-            "ttH_phijet2 := phijet2()"
+            "ttH_phijet2 := phijet2()",
+            "ttDecay_ID := ttDecay_ID()",
+            "ttX_DeepJet_CvsB_Jet1 := deepjetCdiscr_jet1()",
+            "ttX_DeepJet_CvsB_Jet2 := deepjetCdiscr_jet2()",
+            "ttX_DeepJet_CvsL_Jet1 := deepjetCvsLdiscr_jet1()",
+            "ttX_DeepJet_CvsL_Jet2 := deepjetCvsLdiscr_jet2()",
+            "ttX_DeepCSV_CvsB_Jet1 := deepcsvCdiscr_jet1()",
+            "ttX_DeepCSV_CvsB_Jet2 := deepcsvCdiscr_jet2()",
+            "ttX_DeepCSV_CvsL_Jet1 := deepcsvCvsLdiscr_jet1()",
+            "ttX_DeepCSV_CvsL_Jet2 := deepcsvCvsLdiscr_jet2()",
+            "ttX_MT_leadpho_met := MT_leadpho_met()",
+            "ttX_MT_subleadpho_met := MT_subleadpho_met()",
+            "ttX_MT_dipho_met := MT_dipho_met()",
+            "sumPT_Had_Act := sumPT_Had_Act()",
             ]
-    
-    
+        
         if self.customize.doDoubleHttHKiller : 
              variables +=[
                "ttHScore := ttHScore()",
@@ -176,30 +217,80 @@ class DoubleHCustomize():
       return systematicVariables
 
 
-    def variablesToDumpData():
+    def variablesToDumpData(self):
         variables = [
-           #  "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
-           #  "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
-           #  "absCosThetaStar_CS := abs(getCosThetaStar_CS())",
-           #  "absCosThetaStar_CS_old := abs(getCosThetaStar_CS_old(6500))",
-           #  "absCosTheta_bb := abs(CosThetaAngles()[1])",
-           #  "absCosTheta_gg := abs(CosThetaAngles()[0])",
-           #  "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
-           #  "dijetCandidatePtOverdiHiggsM := dijetPtOverM()",
-           #  "customLeadingPhotonIDMVA := diPhoton.leadingView.phoIdMvaWrtChosenVtx",
-           #  "customSubLeadingPhotonIDMVA := diPhoton.subLeadingView.phoIdMvaWrtChosenVtx",
-           #  "leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE",
-           #  "subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE",
-           #  "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
-           #  "PhoJetMinDr := getPhoJetMinDr()",#up to here input variables to MVA
-           #  "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
-           #  "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
-           #  "sigmaMJets := getSigmaMOverMJets()",
-             "HHbbggMVA := MVA()",
-             "MX := MX()",
-           #  "Mjj := dijet().M()",
-           #  "eventNumber := eventNumber()",
-             ]
+	    "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
+            "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
+            "leadingJet_DeepFlavour := leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",#FIXME make the btag type configurable?
+            "subleadingJet_DeepFlavour := subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",#FIXME make the btag type configurable?
+            "absCosThetaStar_CS := abs(getCosThetaStar_CS())",
+            "absCosThetaStar_CS_old := abs(getCosThetaStar_CS_old(6500))",
+            "absCosTheta_bb := abs(CosThetaAngles()[1])",
+            "absCosTheta_gg := abs(CosThetaAngles()[0])",
+            "customLeadingPhotonIDMVA := diPhoton.leadingView.phoIdMvaWrtChosenVtx",
+            "customSubLeadingPhotonIDMVA := diPhoton.subLeadingView.phoIdMvaWrtChosenVtx",
+            "EGMLeadingPhotonIDMVA := diPhoton.leadingPhoton.userFloat('EGMPhotonMVA')",
+            "EGMSubLeadingPhotonIDMVA := diPhoton.subLeadingPhoton.userFloat('EGMPhotonMVA')",
+            "HHbbggMVA := MVA()",
+	    "MX := MX()",
+            "Mjj := dijet().M()",
+	    "eventNumber := eventNumber()",
+	    "MET := MET()",
+	    "diHiggs_mass := getdiHiggsP4().M()",
+            "leadingJet_puJetIdMVA := leadJet().puJetIdMVA()",
+            "subleadingJet_puJetIdMVA := subleadJet().puJetIdMVA()",
+            "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
+            "dijetCandidatePtOverdiHiggsM := dijetPtOverM()",
+            "leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE",
+            "subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE",
+            "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
+            "sigmaMOverMDecorr := getSigmaMDecorr()",
+            "PhoJetMinDr := getPhoJetMinDr()",
+            "leadingJet_bRegNNCorr := leadJet().userFloat('bRegNNCorr')",
+            "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
+            "subleadingJet_bRegNNCorr := subleadJet().userFloat('bRegNNCorr')",
+            "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
+            "sigmaMJets := getSigmaMOverMJets()",
+            "leadingPhoton_pt := diPhoton.leadingPhoton.pt",
+            "leadingPhoton_eta := diPhoton.leadingPhoton.eta",
+            "leadingPhoton_phi := diPhoton.leadingPhoton.phi",
+            "subleadingPhoton_pt := diPhoton.subLeadingPhoton.pt",
+            "subleadingPhoton_eta := diPhoton.subLeadingPhoton.eta",
+            "subleadingPhoton_phi := diPhoton.subLeadingPhoton.phi",
+
+            "leadingJet_pt := leadJet().pt",
+            "leadingJet_eta := leadJet().eta",
+            "leadingJet_phi := leadJet().phi",
+            "leadingJet_mass := leadJet().p4().M()",
+            "leadingJet_e := leadJet().energy",
+            "leadingJet_hflav := leadJet().hadronFlavour()",
+            "leadingJet_pflav := leadJet().partonFlavour()",
+
+            "subleadingJet_pt := subleadJet().pt",
+            "subleadingJet_eta := subleadJet().eta",
+            "subleadingJet_phi := subleadJet().phi",
+            "subleadingJet_mass := subleadJet().p4().M()",
+            "subleadingJet_e := subleadJet().energy",
+            "subleadingJet_hflav := subleadJet().hadronFlavour()",
+            "subleadingJet_pflav := subleadJet().partonFlavour()",
+            "ttH_sumET := sumET()",
+            "ttH_MET := MET()",
+            "ttH_phiMET := phiMET()",
+           ]
+        if self.customize.doVBFHHAnalysis : variables +=[
+            #Addtion of the variables for the VBFHH analysis. 
+            "VBF_mjj := dijetVBF_mass()",
+            "Delta_eta_VBF_jet := Delta_eta()",
+            "DeepCSV_lead := DeepCSV_lead()",
+            "DeepCSV_sublead := DeepCSV_sublead()",
+            "leadVBF_pt := leadVBF_pt()",
+            "subleadVBF_pt := subleadVBF_pt()",
+            "leadVBF_eta := leadVBF_eta()",
+            "subleadVBF_eta := subleadVBF_eta()",
+            "leadVBF_phi := leadVBF_phi()",
+            "subleadVBF_phi := subleadVBF_phi()",
+            "N_jet := N()",
+           ]
         if self.customize.doDoubleHttHKiller : variables +=[
             "ttHScore := ttHScore()",
            ]
@@ -236,6 +327,8 @@ class DoubleHCustomize():
         self.process.flashggDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_listmean"])
         self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
         self.process.flashggDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
+        self.process.flashggDoubleHTag.MRegTestVar = cms.bool(self.customize.massRegressionSaveTestVariables) 
+        self.process.flashggDoubleHTag.doVBFHH = cms.bool(self.customize.doVBFHHAnalysis)
 
         ## add double Higgs tag to the tag sequence
         #  self.process.flashggTagSequence.replace(self.process.flashggUntagged,(self.process.flashggDoubleHTag+self.process.flashggUntagged))
@@ -356,6 +449,8 @@ class DoubleHCustomize():
              genVariables += ["benchmark_reweight_SM := getHHbbggBenchmarkReweight(12)"]
              genVariables += ["benchmark_reweight_box := getHHbbggBenchmarkReweight(13)"]
              genVariables += ["benchmark_reweight_2017fake := getHHbbggBenchmarkReweight(14)"]
+             for KL in range(1,82):
+                genVariables += ["KL%d := getHHbbggBenchmarkReweight(%d)"%(KL, (KL+14))]
 
         ## define categories for gen-level dumper
         cfgTools.addCategory(self.process.genDiphotonDumper,  ## events with not reco-level tag

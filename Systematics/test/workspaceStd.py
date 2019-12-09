@@ -71,6 +71,18 @@ customize.options.register('ttHKillerSaveInputVariables',
                            VarParsing.VarParsing.varType.bool,
                            'ttHKillerSaveInputVariables'
                            )
+customize.options.register('massRegressionSaveTestVariables',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'massRegressionSaveTestVariables'
+                           )
+customize.options.register('doVBFHHAnalysis',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'doVBFHHAnalysis'
+                           )
 customize.options.register('doDoubleHGenAnalysis',
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -254,6 +266,10 @@ if customize.doDoubleHTag:
     hhc = flashgg.Systematics.doubleHCustomize.DoubleHCustomize(process, customize, customize.metaConditions)
     minimalVariables += hhc.variablesToDump()
     systematicVariables = hhc.systematicVariables()
+#####################################Only if needed, tmp fix for Data#########################
+    if customize.processId == "Data":
+         minimalNonSignalVariables += hhc.variablesToDumpData()
+###################################################################################################
 
 process.flashggTHQLeptonicTag.processId = cms.string(str(customize.processId))
 

@@ -78,13 +78,18 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    reweight_producer = cms.string(reweight_settings.reweight_producer),
                                    reweight_names = cms.vstring(reweight_settings.reweight_names),
 
-                                   dottHTagger=cms.bool(False), #whether to do ttH killer. 
-
+                                   dottHTagger=cms.bool(True), #whether to do ttH killer. 
+                                   MRegTestVar=cms.bool(True), #whether to do save mass reg test variables.
+                                   doVBFHH=cms.bool(True), #to fill VBH HH specific variables
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
                                    MuonTag=cms.InputTag('flashggSelectedMuons'),
                                    VertexTag=cms.InputTag('offlineSlimmedPrimaryVertices'),
                                    METTag=cms.InputTag('flashggMets'),
                                    rhoTag = cms.InputTag('fixedGridRhoFastjetAll'),
+                                   reg_genpar=cms.InputTag('flashggPrunedGenParticles'),
+                                   genjets=cms.InputTag('slimmedGenJets'),
+                                   nus=cms.InputTag('flashggGenNeutrinos'),
+                                   genpho=cms.InputTag('flashggGenPhotonsExtra'),
                                    looseLeptonPtThreshold = cms.double(10.),
                                    muonEtaThreshold = cms.double(2.4),
                                    muPFIsoSumRelThreshold = cms.double(0.25),
