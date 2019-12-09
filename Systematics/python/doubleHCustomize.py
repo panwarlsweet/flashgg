@@ -417,7 +417,7 @@ class DoubleHCustomize():
              genVariables += ["benchmark_reweight_box := getHHbbggBenchmarkReweight(13)"]
              genVariables += ["benchmark_reweight_2017fake := getHHbbggBenchmarkReweight(14)"]
              for KL in range(1,82):
-                genVariables += ["KL%d := getBenchmarkReweight(%d)"%(KL, (KL+14))]
+                genVariables += ["KL%d := getHHbbggBenchmarkReweight(%d)"%(KL, (KL+14))]
 
         ## define categories for gen-level dumper
         cfgTools.addCategory(self.process.genDiphotonDumper,  ## events with not reco-level tag
