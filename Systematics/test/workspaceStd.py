@@ -41,6 +41,18 @@ customize.options.register('doubleHTagsOnly',
                            VarParsing.VarParsing.varType.bool,
                            'doubleHTagsOnly'
                            )
+customize.options.register('doubleHTagsUseMjj',
+                           True,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'doubleHTagsUseMjj'
+                           )
+customize.options.register('doubleHTagDumpMinVariables',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'doubleHTagDumpMinVariables'
+                           )
 customize.options.register('ForceGenDiphotonProduction',
                            True,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -154,6 +166,12 @@ customize.options.register('verboseSystDump',
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'verboseSystDump'
+                           )
+customize.options.register('analysisType',
+                           'mainAnalysis',
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.string,
+                           'analysisType'
                            )
 
 
@@ -524,7 +542,8 @@ for tag in tagList:
           else:
               currentVariables = []
       isBinnedOnly = (systlabel !=  "")
-      if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
+      is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
+      if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") or is_signal ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
           print "Signal MC central value, so dumping PDF weights"
           dumpPdfWeights = True
           nPdfWeights = 60
@@ -552,12 +571,7 @@ for tag in tagList:
                            )
 
 # Require standard diphoton trigger
-from HLTrigger.HLTfilters.hltHighLevel_cfi import hltHighLevel
-hlt_paths = []
-for dset in customize.metaConditions["TriggerPaths"]:
-    if dset in customize.datasetName():
-        hlt_paths.extend(customize.metaConditions["TriggerPaths"][dset])
-process.hltHighLevel= hltHighLevel.clone(HLTPaths = cms.vstring(hlt_paths))
+filterHLTrigger(process, customize)
 
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
@@ -652,7 +666,7 @@ if customize.doBJetRegression:
     recoJetCollections = UnpackedJetCollectionVInputTag
     if customize.metaConditions['bRegression']['useBRegressionJERsf'] :
        bregJERJetsProducers,recoJetCollections = createJetSystematicsForBreg(process , customize)
-    process.bregJERJetsProducers = cms.Sequence(reduce(lambda x,y: x+y, bregJERJetsProducers))
+       process.bregJERJetsProducers = cms.Sequence(reduce(lambda x,y: x+y, bregJERJetsProducers))
 
     jetsysts = cms.vstring()
     jetnames = cms.vstring()
@@ -670,7 +684,9 @@ if customize.doBJetRegression:
     setattr(process,"bRegProducer",producer)
     bregProducers.append(producer)
     process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
-    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.bregJERJetsProducers*process.bregProducers)
+    if customize.metaConditions['bRegression']['useBRegressionJERsf'] :
+       process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.bregJERJetsProducers*process.bregProducers)
+    else : process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence+process.bregProducers)
     
 
 if customize.doDoubleHTag:

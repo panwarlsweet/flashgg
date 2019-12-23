@@ -53,6 +53,7 @@ class DoubleHCustomize():
                 "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
                 "sigmaMOverMDecorr := getSigmaMDecorr()",
                 "PhoJetMinDr := getPhoJetMinDr()",#up to here input variables to MVA
+                "PhoJetOtherDr := getPhoJetOtherDr()",
                 "HHbbggMVA := MVA()",
                 # "HHbbggMVAprob0 := MVAprob()[0]",
                 "MX := MX()",
@@ -143,6 +144,9 @@ class DoubleHCustomize():
             for KL in range(1,82):
                 variables += ["KL%d := getBenchmarkReweight(%d)"%(KL, (KL+14))]
 
+        if self.customize.processId != "Data": 
+            var_workspace += ['btagReshapeWeight := weight("JetBTagReshapeWeightCentral")']
+
         if self.customize.ttHKillerSaveInputVariables : variables += [
             "ttH_sumET := sumET()",
             "ttH_MET := MET()",
@@ -200,14 +204,14 @@ class DoubleHCustomize():
              ]
 
        # return var_workspace ##Only temp fix 
-        if self.customize.dumpWorkspace == False :
-            return variables
-        else :
+        if self.customize.doubleHTagDumpMinVariables or self.customize.dumpWorkspace :
             return var_workspace
+        else :
+            return variables
 
 
     def systematicVariables(self):
-      systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()","eventNumber[40,0.,1000000.]:=eventNumber()","genMhh[300,250,5000]:=genMhh()","genAbsCosThetaStar_CS[100,0,1]:=abs(genCosThetaStar_CS())"]
+      systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()","eventNumber[40,0.,1000000.]:=eventNumber()","genMhh[300,250,5000]:=genMhh()","genAbsCosThetaStar_CS[100,0,1]:=abs(genCosThetaStar_CS())",'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")']
       
       if self.customize.doubleHReweight > 0: 
          for num in range(0,12):  #12 benchmarks
@@ -324,12 +328,25 @@ class DoubleHCustomize():
 
     def customizeTagSequence(self):
         self.process.load("flashgg.Taggers.flashggDoubleHTag_cff")
+        
+        # customizing training file (with/wo Mjj) 
+        training_type = 'with_Mjj' if self.customize.doubleHTagsUseMjj else 'wo_Mjj' 
+        
+        self.process.flashggDoubleHTag.MVAConfig.weights=cms.FileInPath(str(self.metaConditions["doubleHTag"]["weightsFile"][training_type]))  
+        self.process.flashggDoubleHTag.MVAFlatteningFileName = cms.untracked.FileInPath(str(self.metaConditions["doubleHTag"]["MVAFlatteningFileName"][training_type]))
+        if training_type == 'with_Mjj' :
+            self.process.flashggDoubleHTag.MVABoundaries = cms.vdouble(0.33,0.56, 0.70)
+            self.process.flashggDoubleHTag.MXBoundaries = cms.vdouble(250., 375.,470.,600.,250.,325.,365.,585.,250.,330.,360.,520.)
+            self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.24)
+        elif training_type == 'wo_Mjj' :
+            self.process.flashggDoubleHTag.MVAConfig.variables.pop(0) 
+            self.process.flashggDoubleHTag.MVABoundaries = cms.vdouble(0.30,0.54, 0.75)
+            self.process.flashggDoubleHTag.MXBoundaries = cms.vdouble(250., 395.,470.,585.,250.,345.,375.,540.,250.,330.,375.,530.)
+            self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.20)
 
         ## customize meta conditions
         self.process.flashggDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["doubleHTag"]["jetID"]))
-        self.process.flashggDoubleHTag.MVAConfig.weights=cms.FileInPath(str(self.metaConditions["doubleHTag"]["weightsFile"]))  
         self.process.flashggDoubleHTag.MVAscaling = cms.double(self.metaConditions["doubleHTag"]["MVAscalingValue"])
-        self.process.flashggDoubleHTag.MVAFlatteningFileName = cms.untracked.FileInPath(str(self.metaConditions["doubleHTag"]["MVAFlatteningFileName"]))
         self.process.flashggDoubleHTag.dottHTagger = cms.bool(self.customize.doDoubleHttHKiller)
         self.process.flashggDoubleHTag.ttHWeightfile = cms.untracked.FileInPath(str(self.metaConditions["doubleHTag"]["ttHWeightfile"]))
         self.process.flashggDoubleHTag.ttHKiller_mean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_mean"])
