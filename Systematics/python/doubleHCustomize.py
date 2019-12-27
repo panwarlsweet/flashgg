@@ -129,6 +129,7 @@ class DoubleHCustomize():
                 "bgenJetNu_2_pt := reg_bgenJetNu_2_pt()",
                 "bgenJetNoNu_1_pt := reg_bgenJetNoNu_1_pt()",
                 "bgenJetNoNu_2_pt := reg_bgenJetNoNu_2_pt()",
+                "SumPT_Nus := reg_SumPT_Nus_()",
 
         ]
         if self.customize.doubleHReweight > 0: 
@@ -350,7 +351,7 @@ class DoubleHCustomize():
             self.process.flashggDoubleHTag.MVAConfig.variables.pop(0) 
             self.process.flashggDoubleHTag.MVABoundaries = cms.vdouble(0.30,0.54, 0.75)
             self.process.flashggDoubleHTag.MXBoundaries = cms.vdouble(250., 395.,470.,585.,250.,345.,375.,540.,250.,330.,375.,530.)
-            self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.20)
+            self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.0)
 
         ## customize meta conditions
         self.process.flashggDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["doubleHTag"]["jetID"]))

@@ -378,6 +378,7 @@ namespace flashgg {
         TagTruthBase truth_obj;
         double genMhh=0.;
         double genCosThetaStar_CS=0.;
+        float SumPT_Nus=0;
         if( ! evt.isRealData() ) {
             Handle<View<reco::GenParticle> > genParticles;
             std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
@@ -460,6 +461,13 @@ namespace flashgg {
                     if(! bbarj.isNull() ) { 
                         hjets->push_back(addNeutrinos(*bbarj,*genNus));  
                         hjets_nonu->push_back(*bbarj);
+                    }
+                    if((! bj.isNull()) && (! bbarj.isNull()) ){
+                        for( size_t kk = 0 ; kk < genNus->size() ; ++kk ) {
+                            auto kNu = genNus->ptrAt( kk );
+                            if(reco::deltaR(*bj, *kNu) < 0.4 || reco::deltaR(*bbarj, *kNu) < 0.4)
+                                SumPT_Nus += kNu->p4().pt();
+                        }
                     }
                 }
             }
@@ -668,6 +676,7 @@ namespace flashgg {
                     MRegVars["bgenJetNu_2_pt"] = -999.;
                     MRegVars["bgenJetNoNu_1_pt"] = -999.;
                     MRegVars["bgenJetNoNu_2_pt"] = -999.;
+                    MRegVars["SumPT_Nus"] = -999.;
                     if( ! evt.isRealData() && MRegTestVar_) {
 
                         MRegVars["nbGenJetsNu"] = hjets->size();
@@ -723,6 +732,7 @@ namespace flashgg {
                                         MRegVars["bgenJetNu_2_pt"] = selgenjetsnu[1].p4().pt();
                                         MRegVars["bgenJetNoNu_1_pt"] = selgenjets_nonu[0].p4().pt();
                                         MRegVars["bgenJetNoNu_2_pt"] = selgenjets_nonu[1].p4().pt();
+                                        MRegVars["SumPT_Nus"] = SumPT_Nus;
                             
                                     }
                         }
@@ -1151,6 +1161,7 @@ namespace flashgg {
                         tag_obj.bgenJetNu_2_pt_ = MRegVars["bgenJetNu_2_pt"];
                         tag_obj.bgenJetNoNu_1_pt_ = MRegVars["bgenJetNoNu_1_pt"];
                         tag_obj.bgenJetNoNu_2_pt_ = MRegVars["bgenJetNoNu_2_pt"];
+                        tag_obj.SumPT_Nus_ = MRegVars["SumPT_Nus"];
                     }
 
             // choose category and propagate weights

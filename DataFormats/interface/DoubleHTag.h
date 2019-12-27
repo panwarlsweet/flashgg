@@ -84,7 +84,7 @@ namespace flashgg {
 
         float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_,PhoJetOtherDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_; 
 
-        float ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_, bgenJetNoNu_1_pt_, bgenJetNoNu_2_pt_, bgenJetNu_1_pt_, bgenJetNu_2_pt_, mbbNu_, mbbNoNu_;
+        float ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_, bgenJetNoNu_1_pt_, bgenJetNoNu_2_pt_, bgenJetNu_1_pt_, bgenJetNu_2_pt_, mbbNu_, mbbNoNu_, SumPT_Nus_;
 
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
@@ -133,13 +133,14 @@ namespace flashgg {
         float MT_subleadpho_met() const {return MT_subleadpho_met_;}
         float MT_dipho_met() const {return MT_dipho_met_;}
         float sumPT_Had_Act() const {return sumPT_Had_Act_;}
+        ///// For mass regression ////////
         float reg_mbbNu() const {return mbbNu_;}
         float reg_mbbNoNu() const {return mbbNoNu_;}
         float reg_bgenJetNoNu_1_pt() const {return bgenJetNoNu_1_pt_;}
         float reg_bgenJetNoNu_2_pt() const {return bgenJetNoNu_2_pt_;}
         float reg_bgenJetNu_1_pt() const {return bgenJetNu_1_pt_;}
         float reg_bgenJetNu_2_pt() const {return bgenJetNu_2_pt_;}
-
+        float reg_SumPT_Nus_() const {return SumPT_Nus_;}
     private:
 
         double mva_, MX_, genMhh_,genCosThetaStar_CS_;
