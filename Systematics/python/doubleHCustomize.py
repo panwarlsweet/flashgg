@@ -265,6 +265,7 @@ class DoubleHCustomize():
             "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
             "sigmaMOverMDecorr := getSigmaMDecorr()",
             "PhoJetMinDr := getPhoJetMinDr()",
+	    "PhoJetOtherDr := getPhoJetOtherDr()",
             "leadingJet_bRegNNCorr := leadJet().userFloat('bRegNNCorr')",
             "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
             "subleadingJet_bRegNNCorr := subleadJet().userFloat('bRegNNCorr')",
