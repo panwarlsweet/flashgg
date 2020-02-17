@@ -548,12 +548,18 @@ namespace flashgg {
                         auto jet_1 = cleaned_jets[ijet];
                         for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
                             auto jet_2 = cleaned_jets[kjet];
-                            auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass(); 
-                            auto & Jet1 = jet1; 
-                            auto & Jet2 = jet2; 
-                            DoubleHTag tag_obj( dipho, Jet1, Jet2);
-                            std::vector<float> mass_corr = xgbComputer_(tag_obj);
-                            //    std::cout << "testing mass corr =" << mass_corr[0] << endl;
+                            auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass();
+                            std::cout << "testin...........1 =" << endl;
+                            auto & leadJet = jet_1; 
+                            auto & subleadJet = jet_2; 
+                            DoubleHTag tag_obj_temp( dipho, leadJet, subleadJet);
+
+                            std::cout << "testing...........2 =" << endl;
+                            std::vector<float> mass_corr = xgbComputer_(tag_obj_temp);
+                            std::cout << "testing mass corr =" << mass_corr[0] << endl;
+                            std::cout << "testing mass corr =" << mass_corr[1] << endl;
+                            std::cout << "testing mass corr =" << mass_corr[2] << endl;
+
                             if (dijet_mass<mjjBoundaries_[0] || dijet_mass>mjjBoundaries_[1]) continue;
                             double sumbtag=0.;
                             for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
