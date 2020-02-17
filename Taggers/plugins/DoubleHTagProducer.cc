@@ -100,6 +100,7 @@ namespace flashgg {
         ConsumesCollector cc_;
         GlobalVariablesComputer globalVariablesComputer_;
         MVAComputer<DoubleHTag> mvaComputer_;
+        MVAComputer<DoubleHTag, StringObjectFunction<flashgg::DoubleHTag, true>, true> xgbComputer_;
         vector<double> mvaBoundaries_, mxBoundaries_;
         unsigned int nMX_;
         int multiclassSignalIdx_;
@@ -165,6 +166,7 @@ namespace flashgg {
         cc_( consumesCollector() ),
         globalVariablesComputer_(iConfig.getParameter<edm::ParameterSet>("globalVariables"), cc_),
         mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesComputer_),
+        xgbComputer_(iConfig.getParameter<edm::ParameterSet>("MRegConf"),  &globalVariablesComputer_),
         overlapRemoval_(false)
     {
         //mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"))
@@ -547,6 +549,11 @@ namespace flashgg {
                         for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
                             auto jet_2 = cleaned_jets[kjet];
                             auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass(); 
+                            auto & Jet1 = jet1; 
+                            auto & Jet2 = jet2; 
+                            DoubleHTag tag_obj( dipho, Jet1, Jet2);
+                            std::vector<float> mass_corr = xgbComputer_(tag_obj);
+                            //    std::cout << "testing mass corr =" << mass_corr[0] << endl;
                             if (dijet_mass<mjjBoundaries_[0] || dijet_mass>mjjBoundaries_[1]) continue;
                             double sumbtag=0.;
                             for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)

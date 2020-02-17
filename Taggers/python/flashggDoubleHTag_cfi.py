@@ -24,6 +24,8 @@ ttHKiller_listmean = cms.vdouble()
 ttHKiller_liststd = cms.vdouble()
 MaxJetEta = 2.5
 
+MReg_weights="XGB_Mjj_Reg_model_2016.xgb"
+
 flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    DiPhotonName = cms.string('flashggPreselectedDiPhotons'), # 
                                    DiPhotonSuffixes = cms.vstring(''), #nominal and systematic variations 
@@ -79,6 +81,12 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    reweight_names = cms.vstring(reweight_settings.reweight_names),
 
                                    dottHTagger=cms.bool(True), #whether to do ttH killer. 
+                                   # for mass regression ####
+                                   MRegConf=cms.PSet(variables=cms.VPSet(),
+                                                   classifier=cms.string("BDT::bdt"),
+                                                   weights=cms.FileInPath("%s"%MReg_weights),
+                                                   regression=cms.bool(True),
+                                                   ),
                                    MRegTestVar=cms.bool(True), #whether to do save mass reg test variables.
                                    doVBFHH=cms.bool(True), #to fill VBH HH specific variables
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
@@ -139,3 +147,28 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                       )
 
 
+cfgTools.addVariables(flashggDoubleHTag.MRegConf.variables,
+                      [
+                          "reg_reco_mjj := dijet().M()",
+                          "reg_recoJet_1_pt := Jet1().pt",
+                          "reg_recoJet_1_eta := Jet1().eta",
+                          "reg_recoJet_1_mass := Jet1().p4().M()",
+                          "reg_recoJet_1_e := Jet1().energy",
+                          "reg_recoJet_1_phi := Jet1().phi",
+                          "reg_recoJet_2_pt := Jet2().pt",
+                          "reg_recoJet_2_eta := Jet2().eta",
+                          "reg_recoJet_2_mass := Jet2().p4().M()",
+                          "reg_recoJet_2_e := Jet2().energy",
+                          "reg_recoJet_2_phi := Jet2().phi",
+                          "Met_CorPt := MET()",
+                          "Met_CorPhi := phiMET()",
+                          "reg_recoJet_phi12 := Jet1().phi - Jet2().phi",
+                          "reg_recoJet_phi1M := Jet1().phi - phiMET()",
+                          "reg_recoJet_phi2M := Jet2().phi - phiMET()",
+                          "reg_recoJet_1_DeepCSV := Jet1().bDiscriminator('pfDeepCSVJetTags:probb')+Jet1().bDiscriminator('pfDeepCSVJetTags:probbb')",
+                          "reg_recoJet_2_DeepCSV := Jet2().bDiscriminator('pfDeepCSVJetTags:probb')+Jet2().bDiscriminator('pfDeepCSVJetTags:probbb')",
+                          "rho := global.rho",
+                          "nvtx := global.nvtx",
+                          "reg_reco_Mbbgg := getdiHiggsP4().M()"
+                      ]
+                    )
