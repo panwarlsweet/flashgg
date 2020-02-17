@@ -557,8 +557,6 @@ namespace flashgg {
                             std::cout << "testing...........2 =" << endl;
                             std::vector<float> mass_corr = xgbComputer_(tag_obj_temp);
                             std::cout << "testing mass corr =" << mass_corr[0] << endl;
-                            std::cout << "testing mass corr =" << mass_corr[1] << endl;
-                            std::cout << "testing mass corr =" << mass_corr[2] << endl;
 
                             if (dijet_mass<mjjBoundaries_[0] || dijet_mass>mjjBoundaries_[1]) continue;
                             double sumbtag=0.;
