@@ -96,6 +96,7 @@ namespace flashgg {
         vector<std::string> bTagType_;
         bool       useJetID_;
         string     JetIDLevel_;        
+        EDGetTokenT<View<flashgg::Met> > MET_;
 
         ConsumesCollector cc_;
         GlobalVariablesComputer globalVariablesComputer_;
@@ -163,6 +164,7 @@ namespace flashgg {
         bTagType_( iConfig.getParameter<vector<std::string>>( "BTagType") ),
         useJetID_( iConfig.getParameter<bool>   ( "UseJetID"     ) ),
         JetIDLevel_( iConfig.getParameter<string> ( "JetIDLevel"   ) ),
+        MET_(consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ("METTag") ) ),
         cc_( consumesCollector() ),
         globalVariablesComputer_(iConfig.getParameter<edm::ParameterSet>("globalVariables"), cc_),
         mvaComputer_(iConfig.getParameter<edm::ParameterSet>("MVAConfig"),  &globalVariablesComputer_),
@@ -540,6 +542,13 @@ namespace flashgg {
                         }
                     }
                     if( cleaned_jets.size() < 2 ) { continue; }
+                    ////////// this MET is only for mass regresion //////////
+
+                    edm::Handle<View<flashgg::Met> > RegMETs;
+                    evt.getByToken( MET_, RegMETs );
+                    auto MET = RegMETs->ptrAt( 0 );
+                    auto & RegMET = MET;
+ 
                     //dijet pair selection. Do pair according to pt and choose the pair with highest b-tag
                     double sumbtag_ref = -999;
                     bool hasDijet = false;
@@ -552,7 +561,7 @@ namespace flashgg {
                             std::cout << "testin...........1 =" << endl;
                             auto & leadJet = jet_1; 
                             auto & subleadJet = jet_2; 
-                            DoubleHTag tag_obj_temp( dipho, leadJet, subleadJet);
+                            DoubleHTag tag_obj_temp( dipho, leadJet, subleadJet, RegMET);
 
                             std::cout << "testing...........2 =" << endl;
                             std::vector<float> mass_corr = xgbComputer_(tag_obj_temp);

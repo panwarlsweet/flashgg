@@ -17,6 +17,16 @@ DoubleHTag::DoubleHTag( edm::Ptr<flashgg::DiPhotonCandidate> diPho, edm::Ptr<fla
     this->setP4( dijet_ + dipho_->p4() );
 }
 
+DoubleHTag::DoubleHTag( edm::Ptr<flashgg::DiPhotonCandidate> diPho, edm::Ptr<flashgg::Jet> leadJet, edm::Ptr<flashgg::Jet> subleadJet, edm::Ptr<flashgg::Met> RegMET )
+    : mva_(-.2), MX_(0.),genMhh_(0.),genCosThetaStar_CS_(0.),leadJet_(leadJet), subleadJet_(subleadJet), RegMET_(RegMET)
+
+{
+    dipho_ = diPho;
+    dijet_ = leadJet_->p4() + subleadJet_->p4();
+    this->setP4( dijet_ + dipho_->p4() );
+}
+
+
 DoubleHTag *DoubleHTag::clone() const
 {
     DoubleHTag *result = new DoubleHTag( *this );

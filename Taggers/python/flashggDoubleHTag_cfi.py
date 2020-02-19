@@ -11,7 +11,6 @@ from flashgg.Taggers.flashggDoubleHReweight_cfi import flashggDoubleHReweight
 from flashgg.MicroAOD.flashggJets_cfi import  maxJetCollections
 
 
-
 jetID = ''
 weightsFile=""# path to TMVA weights
 MVAscalingValue=1.#scale MVA output before the cumulative transformation for 2017(2016 kept unchanged for simplicity, we will probably change that once we have all 3 years.)
@@ -160,8 +159,8 @@ cfgTools.addVariables(flashggDoubleHTag.MRegConf.variables,
                           "reg_recoJet_2_mass := subleadJet().p4().M()",
                           "reg_recoJet_2_e := subleadJet().energy",
                           "reg_recoJet_2_phi := subleadJet().phi",
-                          "Met_CorPt := MET()",
-                          "Met_CorPhi := phiMET()",
+                          "Met_CorPt := RegMET().pt",
+                          "Met_CorPhi := RegMET().phi",
                           "reg_recoJet_phi12 := leadJet().phi - subleadJet().phi",
                           "reg_recoJet_phi1M := leadJet().phi - phiMET()",
                           "reg_recoJet_phi2M := subleadJet().phi - phiMET()",

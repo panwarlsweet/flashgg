@@ -9,6 +9,7 @@
 #include "DataFormats/Math/interface/deltaR.h"
 
 #include "flashgg/Taggers/interface/FunctionHelpers.h"
+#include "flashgg/DataFormats/interface/Met.h"
 
 namespace flashgg {
 
@@ -19,6 +20,7 @@ namespace flashgg {
         ~DoubleHTag();
 
         DoubleHTag( edm::Ptr<DiPhotonCandidate>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet> );
+        DoubleHTag( edm::Ptr<DiPhotonCandidate>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Met> );
         virtual DoubleHTag *clone() const override;
         /// DiPhotonTagBase::tag_t tagEnum() const override { return DiPhotonTagBase::kDoubleH; }
 
@@ -38,6 +40,7 @@ namespace flashgg {
 
         const flashgg::Jet & leadJet() const { return *leadJet_; } 
         const flashgg::Jet & subleadJet() const { return *subleadJet_; } 
+        const flashgg::Met & RegMET() const {return *RegMET_; }
       //Addition for the VBFHH analysis: *********************************
         void setdijetVBF_mass(double x) { dijetVBF_mass_ = x;}
         double dijetVBF_mass() const {return dijetVBF_mass_ ;}
@@ -149,6 +152,7 @@ namespace flashgg {
  //       std::vector<float> mva_prob_;
          long eventNumber_;
         edm::Ptr<flashgg::Jet> leadJet_, subleadJet_;
+        edm::Ptr<flashgg::Met> RegMET_;
         LorentzVector dijet_;
         DecorrTransform* transfEBEB_;
         DecorrTransform* transfNotEBEB_;
