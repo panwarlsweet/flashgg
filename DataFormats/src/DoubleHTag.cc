@@ -158,6 +158,18 @@ float DoubleHTag::getSigmaMOverMJets() const
     return dijetSigmaMOverM;
 
 }
+///// These are only for mass regression
+std::vector<double> DoubleHTag::getdPhi() const
+{
+    std::vector<double> dPhi;
+    double dphi_jj = TVector2::Phi_mpi_pi(leadJet().phi() - subleadJet().phi());
+    dPhi.push_back(dphi_jj);
+    double dphi_j1m = TVector2::Phi_mpi_pi(leadJet().phi() - RegMET().phi());
+    dPhi.push_back(dphi_j1m);
+    double dphi_j2m = TVector2::Phi_mpi_pi(subleadJet().phi() - RegMET().phi());
+    dPhi.push_back(dphi_j2m);
+    return dPhi;
+}
 
 // Local Variables:
 // mode:c++

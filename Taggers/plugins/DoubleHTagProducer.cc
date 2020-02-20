@@ -558,6 +558,7 @@ namespace flashgg {
                         for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
                             auto jet_2 = cleaned_jets[kjet];
                             auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass();
+                            if(dijet_mass > 200.) continue;
                             std::cout << "testin...........1 =" << endl;
                             auto & leadJet = jet_1; 
                             auto & subleadJet = jet_2; 

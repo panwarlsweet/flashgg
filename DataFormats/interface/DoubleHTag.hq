@@ -1,0 +1,119 @@
+[1mdiff --git a/DataFormats/interface/DoubleHTag.h b/DataFormats/interface/DoubleHTag.h[m
+[1mindex 95cead7a..3beb6fd9 100644[m
+[1m--- a/DataFormats/interface/DoubleHTag.h[m
+[1m+++ b/DataFormats/interface/DoubleHTag.h[m
+[36m@@ -76,6 +76,9 @@[m [mnamespace flashgg {[m
+         float getPhoJetOtherDr() const;[m
+         float getSigmaMDecorr() const;[m
+         float getSigmaMOverMJets() const;[m
+[32m+[m[32m        float getdPhiJ1J2() const;[m
+[32m+[m[32m        float getdPhiJ1M() const;[m
+[32m+[m[32m        float getdPhiJ2M() const;[m
+         void  setSigmaMDecorrTransf( DecorrTransform* transfEBEB, DecorrTransform* transfNotEBEB){ transfEBEB_= transfEBEB; transfNotEBEB_=transfNotEBEB;}[m
+         LorentzVector getdiHiggsP4() const {return p4();}[m
+         void setBenchmarkReweight(std::vector<float> x) { benchmark_reweights_ = x; }[m
+[1mdiff --git a/DataFormats/src/DoubleHTag.cc b/DataFormats/src/DoubleHTag.cc[m
+[1mindex abc9e02a..a654a9eb 100644[m
+[1m--- a/DataFormats/src/DoubleHTag.cc[m
+[1m+++ b/DataFormats/src/DoubleHTag.cc[m
+[36m@@ -158,6 +158,23 @@[m [mfloat DoubleHTag::getSigmaMOverMJets() const[m
+     return dijetSigmaMOverM;[m
+ [m
+ }[m
+[32m+[m[32m///// These are only for mass regression[m
+[32m+[m[32mfloat DoubleHTag::getdPhiJ1J2() const[m
+[32m+[m[32m{[m
+[32m+[m[32m    float dphi_jj = TVector2::Phi_mpi_pi(leadJet().phi() - subleadJet().phi());[m
+[32m+[m[32m    return dphi_jj;[m
+[32m+[m[32m}[m
+[32m+[m[32mfloat DoubleHTag::getdPhiJ1M() const[m
+[32m+[m[32m{[m
+[32m+[m[32m    float dphi_j1m = TVector2::Phi_mpi_pi(leadJet().phi() - RegMET().phi());[m
+[32m+[m[32m    return dphi_j1m;[m
+[32m+[m[32m}[m
+[32m+[m[32mfloat DoubleHTag::getdPhiJ2M() const[m
+[32m+[m[32m{[m
+[32m+[m[32m    float dphi_j2m = TVector2::Phi_mpi_pi(subleadJet().phi() - RegMET().phi());[m
+[32m+[m[32m    return dphi_j2m;[m
+[32m+[m[32m}[m
+[32m+[m
+ [m
+ // Local Variables:[m
+ // mode:c++[m
+[1mdiff --git a/MicroAOD/interface/MVAComputer.h b/MicroAOD/interface/MVAComputer.h[m
+[1mindex b335a934..78472880 100644[m
+[1m--- a/MicroAOD/interface/MVAComputer.h[m
+[1m+++ b/MicroAOD/interface/MVAComputer.h[m
+[36m@@ -134,8 +134,10 @@[m [mnamespace flashgg {[m
+                     //---check for un-physical events[m
+                     if(std::isnan(values_[ivar]))[m
+                         return {-999.};[m
+[31m-                    if( useXGB )[m
+[32m+[m[32m                    if( useXGB ){[m
+                         std::get<1>(xgbVars_[ivar]) = values_[ivar];[m
+[32m+[m[32m                        std::cout << "testing value of vars...1=" << values_[ivar] << endl;[m
+[32m+[m[32m                        }[m
+                 }[m
+             else[m
+                 {[m
+[36m@@ -143,8 +145,10 @@[m [mnamespace flashgg {[m
+                     auto pos = name.find( "::" );[m
+                     auto gname = name.substr( pos + 2 );[m
+                     values_[ivar] = global_->valueOf( gname );[m
+[31m-                    if( useXGB )[m
+[32m+[m[32m                    if( useXGB ){[m
+                         std::get<1>(xgbVars_[ivar]) = global_->valueOf( gname );[m
+[32m+[m[32m                        std::cout << "testing value of vars...2=" << name << " and "<<  gname << "== " << global_->valueOf( gname ) << endl;[m
+[32m+[m[32m                    }[m
+                 }[m
+         }[m
+ [m
+[36m@@ -163,6 +167,11 @@[m [mnamespace flashgg {[m
+         {[m
+             xgbComputer_.SetVariables(&xgbVars_);[m
+             result = xgbComputer_();[m
+[32m+[m[32m            for(size_t j =0; j < variables_.size(); ++j){[m
+[32m+[m[32m                std::cout << "jsut before MVA computer = "<< std::get<1>(xgbVars_[j]) << endl;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            std::cout << "testing mva computer output...3=" << result[0] << endl;[m
+[32m+[m[32m            std::cout << "testing mva computer output...4=" << result[1] << endl;[m
+         }[m
+         [m
+         return result;[m
+[1mdiff --git a/MicroAOD/test/microAODstd.py b/MicroAOD/test/microAODstd.py[m
+[1mindex 6796b0c5..99d2e3e5 100644[m
+[1m--- a/MicroAOD/test/microAODstd.py[m
+[1m+++ b/MicroAOD/test/microAODstd.py[m
+[36m@@ -18,7 +18,7 @@[m [mimport os[m
+ ### 2016[m
+ process.GlobalTag = GlobalTag(process.GlobalTag, '', '')[m
+ process.source = cms.Source("PoolSource",[m
+[31m-                             fileNames=cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv3/VBFHToGG_M125_13TeV_amcatnlo_pythia8_v2/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3-v1/50000/38128C3C-892D-E911-AC8E-008CFA0087C4.root"))[m
+[32m+[m[32m                             fileNames=cms.untracked.vstring("/store/mc/RunIISummer16MiniAODv3/NMSSM_XToYHTo2b2g_MX-300_TuneCUETP8M1_13TeV-madgraph-pythia8/MINIAODSIM/PUSummer16v3Fast_94X_mcRun2_asymptotic_v3-v1/280000/FC9C708A-EA49-EA11-9DB5-0CC47A4D7616.root"))[m
+ #    process.GlobalTag = GlobalTag(process.GlobalTag,'80X_dataRun2_2016LegacyRepro_v4','')[m
+ #    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring("/store/data/Run2016B/SingleElectron/MINIAOD/07Aug17_ver1-v1/110000/0248293E-578B-E711-A639-44A842CFC9D9.root"))[m
+ [m
+[1mdiff --git a/Taggers/python/flashggDoubleHTag_cfi.py b/Taggers/python/flashggDoubleHTag_cfi.py[m
+[1mindex a1a5612c..8fa6882b 100644[m
+[1m--- a/Taggers/python/flashggDoubleHTag_cfi.py[m
+[1m+++ b/Taggers/python/flashggDoubleHTag_cfi.py[m
+[36m@@ -1,5 +1,5 @@[m
+ import FWCore.ParameterSet.Config as cms[m
+[31m-[m
+[32m+[m[32mimport ROOT[m
+ import flashgg.Taggers.dumperConfigTools as cfgTools[m
+ [m
+ from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag[m
+[36m@@ -161,9 +161,9 @@[m [mcfgTools.addVariables(flashggDoubleHTag.MRegConf.variables,[m
+                           "reg_recoJet_2_phi := subleadJet().phi",[m
+                           "Met_CorPt := RegMET().pt",[m
+                           "Met_CorPhi := RegMET().phi",[m
+[31m-                          "reg_recoJet_phi12 := abs(leadJet().phi - subleadJet().phi)",[m
+[31m-                          "reg_recoJet_phi1M := abs(leadJet().phi - RegMET().phi)",[m
+[31m-                          "reg_recoJet_phi2M := abs(subleadJet().phi - RegMET().phi)",[m
+[32m+[m[32m                          "reg_recoJet_phi12 := abs(getdPhiJ1J2())",[m
+[32m+[m[32m                          "reg_recoJet_phi1M := abs(getdPhiJ1M())",[m
+[32m+[m[32m                          "reg_recoJet_phi2M := abs(getdPhiJ2M())",[m
+                           "reg_recoJet_1_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",[m
+                           "reg_recoJet_2_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",[m
+                           "rho := global.rho",[m

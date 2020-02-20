@@ -76,6 +76,7 @@ namespace flashgg {
         float getPhoJetOtherDr() const;
         float getSigmaMDecorr() const;
         float getSigmaMOverMJets() const;
+        std::vector<double> getdPhi() const;
         void  setSigmaMDecorrTransf( DecorrTransform* transfEBEB, DecorrTransform* transfNotEBEB){ transfEBEB_= transfEBEB; transfNotEBEB_=transfNotEBEB;}
         LorentzVector getdiHiggsP4() const {return p4();}
         void setBenchmarkReweight(std::vector<float> x) { benchmark_reweights_ = x; }
