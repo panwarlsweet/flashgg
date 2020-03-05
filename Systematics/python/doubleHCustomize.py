@@ -70,6 +70,10 @@ class DoubleHCustomize():
                 "diHiggs_mass := getdiHiggsP4().M()",
                 "diHiggs_eta :=  getdiHiggsP4().eta()",
                 "diHiggs_phi := getdiHiggsP4().phi()",
+                "deltaEtaHH := abs(dijet().eta - diPhoton.eta)",
+		"deltaPhiHH := abs(dijet().phi - diPhoton.phi)",
+		"sumEtaHH := abs(dijet().eta + diPhoton.eta)",
+                "sumPhiHH := abs(dijet().phi + diPhoton.phi)",
                 "category := categoryNumber()",
                 
                 "leadingPhoton_pt := diPhoton.leadingPhoton.pt",
@@ -80,6 +84,8 @@ class DoubleHCustomize():
                 "subleadingPhoton_eta := diPhoton.subLeadingPhoton.eta",
                 "subleadingPhoton_phi := diPhoton.subLeadingPhoton.phi",
                 "subleadingPhoton_e := diPhoton.subLeadingPhoton.energy",
+		"dipho_lead_prompt := diPhoton.leadingPhoton.genMatchType",
+		"dipho_sublead_prompt := diPhoton.subLeadingPhoton.genMatchType",
 
                 "leadingJet_pt := leadJet().pt",
                 "leadingJet_eta := leadJet().eta",
