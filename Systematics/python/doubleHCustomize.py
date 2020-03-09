@@ -96,6 +96,8 @@ class DoubleHCustomize():
                 "subleadingJet_mass := subleadJet().p4().M()",
                 "subleadingJet_hflav := subleadJet().hadronFlavour()",
                 "subleadingJet_pflav := subleadJet().partonFlavour()",
+
+                "mass_tH := mass_tH()",
             ]
         
         if self.customize.doVBFHHAnalysis : variables +=[
@@ -300,6 +302,8 @@ class DoubleHCustomize():
             "ttH_MET := MET()",
             "ttH_phiMET := phiMET()",
             "ttH_njets := njets()",
+
+            "mass_tH = mass_tH()",
            ]
         if self.customize.doVBFHHAnalysis : variables +=[
             #Addtion of the variables for the VBFHH analysis. 
