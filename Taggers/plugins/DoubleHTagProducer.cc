@@ -541,7 +541,7 @@ namespace flashgg {
                     //dijet pair selection. Do pair according to pt and choose the pair with highest b-tag
                     double sumbtag_ref = -999;
                     bool hasDijet = false;
-                    edm::Ptr<flashgg::Jet>  jet1, jet2, jet3, jet4;
+                    edm::Ptr<flashgg::Jet>  jet1, jet2, jet3, jet4, jet_1b, ljet1, ljet2;
                     for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
                         auto jet_1 = cleaned_jets[ijet];
                         for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
@@ -559,12 +559,33 @@ namespace flashgg {
                             }
                         }
                     }
+                    ///// for tH////
+                    double mass_tH = -99.0, t_btag=0, ref_btag=-99;
+                    for( size_t kjet=0; kjet < cleaned_jets.size(); ++kjet ){
+                        auto jet = cleaned_jets[kjet];
+                        for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
+                            t_btag += jet->bDiscriminator(bTagType_[btag_num]); 
+                        if(t_btag > ref_btag){
+                            ref_btag = t_btag;
+                            jet_1b = jet;
+                        }
+                    }
+                    for( size_t ijet=0; ijet < cleaned_jets.size()-1; ++ijet ){
+                        auto ljet1 = cleaned_jets[ijet];
+                        for( size_t kjet=ijet+1; kjet < cleaned_jets.size(); ++kjet ){
+                            auto ljet2 = cleaned_jets[kjet];
+                            if(reco::deltaR( *jet_1b, *ljet1 ) > 0.4 && reco::deltaR( *jet_1b, *ljet2 ) > 0.4 && std::abs(ljet1->hadronFlavour()) != 5 && std::abs(ljet2->hadronFlavour()) != 5  )
+                                mass_tH = (dipho->p4() + jet_1b->p4() + ljet1->p4() + ljet2->p4() ).mass();
+                        }                         
+                    }
+                    //std::cout << "testin tH mass ==" << mass_tH  << endl;
+                    //tag_obj.mass_tH_ = mass_tH;
+
                     if (!hasDijet)  continue;             
 
                     auto & leadJet = jet1; 
                     auto & subleadJet = jet2; 
                     
-                   
                     // These addition is corresponding to the VBFHH analysis: 
                     // The varivbles are : Number of Jets, Forward lead & sublead jet eta, pt and phi, dijet mass and their eta difference. 
                     double dijetVBF_mass = -10.0;
@@ -1052,6 +1073,7 @@ namespace flashgg {
                             tag_obj.MT_subleadpho_met_= ttHVars["MT_subleadpho_met"];
                             tag_obj.MT_dipho_met_= ttHVars["MT_dipho_met"];
                             tag_obj.sumPT_Had_Act_ = ttHVars["sumPT_Had_Act"];
+                            tag_obj.mass_tH_ = mass_tH;
                             StandardizeHLF();
                 
                             //10 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
