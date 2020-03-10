@@ -548,27 +548,6 @@ namespace flashgg {
                             }
                         }
                     }
-                    ///// for tH////
-                    double mass_tH = -99.0, t_btag=0, ref_btag=-99;
-                    for( size_t kjet=0; kjet < cleaned_jets.size(); ++kjet ){
-                        auto jet = cleaned_jets[kjet];
-                        for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
-                            t_btag += jet->bDiscriminator(bTagType_[btag_num]); 
-                        if(t_btag > ref_btag){
-                            ref_btag = t_btag;
-                            jet_1b = jet;
-                        }
-                    }
-                    for( size_t ijet=0; ijet < cleaned_jets.size()-1; ++ijet ){
-                        auto ljet1 = cleaned_jets[ijet];
-                        for( size_t kjet=ijet+1; kjet < cleaned_jets.size(); ++kjet ){
-                            auto ljet2 = cleaned_jets[kjet];
-                            if(reco::deltaR( *jet_1b, *ljet1 ) > 0.4 && reco::deltaR( *jet_1b, *ljet2 ) > 0.4 && std::abs(ljet1->hadronFlavour()) != 5 && std::abs(ljet2->hadronFlavour()) != 5  )
-                                mass_tH = (dipho->p4() + jet_1b->p4() + ljet1->p4() + ljet2->p4() ).mass();
-                        }                         
-                    }
-                    //std::cout << "testin tH mass ==" << mass_tH  << endl;
-                    //tag_obj.mass_tH_ = mass_tH;
 
                     if (!hasDijet)  continue;             
 
@@ -757,6 +736,7 @@ namespace flashgg {
                     // tag_obj.setMVAprob( mva_vector );
 
                     // tth Tagger
+                    double mass_tH = -99.0, MX_tH = -99.0;
                     if (dottHTagger_) 
                         {
                             HLF_VectorVar_.resize(9);  // High-level features. 9 at the moment
@@ -929,6 +909,16 @@ namespace flashgg {
                             DiJet.push_back(tag_obj.leadJet());
                             DiJet.push_back(tag_obj.subleadJet());
                             std::vector<float> Xtt = tthKiller_.XttCalculation(cleaned_physical_jets,DiJet);
+                            // for tH ////
+                            const flashgg::Jet *Wjet1 = &(cleaned_physical_jets[Xtt[6]]);
+                            const flashgg::Jet *Wjet2 = &(cleaned_physical_jets[Xtt[7]]);
+
+                            double mass_t = ( Wjet1->p4() + Wjet2->p4() + DiJet[Xtt[8]].p4() ).M();
+                            mass_tH = ( Wjet1->p4() + Wjet2->p4() + DiJet[Xtt[8]].p4() + dipho->p4() ).M();
+                            MX_tH   = mass_tH - dipho->p4().M() - mass_t + 125.0 + 175.0;
+
+                            std::cout << "testing mass_tH.......="  << mass_tH << " and " << MX_tH  << endl;
+                            /// upto here ///
                             if(Xtt.size()>3){
                                 ttHVars["Xtt0"] = Xtt[0];
                                 ttHVars["Xtt1"] = Xtt[3];
@@ -1049,6 +1039,7 @@ namespace flashgg {
                             tag_obj.etajet2_ = ttHVars["etajet2"];
                             tag_obj.phijet1_ = ttHVars["phijet1"];
                             tag_obj.phijet2_ = ttHVars["phijet2"];
+                            /// adding for extra studies ////
                             tag_obj.ttDecay_ID_ = ttHVars["ttDecay_ID"];
                             tag_obj.deepjetCdiscr_jet1_= ttHVars["deepjetCdiscr_jet1"];
                             tag_obj.deepjetCvsLdiscr_jet1_= ttHVars["deepjetCvsLdiscr_jet1"];
@@ -1063,6 +1054,8 @@ namespace flashgg {
                             tag_obj.MT_dipho_met_= ttHVars["MT_dipho_met"];
                             tag_obj.sumPT_Had_Act_ = ttHVars["sumPT_Had_Act"];
                             tag_obj.mass_tH_ = mass_tH;
+                            tag_obj.MX_tH_ = MX_tH;
+                            ////////
                             StandardizeHLF();
                 
                             //10 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',

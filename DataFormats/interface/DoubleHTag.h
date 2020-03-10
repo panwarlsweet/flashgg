@@ -87,7 +87,7 @@ namespace flashgg {
 
         float ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_, bgenJetNoNu_1_pt_, bgenJetNoNu_2_pt_, bgenJetNu_1_pt_, bgenJetNu_2_pt_, mbbNu_, mbbNoNu_, SumPT_Nus_;
 
-        float mass_tH_;
+        float mass_tH_, MX_tH_;
 
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
@@ -146,6 +146,7 @@ namespace flashgg {
         float reg_SumPT_Nus_() const {return SumPT_Nus_;}
         /// for tH//////
         float mass_tH() const {return mass_tH_;}
+        float MX_tH() const {return MX_tH_;}
     private:
 
         double mva_, MX_, genMhh_,genCosThetaStar_CS_;
