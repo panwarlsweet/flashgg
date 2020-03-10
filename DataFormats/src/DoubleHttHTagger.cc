@@ -24,7 +24,7 @@ std::vector<float> DoubleHttHTagger::XttCalculation(std::vector<flashgg::Jet> je
 {
 
     std::vector<float> Xtt;
-    Xtt.push_back(1000);  Xtt.push_back(0);   Xtt.push_back(0);  Xtt.push_back(1000); Xtt.push_back(0);  Xtt.push_back(0); 
+    Xtt.push_back(1000);  Xtt.push_back(0);   Xtt.push_back(0);  Xtt.push_back(1000); Xtt.push_back(0);  Xtt.push_back(0); Xtt.push_back(-1); Xtt.push_back(-1); Xtt.push_back(-1); 
     unsigned int WJetIndex00 = 1000,  WJetIndex01 = 1000, bJetIndex0 = 1000;
 
 
@@ -52,7 +52,7 @@ std::vector<float> DoubleHttHTagger::XttCalculation(std::vector<flashgg::Jet> je
             }
         }
     }
-
+    Xtt[6] = WJetIndex00; Xtt[7] = WJetIndex01; Xtt[8] = bJetIndex0; 
     if (jetsCol.size() < 4) return Xtt;
 
     int  bJetIndex = 0;

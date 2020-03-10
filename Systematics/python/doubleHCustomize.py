@@ -96,8 +96,6 @@ class DoubleHCustomize():
                 "subleadingJet_mass := subleadJet().p4().M()",
                 "subleadingJet_hflav := subleadJet().hadronFlavour()",
                 "subleadingJet_pflav := subleadJet().partonFlavour()",
-
-                "mass_bjjgg := mass_tH()",
             ]
         
         if self.customize.doVBFHHAnalysis : variables +=[
@@ -201,6 +199,8 @@ class DoubleHCustomize():
         if self.customize.doDoubleHttHKiller : 
              variables +=[
                "ttHScore := ttHScore()",
+               "mass_bjjgg := mass_tH()",
+               "MX_bjjgg := MX_tH()",
              ]
              var_workspace +=[
                "ttHScore := ttHScore()",
@@ -302,8 +302,6 @@ class DoubleHCustomize():
             "ttH_MET := MET()",
             "ttH_phiMET := phiMET()",
             "ttH_njets := njets()",
-
-            "mass_bjjgg = mass_tH()",
            ]
         if self.customize.doVBFHHAnalysis : variables +=[
             #Addtion of the variables for the VBFHH analysis. 
@@ -321,6 +319,8 @@ class DoubleHCustomize():
            ]
         if self.customize.doDoubleHttHKiller : variables +=[
             "ttHScore := ttHScore()",
+            "mass_bjjgg := mass_tH()",
+            "MX_bjjgg := MX_tH()",
            ]
         return variables
 
