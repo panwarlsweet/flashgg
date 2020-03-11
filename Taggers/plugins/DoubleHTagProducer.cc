@@ -747,7 +747,7 @@ namespace flashgg {
                     // tag_obj.setMVAprob( mva_vector );
 
                     // tth Tagger
-                    double mass_tH = -99.0, MX_tH = -99.0;
+                    double mass_tH = -99.0, MX_tH = -99.0, mass_t = -99., mass_W = -99.0, deepjet_b = -99.0;
                     if (dottHTagger_) 
                         {
                             HLF_VectorVar_.resize(9);  // High-level features. 9 at the moment
@@ -923,12 +923,15 @@ namespace flashgg {
                             // for tH ////
                             const flashgg::Jet *Wjet1 = &(cleaned_physical_jets[Xtt[6]]);
                             const flashgg::Jet *Wjet2 = &(cleaned_physical_jets[Xtt[7]]);
-
-                            double mass_t = ( Wjet1->p4() + Wjet2->p4() + DiJet[Xtt[8]].p4() ).M();
+                            
+                            mass_W = ( Wjet1->p4() + Wjet2->p4() ).M();
+                            mass_t = ( Wjet1->p4() + Wjet2->p4() + DiJet[Xtt[8]].p4() ).M();
                             mass_tH = ( Wjet1->p4() + Wjet2->p4() + DiJet[Xtt[8]].p4() + dipho->p4() ).M();
                             MX_tH   = mass_tH - dipho->p4().M() - mass_t + 125.0 + 175.0;
-
-                            std::cout << "testing mass_tH.......="  << mass_tH << " and " << MX_tH  << endl;
+                            deepjet_b = 0.;
+                            for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
+                                deepjet_b +=  DiJet[Xtt[8]].bDiscriminator(bTagType_[btag_num]); 
+                            //   std::cout << "testing mass_tH.......="  << mass_tH << " and " << MX_tH  << " and " << mass_t << " and " << mass_W << std::endl;
                             /// upto here ///
                             if(Xtt.size()>3){
                                 ttHVars["Xtt0"] = Xtt[0];
@@ -1066,6 +1069,9 @@ namespace flashgg {
                             tag_obj.sumPT_Had_Act_ = ttHVars["sumPT_Had_Act"];
                             tag_obj.mass_tH_ = mass_tH;
                             tag_obj.MX_tH_ = MX_tH;
+                            tag_obj.mass_t_ = mass_t;
+                            tag_obj.mass_W_ = mass_W;
+                            tag_obj.deepjet_b_ = deepjet_b;
                             ////////
                             StandardizeHLF();
                 
