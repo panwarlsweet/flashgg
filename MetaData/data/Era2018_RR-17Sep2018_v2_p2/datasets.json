@@ -3059,5 +3059,108 @@
         ], 
         "parent_n_units": 200000, 
         "vetted": true
+    }, 
+    "/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/lata-Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1-cb307715c84d00545a381c20bd4e6a9f/USER": {
+        "dset_type": "mc", 
+        "files": [
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_2.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24845.8046875
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_8.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24819.392578125
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_3.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24837.28125
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_4.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24867.6875
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_9.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24816.001953125
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_1.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24850.734375
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_7.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24868.642578125
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_6.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24817.841796875
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_11.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24826.353515625
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_12.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24865.4140625
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_10.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24850.22265625
+            }, 
+            {
+                "bad": false, 
+                "events": 25000, 
+                "name": "/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/Era2018_RR-17Sep2018_v2_p2/v2_p2/TprimeBToTH_M-700_LH_TuneCP5_PSweights_13TeV-madgraph_pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200331_133307/0000/myMicroAODOutputFile_5.root", 
+                "nevents": 25000, 
+                "totEvents": 25000, 
+                "weights": 24854.8125
+            }
+        ], 
+        "parent_n_units": 300000, 
+        "vetted": true
     }
 }
