@@ -199,6 +199,13 @@ class DoubleHCustomize():
         if self.customize.doDoubleHttHKiller : 
              variables +=[
                "ttHScore := ttHScore()",
+               "mass_bjjgg := mass_tH()",
+               "MX_bjjgg := MX_tH()",
+               "mass_bjj := mass_t()",
+               "mass_jj := mass_W()",
+               "deepjet_b := deepjet_b()",
+               "Xtt0 := Xtt0()",
+               "Xtt3 := Xtt1()",
              ]
              var_workspace +=[
                "ttHScore := ttHScore()",
@@ -317,6 +324,13 @@ class DoubleHCustomize():
            ]
         if self.customize.doDoubleHttHKiller : variables +=[
             "ttHScore := ttHScore()",
+            "mass_bjjgg := mass_tH()",
+            "MX_bjjgg := MX_tH()",
+            "mass_bjj := mass_t()",
+            "mass_jj := mass_W()",
+            "deepjet_b := deepjet_b()",
+            "Xtt0 := Xtt0()",
+            "Xtt3 := Xtt1()",
            ]
         return variables
 

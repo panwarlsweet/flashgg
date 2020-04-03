@@ -44,8 +44,6 @@ namespace flashgg {
     {
 
     public:
-        typedef math::XYZPoint Point;
-
         DoubleHTagProducer( const ParameterSet & );
     private:
         void produce( Event &, const EventSetup & ) override;
@@ -387,14 +385,6 @@ namespace flashgg {
             Handle<View<reco::GenParticle> > genParticles;
             std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
             evt.getByToken( genParticleToken_, genParticles );
-            Point higgsVtx(0.,0.,0.);
-            for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
-                int pdgid = genParticles->ptrAt( genLoop )->pdgId(); 
-                if( pdgid == 25 || pdgid == 22 ) {
-                    higgsVtx = genParticles->ptrAt( genLoop )->vertex();
-                    break;
-                }
-            }
             for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
                 edm::Ptr<reco::GenParticle> genPar = genParticles->ptrAt(genLoop);
                 if (selHiggses.size()>1) break;
@@ -409,7 +399,6 @@ namespace flashgg {
                 genMhh  = (H1+H2).M();
                 genCosThetaStar_CS = getGenCosThetaStar_CS(H1,H2);   
             }
-            truth_obj.setGenPV( higgsVtx );
             truths->push_back( truth_obj );
             
    
@@ -552,7 +541,7 @@ namespace flashgg {
                     //dijet pair selection. Do pair according to pt and choose the pair with highest b-tag
                     double sumbtag_ref = -999;
                     bool hasDijet = false;
-                    edm::Ptr<flashgg::Jet>  jet1, jet2, jet3, jet4;
+                    edm::Ptr<flashgg::Jet>  jet1, jet2, jet3, jet4, jet_1b, ljet1, ljet2;
                     for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
                         auto jet_1 = cleaned_jets[ijet];
                         for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
@@ -580,12 +569,12 @@ namespace flashgg {
                             }
                         }
                     }
+
                     if (!hasDijet)  continue;             
 
                     auto & leadJet = jet1; 
                     auto & subleadJet = jet2; 
                     
-                   
                     // These addition is corresponding to the VBFHH analysis: 
                     // The varivbles are : Number of Jets, Forward lead & sublead jet eta, pt and phi, dijet mass and their eta difference. 
                     double dijetVBF_mass = -10.0;
@@ -768,6 +757,7 @@ namespace flashgg {
                     // tag_obj.setMVAprob( mva_vector );
 
                     // tth Tagger
+                    double mass_tH = -99.0, MX_tH = -99.0, mass_t = -99., mass_W = -99.0, deepjet_b = -99.0;
                     if (dottHTagger_) 
                         {
                             HLF_VectorVar_.resize(9);  // High-level features. 9 at the moment
@@ -940,6 +930,19 @@ namespace flashgg {
                             DiJet.push_back(tag_obj.leadJet());
                             DiJet.push_back(tag_obj.subleadJet());
                             std::vector<float> Xtt = tthKiller_.XttCalculation(cleaned_physical_jets,DiJet);
+                            // for tH ////
+                            const flashgg::Jet *Wjet1 = &(cleaned_physical_jets[Xtt[6]]);
+                            const flashgg::Jet *Wjet2 = &(cleaned_physical_jets[Xtt[7]]);
+                            
+                            mass_W = ( Wjet1->p4() + Wjet2->p4() ).M();
+                            mass_t = ( Wjet1->p4() + Wjet2->p4() + DiJet[Xtt[8]].p4() ).M();
+                            mass_tH = ( Wjet1->p4() + Wjet2->p4() + DiJet[Xtt[8]].p4() + dipho->p4() ).M();
+                            MX_tH   = mass_tH - dipho->p4().M() - mass_t + 125.0 + 175.0;
+                            deepjet_b = 0.;
+                            for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
+                                deepjet_b +=  DiJet[Xtt[8]].bDiscriminator(bTagType_[btag_num]); 
+                            //   std::cout << "testing mass_tH.......="  << mass_tH << " and " << MX_tH  << " and " << mass_t << " and " << mass_W << std::endl;
+                            /// upto here ///
                             if(Xtt.size()>3){
                                 ttHVars["Xtt0"] = Xtt[0];
                                 ttHVars["Xtt1"] = Xtt[3];
@@ -1060,6 +1063,7 @@ namespace flashgg {
                             tag_obj.etajet2_ = ttHVars["etajet2"];
                             tag_obj.phijet1_ = ttHVars["phijet1"];
                             tag_obj.phijet2_ = ttHVars["phijet2"];
+                            /// adding for extra studies ////
                             tag_obj.ttDecay_ID_ = ttHVars["ttDecay_ID"];
                             tag_obj.deepjetCdiscr_jet1_= ttHVars["deepjetCdiscr_jet1"];
                             tag_obj.deepjetCvsLdiscr_jet1_= ttHVars["deepjetCvsLdiscr_jet1"];
@@ -1073,6 +1077,12 @@ namespace flashgg {
                             tag_obj.MT_subleadpho_met_= ttHVars["MT_subleadpho_met"];
                             tag_obj.MT_dipho_met_= ttHVars["MT_dipho_met"];
                             tag_obj.sumPT_Had_Act_ = ttHVars["sumPT_Had_Act"];
+                            tag_obj.mass_tH_ = mass_tH;
+                            tag_obj.MX_tH_ = MX_tH;
+                            tag_obj.mass_t_ = mass_t;
+                            tag_obj.mass_W_ = mass_W;
+                            tag_obj.deepjet_b_ = deepjet_b;
+                            ////////
                             StandardizeHLF();
                 
                             //10 HLFs: 'sumEt','dPhi1','dPhi2','PhoJetMinDr','njets','Xtt0',
@@ -1192,8 +1202,8 @@ namespace flashgg {
             //            tag_obj.includeWeights( *leadJet );
             //            tag_obj.includeWeights( *subleadJet );
 
-                        tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight");
-                        tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight" );
+                        tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight", false);
+                        tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight", false);
 
 
 

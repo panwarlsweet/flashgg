@@ -64,6 +64,7 @@ namespace flashgg {
         double leadVBF_pt() const {return leadVBF_pt_;}
         void setsubleadVBF_pt(double x) { subleadVBF_pt_ = x;}
         double subleadVBF_pt() const {return subleadVBF_pt_;}
+        
        //*****************************************************************
         
         const LorentzVector & dijet() const { return dijet_; }
@@ -89,6 +90,8 @@ namespace flashgg {
         float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_,PhoJetOtherDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_; 
 
         float ttDecay_ID_, deepjetCdiscr_jet1_, deepjetCdiscr_jet2_, deepjetCvsLdiscr_jet1_, deepjetCvsLdiscr_jet2_, deepcsvCdiscr_jet1_, deepcsvCdiscr_jet2_, deepcsvCvsLdiscr_jet1_, deepcsvCvsLdiscr_jet2_,  MT_leadpho_met_, MT_subleadpho_met_, MT_dipho_met_, sumPT_Had_Act_, bgenJetNoNu_1_pt_, bgenJetNoNu_2_pt_, bgenJetNu_1_pt_, bgenJetNu_2_pt_, mbbNu_, mbbNoNu_, SumPT_Nus_;
+
+        float mass_tH_, MX_tH_, mass_W_, mass_t_, deepjet_b_;
 
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
@@ -145,6 +148,12 @@ namespace flashgg {
         float reg_bgenJetNu_1_pt() const {return bgenJetNu_1_pt_;}
         float reg_bgenJetNu_2_pt() const {return bgenJetNu_2_pt_;}
         float reg_SumPT_Nus_() const {return SumPT_Nus_;}
+        /// for tH//////
+        float mass_t() const {return mass_t_;}
+        float mass_W() const {return mass_W_;}
+        float mass_tH() const {return mass_tH_;}
+        float MX_tH() const {return MX_tH_;}
+        double deepjet_b() const {return deepjet_b_;}
     private:
 
         double mva_, MX_, genMhh_,genCosThetaStar_CS_;

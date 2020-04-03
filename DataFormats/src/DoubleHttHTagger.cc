@@ -24,9 +24,10 @@ std::vector<float> DoubleHttHTagger::XttCalculation(std::vector<flashgg::Jet> je
 {
 
     std::vector<float> Xtt;
-    Xtt.push_back(1000);  Xtt.push_back(0);   Xtt.push_back(0);  Xtt.push_back(1000); Xtt.push_back(0);  Xtt.push_back(0); 
+    Xtt.push_back(1000);  Xtt.push_back(0);   Xtt.push_back(0);  Xtt.push_back(1000); Xtt.push_back(0);  Xtt.push_back(0); Xtt.push_back(-1); Xtt.push_back(-1); Xtt.push_back(-1); 
+    Xtt.push_back(-1); Xtt.push_back(-1); Xtt.push_back(-1);
     unsigned int WJetIndex00 = 1000,  WJetIndex01 = 1000, bJetIndex0 = 1000;
-
+    unsigned int WJetIndex10 = 1000,  WJetIndex11 = 1000, bJetIndex1 = 1000;
 
     for( unsigned int jetIndex0 = 0; jetIndex0 < jetsCol.size(); jetIndex0++ ) {
         //flashgg::Jet jet = jetsCol[jetIndex];
@@ -48,11 +49,11 @@ std::vector<float> DoubleHttHTagger::XttCalculation(std::vector<flashgg::Jet> je
             }
             if (Xtt[0] > XT1) {
                 Xtt[0] = XT1; Xtt[1] = Wcand.M(); Xtt[2] = tcand1.M(); 
-                WJetIndex00 = jetIndex0, WJetIndex01 = jetIndex1, bJetIndex0 = 1;
+                WJetIndex00 = jetIndex0; WJetIndex01 = jetIndex1; bJetIndex0 = 1;
             }
         }
     }
-
+    Xtt[6] = WJetIndex00; Xtt[7] = WJetIndex01; Xtt[8] = bJetIndex0; 
     if (jetsCol.size() < 4) return Xtt;
 
     int  bJetIndex = 0;
@@ -76,12 +77,13 @@ std::vector<float> DoubleHttHTagger::XttCalculation(std::vector<flashgg::Jet> je
             float XT = XW + TMath::Power((tcand.M() - mT)/(0.1*mT),2);
 
             if (Xtt[3] > XT) {
-                Xtt[3] = XT;  Xtt[4] = Wcand.M(); Xtt[5] = tcand.M(); 
+                Xtt[3] = XT;  Xtt[4] = Wcand.M(); Xtt[5] = tcand.M();
+		WJetIndex10 = jetIndex0; WJetIndex11 = jetIndex1; bJetIndex1 = bJetIndex;
             }
 
         }
     }
-
+    Xtt[9] = WJetIndex10; Xtt[10] = WJetIndex11; Xtt[11] = bJetIndex1;
 
     return Xtt;
 }
