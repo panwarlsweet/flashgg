@@ -23,7 +23,7 @@ ttHKiller_listmean = cms.vdouble()
 ttHKiller_liststd = cms.vdouble()
 MaxJetEta = 2.5
 
-MReg_weights="XGB_Mjj_Reg_model_2016.xgb"
+MReg_weights="XGB_Mjj_Reg_model_2016.weights.xml"
 
 flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    DiPhotonName = cms.string('flashggPreselectedDiPhotons'), # 
@@ -148,26 +148,25 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
 
 cfgTools.addVariables(flashggDoubleHTag.MRegConf.variables,
                       [
-                          "reg_reco_mjj := dijet().M()",
-                          "reg_recoJet_1_pt := leadJet().pt",
-                          "reg_recoJet_1_eta := leadJet().eta",
-                          "reg_recoJet_1_mass := leadJet().p4().M()",
-                          "reg_recoJet_1_e := leadJet().energy",
-                          "reg_recoJet_1_phi := leadJet().phi",
-                          "reg_recoJet_2_pt := subleadJet().pt",
-                          "reg_recoJet_2_eta := subleadJet().eta",
-                          "reg_recoJet_2_mass := subleadJet().p4().M()",
-                          "reg_recoJet_2_e := subleadJet().energy",
-                          "reg_recoJet_2_phi := subleadJet().phi",
-                          "Met_CorPt := RegMET().pt",
-                          "Met_CorPhi := RegMET().phi",
-                          "reg_recoJet_phi12 := abs(getdPhi()[0])",
-                          "reg_recoJet_phi1M := abs(getdPhi()[1])",
-                          "reg_recoJet_phi2M := abs(getdPhi()[2])",
-                          "reg_recoJet_1_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
-                          "reg_recoJet_2_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
+                          "leadingJet_pt := leadJet().pt",
+                          "leadingJet_eta := leadJet().eta",
+                          "leadingJet_mass := leadJet().p4().M()",
+                          "leadingJet_e := leadJet().energy",
+                          "leadingJet_phi := leadJet().phi",
+                          "subleadingJet_pt := subleadJet().pt",
+                          "subleadingJet_eta := subleadJet().eta",
+                          "subleadingJet_mass := subleadJet().p4().M()",
+                          "subleadingJet_e := subleadJet().energy",
+                          "subleadingJet_phi := subleadJet().phi",
+                          "ttH_MET := RegMET().pt",
+                          "ttH_phiMET := RegMET().phi",
+                          "MjjReg_phi12 := abs(getdPhi()[0])",
+                          "MjjReg_phi1M := abs(getdPhi()[1])",
+                          "MjjReg_phi2M := abs(getdPhi()[2])",
+                          "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
+                          "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
                           "rho := global.rho",
                           "nvtx := global.nvtx",
-                          "reg_reco_Mbbgg := getdiHiggsP4().M()"
+                          "diHiggs_mass := getdiHiggsP4().M()"
                       ]
                     )
