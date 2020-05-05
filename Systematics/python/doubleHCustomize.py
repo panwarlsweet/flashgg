@@ -129,6 +129,12 @@ class DoubleHCustomize():
                 "bgenJetNu_2_pt := reg_bgenJetNu_2_pt()",
                 "bgenJetNoNu_1_pt := reg_bgenJetNoNu_1_pt()",
                 "bgenJetNoNu_2_pt := reg_bgenJetNoNu_2_pt()",
+                "leadJet_softleptonPtRel := leadJet().userFloat('softLepPtRel')",
+                "subleadJet_softleptonPtRel := subleadJet().userFloat('softLepPtRel')",
+                "leadJet_softLepDr := leadJet().userFloat('softLepDr')",
+                "subleadJet_softLepDr := subleadJet().userFloat('softLepDr')",
+                "leadJet_softLepPtRelInv := leadJet().userFloat('softLepPtRelInv')*leadJet().correctedJet('Uncorrected').pt/leadJet().pt",
+                "subleadJet_softLepPtRelInv := subleadJet().userFloat('softLepPtRelInv')*subleadJet().correctedJet('Uncorrected').pt/subleadJet().pt",
                 "SumPT_Nus := reg_SumPT_Nus_()",
 
         ]
