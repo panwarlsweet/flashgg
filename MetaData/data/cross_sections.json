@@ -1,4 +1,13 @@
 {
+"NMSSM_XToYHTo2b2g_MX-300_TuneCUETP8M1_13TeV-madgraph-pythia8"	   : { "xs" : 0.00, "kf" : 1.06                               },
+"NMSSM_XToYHTo2b2g_MX-400_TuneCUETP8M1_13TeV-madgraph-pythia8"     : { "xs" : 0.00, "kf" : 1.06                               },
+"NMSSM_XToYHTo2b2g_MX-500_TuneCUETP8M1_13TeV-madgraph-pythia8"     : { "xs" : 0.00, "kf" : 1.06                               },
+"NMSSM_XToYHTo2b2g_MX-600_TuneCUETP8M1_13TeV-madgraph-pythia8"	   : { "xs" : 0.00, "kf" : 1.06                               },
+"NMSSM_XToYHTo2b2g_MX-700_TuneCUETP8M1_13TeV-madgraph-pythia8"     : { "xs" : 0.00, "kf" : 1.06                               },
+"NMSSM_XToYHTo2b2g_MX-800_TuneCUETP8M1_13TeV-madgraph-pythia8"     : { "xs" : 0.00, "kf" : 1.06                               },
+"NMSSM_XToYHTo2b2g_MX-900_TuneCUETP8M1_13TeV-madgraph-pythia8"	   : { "xs" : 0.00, "kf" : 1.06                               },
+"NMSSM_XToYHTo2b2g_MX-1000_TuneCUETP8M1_13TeV-madgraph-pythia8"     : { "xs" : 0.00, "kf" : 1.06                               },
+"GluGluToRadionToHHTo2B2G_M-1000_narrow_TuneCUETP8M1_13TeV-madgraph-pythia8"      : { "xs" : 0.001, "kf" : 1.06                               },
 "GluGluToBulkGravitonToHHTo2B2G_M-1000_narrow_13TeV-madgraph"      : { "xs" : 0.00, "kf" : 1.06                               },
 "GluGluToBulkGravitonToHHTo2B2G_M-250_narrow_13TeV-madgraph"      : { "xs" : 0.001, "kf" : 1.06                              },
 "GluGluToBulkGravitonToHHTo2B2G_M-260_narrow_13TeV-madgraph"      : { "xs" : 0.001, "kf" : 1.06                              },
