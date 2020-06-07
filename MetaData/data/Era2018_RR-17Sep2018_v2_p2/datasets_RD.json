@@ -19,7 +19,7 @@
                 "weights": 24992.96875
             }, 
             {
-                "bad": false, 
+                "bad": true, 
                 "events": 25000, 
                 "name": "/store/group/phys_higgs/cmshgg/lata/flashgg/Era2018_RR-17Sep2018_v2_p2/v2_p2/GluGluToRadionToHHTo2B2G_M-1000_narrow_TuneCP5_PSWeights_13TeV-madgraph-pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/190820_153231/0000/myMicroAODOutputFile_3.root", 
                 "nevents": 25000, 
@@ -1633,6 +1633,14 @@
                 "nevents": 25000, 
                 "totEvents": 25000, 
                 "weights": 24995.169921875
+            }, 
+            {
+                "bad": false, 
+                "events": 20000, 
+                "name": "/store/user/lata/t3store2/WED_microAODs/2018/GluGluToRadionToHHTo2B2G_M-800_narrow_TuneCP5_PSWeights_13TeV-madgraph-pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/200520_145002/0000/myMicroAODOutputFile_2.root", 
+                "nevents": 20000, 
+                "totEvents": 20000, 
+                "weights": 19996.23046875
             }
         ], 
         "parent_n_units": 193000, 
@@ -1658,7 +1666,7 @@
                 "weights": 24992.7890625
             }, 
             {
-                "bad": false, 
+                "bad": true, 
                 "events": 25000, 
                 "name": "/store/group/phys_higgs/cmshgg/lata/flashgg/Era2018_RR-17Sep2018_v2_p2/v2_p2/GluGluToRadionToHHTo2B2G_M-900_narrow_TuneCP5_PSWeights_13TeV-madgraph-pythia8/Era2018_RR-17Sep2018_v2_p2-v2_p2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/190820_163001/0000/myMicroAODOutputFile_2.root", 
                 "nevents": 25000, 
