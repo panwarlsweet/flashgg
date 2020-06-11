@@ -150,6 +150,8 @@ class DoubleHCustomize():
             var_workspace += ["benchmark_reweight_2017fake := getBenchmarkReweight(14)"]
             for KL in range(1,82):
                 variables += ["KL%d := getBenchmarkReweight(%d)"%(KL, (KL+14))]
+	    for C2 in range(1,81):
+                variables += ["C2%d := getBenchmarkReweight(%d)"%(C2, (C2+95))]
 
         if self.customize.processId != "Data": 
             var_workspace += ['btagReshapeWeight := weight("JetBTagReshapeWeightCentral")']
@@ -205,13 +207,13 @@ class DoubleHCustomize():
         if self.customize.doDoubleHttHKiller : 
              variables +=[
                "ttHScore := ttHScore()",
-               "mass_bjjgg := mass_tH()",
-               "MX_bjjgg := MX_tH()",
-               "mass_bjj := mass_t()",
-               "mass_jj := mass_W()",
-               "deepjet_b := deepjet_b()",
-               "Xtt0 := Xtt0()",
-               "Xtt3 := Xtt1()",
+               #"mass_bjjgg := mass_tH()",
+               #"MX_bjjgg := MX_tH()",
+               #"mass_bjj := mass_t()",
+               #"mass_jj := mass_W()",
+               #"deepjet_b := deepjet_b()",
+               #"Xtt0 := Xtt0()",
+               #"Xtt3 := Xtt1()",
              ]
              var_workspace +=[
                "ttHScore := ttHScore()",
@@ -330,13 +332,13 @@ class DoubleHCustomize():
            ]
         if self.customize.doDoubleHttHKiller : variables +=[
             "ttHScore := ttHScore()",
-            "mass_bjjgg := mass_tH()",
-            "MX_bjjgg := MX_tH()",
-            "mass_bjj := mass_t()",
-            "mass_jj := mass_W()",
-            "deepjet_b := deepjet_b()",
-            "Xtt0 := Xtt0()",
-            "Xtt3 := Xtt1()",
+            #"mass_bjjgg := mass_tH()",
+            #"MX_bjjgg := MX_tH()",
+            #"mass_bjj := mass_t()",
+            #"mass_jj := mass_W()",
+            #"deepjet_b := deepjet_b()",
+            #"Xtt0 := Xtt0()",
+            #"Xtt3 := Xtt1()",
            ]
         return variables
 
@@ -508,6 +510,8 @@ class DoubleHCustomize():
              genVariables += ["benchmark_reweight_2017fake := getHHbbggBenchmarkReweight(14)"]
              for KL in range(1,82):
                 genVariables += ["KL%d := getHHbbggBenchmarkReweight(%d)"%(KL, (KL+14))]
+	     for C2 in range(1,81):
+                genVariables += ["C2%d := getHHbbggBenchmarkReweight(%d)"%(C2, (C2+95))]
 
         ## define categories for gen-level dumper
         cfgTools.addCategory(self.process.genDiphotonDumper,  ## events with not reco-level tag

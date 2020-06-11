@@ -36,6 +36,7 @@ namespace flashgg {
         void produce( Event &, const EventSetup & ) override;
         float getWeight( int targetNode,float gen_mHH, float gen_cosTheta);
         float getklScan( float kl, float gen_mHH, float gen_cosTheta);
+        float getc2Scan ( float c2, float gen_mHH, float gen_cosTheta);
         float getNormalisation(float kl, float kt, float c2, float cg, float c2g, TH2F* h_all);
         float getCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2);
         float functionGF(float kl, float kt, float c2, float cg, float c2g, vector<double> A);
@@ -44,7 +45,7 @@ namespace flashgg {
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
         int doReweight_;
         edm::FileInPath weightsFile_;  // file with prepared histograms needed for reweighting
-        const unsigned int NUM_benchmarks = 96;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15, 81 kl scan points = [-6, 10] with spacing 0.2 
+        const unsigned int NUM_benchmarks = 177;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15, 81 kl scan points = [-6, 10] with spacing 0.2, 81 c2 scan points = [-6, 10] with spacing 0.2 
         const unsigned int numberSMbenchmark = 13;  // index of SM benchmark 
         const unsigned int numberBoxbenchmark = 14;  // index of SM benchmark 
         const unsigned int numberFakebenchmark = 15;  // index of SM benchmark 
@@ -84,8 +85,10 @@ namespace flashgg {
                     else if (num==(numberFakebenchmark-1)) produces<float>("benchmark2017fake");
                     else produces<float>(Form("benchmark%i",num));
                 }
-                else
-                    produces<float>(Form("KL%i",(num-(numberFakebenchmark-1))));
+                else if(num >= numberFakebenchmark && num < 96){
+                        produces<float>(Form("KL%i",(num-(numberFakebenchmark-1))));
+                    }
+                else produces<float>(Form("C2%i",(num-95))); 
             }
     }   
     
@@ -158,7 +161,27 @@ namespace flashgg {
         w = (effBSM/denom);
         return w;
     }
-    
+    float DoubleHReweighter::getc2Scan( float c2, float gen_mHH, float gen_cosTheta)
+    {
+        float w = 0.;
+        pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, gen_cosTheta);
+        float denom = hist_inputMix_->GetBinContent(bins.first, bins.second);
+        if (denom == 0) {
+            return 0;
+        }
+        float nEvSM = hist_SM_->GetBinContent(bins.first, bins.second);
+        vector<double> Acoeffs;
+        for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic){
+            Acoeffs.push_back((hists_params_[ic])->GetBinContent(bins.first, bins.second));
+        }
+        double effBSM = (nEvSM * functionGF(1.,1.,c2,0.,0.,Acoeffs))/functionGF(1.,1.,c2,0.,0.,A_13TeV_SM_);
+        if (effBSM/denom < 0) {
+            return 0;
+        } 
+        w = (effBSM/denom);
+        return w;
+    }
+
     float DoubleHReweighter::getNormalisation(float kl, float kt, float c2, float cg, float c2g, TH2F* h_all)
     {
         float sumofweights = 0.;
@@ -204,6 +227,8 @@ namespace flashgg {
        
         std::vector<float> NRWeights; //we will use this in the future when we would like to save all weights
         std::vector<float> klScanWeights;  // for KL-Scan
+        std::vector<float> c2ScanWeights;  // for C2-Scan
+
         if (selHiggses.size()==2){
             TLorentzVector H1,H2;
             H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
@@ -220,7 +245,11 @@ namespace flashgg {
                 klScanWeights.push_back(getklScan(kl_p, gen_mHH, gen_cosTheta));
                 //   std::cout << "KL=="<< kl_p << std::endl;
             }
-        } 
+            for (unsigned int c2=1; c2<82; c2++){
+                float c2_p = (1.0*(c2-31.))/5.;
+                c2ScanWeights.push_back(getc2Scan(c2_p, gen_mHH, gen_cosTheta));
+            }
+        }
         for (unsigned int n=0; n<NUM_benchmarks; n++){
             if(n < numberFakebenchmark){
                 std::string weight_number = "benchmark";
@@ -231,11 +260,17 @@ namespace flashgg {
                 std::unique_ptr<float>  final_weight( new float(NRWeights[n]) );
                 evt.put( std::move( final_weight) , weight_number);
             }
-            else{
+            else if(n >= numberFakebenchmark && n < 96){
                 std::string KL_Scan_w = "KL";
                 KL_Scan_w.append(std::to_string(n-(numberFakebenchmark-1)));
                 std::unique_ptr<float>  final_weight( new float(klScanWeights[n-numberFakebenchmark]) );
                 evt.put( std::move( final_weight) , KL_Scan_w);
+                }
+            else{
+                std::string C2_Scan_w = "C2";
+                C2_Scan_w.append(std::to_string(n-95));
+                std::unique_ptr<float>  final_weight( new float(c2ScanWeights[n-95]) );
+                evt.put( std::move( final_weight) , C2_Scan_w);
             }
         }
        
