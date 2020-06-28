@@ -134,9 +134,7 @@ namespace flashgg {
         if (effBSM/denom < 0) {
             return 0;
         } // In case of very small negative weights, which can happen
-
         w = (effBSM/denom);
-        
         return w;
     }
 
@@ -260,8 +258,6 @@ namespace flashgg {
          // number is a string. Each collection is specified by 4 string :  type, name of producer, process_name(reco,flashggMicroAOD),last one  - if producer produces more than one object of the same type -> here : number
     }
 }
-
-
 typedef flashgg::DoubleHReweighter FlashggDoubleHReweighter;
 DEFINE_FWK_MODULE( FlashggDoubleHReweighter );
 // Local Variables:
