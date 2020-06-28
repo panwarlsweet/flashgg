@@ -166,10 +166,6 @@ class DoubleHCustomize():
             var_workspace += ["benchmark_reweight_SM := getBenchmarkReweight(12)"]
             var_workspace += ["benchmark_reweight_box := getBenchmarkReweight(13)"]
             var_workspace += ["benchmark_reweight_2017fake := getBenchmarkReweight(14)"]
-            for KL in range(1,82):
-                variables += ["KL%d := getBenchmarkReweight(%d)"%(KL, (KL+14))]
-            for C2 in range(1,81):
-                variables += ["C2%d := getBenchmarkReweight(%d)"%(C2, (C2+95))]
 
 
         if self.customize.ttHKillerSaveInputVariables : variables += [
@@ -452,10 +448,6 @@ class DoubleHCustomize():
              genVariables += ["benchmark_reweight_SM := getHHbbggBenchmarkReweight(12)"]
              genVariables += ["benchmark_reweight_box := getHHbbggBenchmarkReweight(13)"]
              genVariables += ["benchmark_reweight_2017fake := getHHbbggBenchmarkReweight(14)"]
-             for KL in range(1,82):
-                genVariables += ["KL%d := getHHbbggBenchmarkReweight(%d)"%(KL, (KL+14))]
-             for C2 in range(1,81):
-                genVariables += ["C2%d := getHHbbggBenchmarkReweight(%d)"%(C2, (C2+95))]
 
         ## define categories for gen-level dumper
         cfgTools.addCategory(self.process.genDiphotonDumper,  ## events with not reco-level tag
