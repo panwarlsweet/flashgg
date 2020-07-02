@@ -539,7 +539,8 @@ namespace flashgg {
                     bool hasDijet = false;
                     edm::Ptr<flashgg::Jet>  jet1, jet2, jet3, jet4;
                     std::vector<float> mass_corr;
-                    double METCorr, phiMETCorr;
+
+                    double METCorr=0., phiMETCorr=0.;
                     for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
                         auto jet_1 = cleaned_jets[ijet];
                         for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
@@ -1004,7 +1005,7 @@ namespace flashgg {
 
                     if (catnum>-1){
                         if (doCategorization_) {
-                            if (tag_obj.dijet().mass()<mjjBoundariesLower_[catnum] || tag_obj.dijet().mass()>mjjBoundariesUpper_[catnum]) continue;
+                            // if (tag_obj.dijet().mass()<mjjBoundariesLower_[catnum] || tag_obj.dijet().mass()>mjjBoundariesUpper_[catnum]) continue;
                         }
                         tags->push_back( tag_obj );
                         // link mc-truth

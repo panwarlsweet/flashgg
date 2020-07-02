@@ -499,7 +499,7 @@ namespace flashgg {
             bool hasDijet = false;
             edm::Ptr<flashgg::Jet>  jet1, jet2;
             std::vector<float> mass_corr;
-            double METCorr, phiMETCorr;
+            double METCorr=0., phiMETCorr=0.;
             for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
                 auto jet_1 = cleaned_jets[ijet];
                 for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
@@ -558,7 +558,7 @@ namespace flashgg {
             else  
                 tag_obj.setSystLabel( inputJetsSuffixes_[jet_col_idx]);
 
-            if (tag_obj.dijet().mass()<mjjBoundaries_[0] || tag_obj.dijet().mass()>mjjBoundaries_[1]) continue;
+            // if (tag_obj.dijet().mass()<mjjBoundaries_[0] || tag_obj.dijet().mass()>mjjBoundaries_[1]) continue;
 
             // compute extra variables here
             tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass() - tag_obj.diPhoton()->mass() + 250. );
@@ -863,7 +863,7 @@ namespace flashgg {
 
           if (catnum>-1){
                 if (doCategorization_) {
-                    if (tag_obj.dijet().mass()<mjjBoundariesLower_[catnum] || tag_obj.dijet().mass()>mjjBoundariesUpper_[catnum]) continue;
+                    // if (tag_obj.dijet().mass()<mjjBoundariesLower_[catnum] || tag_obj.dijet().mass()>mjjBoundariesUpper_[catnum]) continue;
                 }
                 tags->push_back( tag_obj );
                 // link mc-truth
