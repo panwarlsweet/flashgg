@@ -47,6 +47,12 @@ class DoubleHCustomize():
         return variables
 
     def variablesToDump(self):
+        if self.metaConditions["MjjRegression"]["XYMETCorr_year"] == 2016:
+            Lumi = 35.9
+        elif self.metaConditions["MjjRegression"]["XYMETCorr_year"] == 2017:
+            Lumi = 41.5
+        elif self.metaConditions["MjjRegression"]["XYMETCorr_year"] == 2018:
+            Lumi = 59.4
         var_workspace = []
         variables = []
         if(self.customize.doubleHTagsOnly):
@@ -72,6 +78,8 @@ class DoubleHCustomize():
                     "subleadingJet_hflav := subleadJet().hadronFlavour()",
                     "subleadingJet_pflav := subleadJet().partonFlavour()",
                     'btagReshapeWeight := weight("JetBTagReshapeWeightCentral")',
+                    "dipho_lead_prompt := diPhoton.leadingPhoton.genMatchType",
+                    "dipho_sublead_prompt := diPhoton.subLeadingPhoton.genMatchType",
                 ]
             variables += [
                 "leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
@@ -137,7 +145,9 @@ class DoubleHCustomize():
                 "ntagMuons := ntagMuons()",
                 "ntagElectrons := ntagElectrons()",
                 "nMuons2018 := nMuons2018()",
-                "nElectrons2018 := nElectrons2018()"
+                "nElectrons2018 := nElectrons2018()",
+                "year := %i"%(self.metaConditions["MjjRegression"]["XYMETCorr_year"]),
+                "lumi_fb := %f"%(Lumi),
             ]
         if self.customize.doBJetRegression and self.customize.doubleHTagsOnly: variables +=[
                 "leadingJet_bRegNNCorr := leadJet().userFloat('bRegNNCorr')",
