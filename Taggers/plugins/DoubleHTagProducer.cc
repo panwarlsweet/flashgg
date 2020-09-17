@@ -596,7 +596,7 @@ namespace flashgg {
                 for (int i = 0; i < 8; i++)
                     PL_VectorVar_[i].resize(7); // List of particles. 8 objects. Each object has 7 attributes.
 
-                float sumEt=0.,njets=0.;
+                float sumEt=0.,njets=0.,sumEt_eta=0.,sumEt_phi=0.,sumEt_mass=0.;
                 njets = cleaned_jets.size();
                 std::vector<flashgg::Jet> cleanedDR_jets;
                 std::vector<flashgg::Jet> cleaned_physical_jets; // for Xtt calculation who doesn't take edm::Ptr
@@ -606,9 +606,15 @@ namespace flashgg {
                     if( reco::deltaR(*jet, *leadJet)< vetoConeSize_) continue;
                     if( reco::deltaR(*jet, *subleadJet)< vetoConeSize_) continue;
                     sumEt+=jet->p4().pt();
+                    sumEt_eta+=jet->p4().eta();
+                    sumEt_phi+=jet->p4().phi();
+                    sumEt_mass+=jet->p4().mass();
                     cleanedDR_jets.push_back(*jet);
                 }
                 ttHVars["sumET"] = sumEt;
+                ttHVars["sumET_eta"] = sumEt_eta;
+                ttHVars["sumET_phi"] = sumEt_phi;
+                ttHVars["sumET_mass"] = sumEt_mass;
                 edm::Handle<View<flashgg::Met> > METs;
                 evt.getByToken( METToken_, METs );
                 if( METs->size() != 1 )
@@ -710,6 +716,9 @@ namespace flashgg {
                 ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);
                 
                 tag_obj.sumET_ = ttHVars["sumET"];
+                tag_obj.sumET_eta_ = ttHVars["sumET_eta"];
+                tag_obj.sumET_phi_ = ttHVars["sumET_phi"];
+                tag_obj.sumET_mass_ = ttHVars["sumET_mass"];
                 tag_obj.MET_ = ttHVars["MET"];
                 tag_obj.phiMET_ = ttHVars["phiMET"];
                 tag_obj.dPhi1_ = ttHVars["dPhi1"];
@@ -854,10 +863,10 @@ namespace flashgg {
             //tag_obj.includeWeights( *leadJet );
             //tag_obj.includeWeights( *subleadJet );
             
-           // tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight",false);
-          //  tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight",false );
-            tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight");
-            tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight" );
+            tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight",false);
+            tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight",false );
+            // tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight");
+            //tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight" );
 
 
 

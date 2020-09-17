@@ -57,9 +57,9 @@ class DoubleHCustomize():
         variables = []
         if(self.customize.doubleHTagsOnly):
             var_workspace += [
-                "Mjj_noMReg := dijet().M()",
+                "Mjj := dijet().M()",
                 "eventNumber := eventNumber()",
-                "MX_noMReg := MX()",
+                "MX := MX()",
                 "leadingJet_pt := leadJet().pt",
                 "subleadingJet_pt := subleadJet().pt",
                 "HHbbggMVA := MVA()"
@@ -110,8 +110,8 @@ class DoubleHCustomize():
                 "PhoJetOtherDr := getPhoJetOtherDr()",
                 "HHbbggMVA := MVA()",
                 # "HHbbggMVAprob0 := MVAprob()[0]",
-                "MX_noMReg := MX()",
-                "Mjj_noMReg := dijet().M()",
+                "MX := MX()",
+                "Mjj := dijet().M()",
                 "dijet_pt := dijet().pt",
                 "dijet_eta := dijet().eta",
                 "dijet_phi := dijet().phi",
@@ -159,12 +159,12 @@ class DoubleHCustomize():
         if self.customize.doMjjRegression: 
             variables += [
 		"mass_corr := mass_corr()",
-		"Mjj := mass_corr()*dijet().M()",
-		"MX := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250" 
+		"Mjj_MReg := mass_corr()*dijet().M()",
+		"MX_MReg := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250" 
             ]
             var_workspace += [
-                "Mjj := mass_corr()*dijet().M()",
-                "MX := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250"
+                "Mjj_MReg := mass_corr()*dijet().M()",
+                "MX_MReg := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250"
             ]
         if self.customize.doubleHReweight > 0: 
             for num in range(0,12):  #12 benchmarks + 1 SM
@@ -184,6 +184,9 @@ class DoubleHCustomize():
 
         if self.customize.ttHKillerSaveInputVariables : variables += [
             "ttH_sumET := sumET()",
+            "ttH_sumET_eta := sumET_eta()",
+            "ttH_sumET_phi := sumET_phi()",
+            "ttH_sumET_mass := sumET_mass()",
             "ttH_MET := MET()",
             "ttH_phiMET := phiMET()",
             "ttH_dPhi1 := dPhi1()",
@@ -233,7 +236,7 @@ class DoubleHCustomize():
 
 
     def systematicVariables(self):
-      systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()","eventNumber[40,0.,1000000.]:=eventNumber()","genMhh[300,250,5000]:=genMhh()","genAbsCosThetaStar_CS[100,0,1]:=abs(genCosThetaStar_CS())",'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',"ntagMuons[100,0.,10] := ntagMuons()","ntagElectrons[100,0.,10] := ntagElectrons()","nMuons2018[100,0.,10] := nMuons2018()","nElectrons2018[100,0.,10] := nElectrons2018()","leadingJet_pt[100,0,1000] := leadJet().pt","subleadingJet_pt[100,0,1000] := subleadJet().pt"]
+      systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()","Mjj_MReg[120,70,190]:=mass_corr()*dijet().M()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()","MX_MReg[300,250,5000] := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250","eventNumber[40,0.,1000000.]:=eventNumber()","genMhh[300,250,5000]:=genMhh()","genAbsCosThetaStar_CS[100,0,1]:=abs(genCosThetaStar_CS())",'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',"ntagMuons[100,0.,10] := ntagMuons()","ntagElectrons[100,0.,10] := ntagElectrons()","nMuons2018[100,0.,10] := nMuons2018()","nElectrons2018[100,0.,10] := nElectrons2018()","leadingJet_pt[100,0,1000] := leadJet().pt","subleadingJet_pt[100,0,1000] := subleadJet().pt"]
       
       if self.customize.doubleHReweight > 0: 
          for num in range(0,12):  #12 benchmarks
@@ -277,7 +280,7 @@ class DoubleHCustomize():
             self.process.flashggDoubleHTag.MVAConfig.variables.pop(0) 
             self.process.flashggDoubleHTag.MVABoundaries = cms.vdouble(0.37,0.62,0.78)
             self.process.flashggDoubleHTag.MXBoundaries = cms.vdouble(250., 385.,510.,600.,250.,330.,360.,540.,250.,330.,375.,585.)
-            self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.26) #0.26
+            self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.0) #0.26
 
         # customizing training file (with/wo Mjj) 
         training_type = 'with_Mjj' if self.customize.doubleHTagsUseMjj else 'wo_Mjj'
@@ -302,7 +305,7 @@ class DoubleHCustomize():
             self.process.flashggVBFDoubleHTag.MVABoundaries = cms.vdouble(0.52,0.86) #CAT0 MX > 500, CAT1 :MX <=500
             self.process.flashggVBFDoubleHTag.MXBoundaries = cms.vdouble(0.,500.)
             self.process.flashggVBFDoubleHTag.nMX = cms.uint32(2)
-            self.process.flashggVBFDoubleHTag.ttHScoreThreshold = cms.double(0.26)
+            self.process.flashggVBFDoubleHTag.ttHScoreThreshold = cms.double(0.0)
 
         ## customize meta conditions
         self.process.flashggVBFDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["VBFdoubleHTag"]["jetID"]))

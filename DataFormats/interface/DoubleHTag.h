@@ -66,8 +66,11 @@ namespace flashgg {
 
         float ttHScore_;
         float ntagMuons_, ntagElectrons_,nMuons2018_,nElectrons2018_;
-        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_,PhoJetOtherDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, mass_corr_; 
+        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_,PhoJetOtherDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, mass_corr_,sumET_eta_,sumET_phi_,sumET_mass_; 
         float sumET() const {return sumET_;}
+        float sumET_eta() const {return sumET_eta_;}
+        float sumET_phi() const {return sumET_phi_;}
+        float sumET_mass() const {return sumET_mass_;}
         float MET() const {return MET_;}
         float phiMET() const {return phiMET_;}
         float dPhi1() const {return dPhi1_;}
