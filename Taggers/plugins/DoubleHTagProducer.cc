@@ -379,6 +379,7 @@ namespace flashgg {
         double genMhh=0.;
         double genCosThetaStar_CS=0.;
         float SumPT_Nus=0;
+        double genMbb=0.;
         if( ! evt.isRealData() ) {
             Handle<View<reco::GenParticle> > genParticles;
             std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
@@ -423,6 +424,25 @@ namespace flashgg {
 
                 MRegVars["nGenJets"] = genjets->size();
                 MRegVars["nNus"] = genNus->size();
+                
+                TLorentzVector b1,b2;
+                for( size_t i = 0 ; i < genParts->size() ; ++i ) {
+                    const reco::GenParticle & p = (*genParts)[i];
+                    int id = p.pdgId();
+                    if(id == 25 || id == 35){
+                        int n = p.numberOfDaughters();
+                        if(n < 2 ) continue;
+                        const reco::Candidate * d1 = p.daughter( 0 );
+                        const reco::Candidate * d2 = p.daughter( 1 );
+                        if (std::abs(d1->pdgId())==5 && std::abs(d2->pdgId())==5){
+                            b1.SetPtEtaPhiE(d1->pt(),d1->eta(),d1->phi(),d1->energy());
+                            b2.SetPtEtaPhiE(d2->pt(),d2->eta(),d2->phi(),d2->energy());
+                            genMbb=(b1+b2).M();
+                            std::cout << "testing.....Mbb = " << genMbb << endl;
+                        }
+                        else continue;
+                    }
+                }
 
                 edm::Ptr<reco::GenParticle> bq, bbarq;
 
@@ -677,7 +697,10 @@ namespace flashgg {
                     MRegVars["bgenJetNoNu_1_pt"] = -999.;
                     MRegVars["bgenJetNoNu_2_pt"] = -999.;
                     MRegVars["SumPT_Nus"] = -999.;
+                    MRegVars["genMbb"] = -999;
                     if( ! evt.isRealData() && MRegTestVar_) {
+
+                        MRegVars["genMbb"] = genMbb; // not related MReg at all; adding for NMSSM Y masspoints 
 
                         MRegVars["nbGenJetsNu"] = hjets->size();
                 
@@ -1162,6 +1185,7 @@ namespace flashgg {
                         tag_obj.bgenJetNoNu_1_pt_ = MRegVars["bgenJetNoNu_1_pt"];
                         tag_obj.bgenJetNoNu_2_pt_ = MRegVars["bgenJetNoNu_2_pt"];
                         tag_obj.SumPT_Nus_ = MRegVars["SumPT_Nus"];
+                        tag_obj.genMbb_ = MRegVars["genMbb"];
                     }
 
             // choose category and propagate weights

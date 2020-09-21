@@ -136,6 +136,7 @@ class DoubleHCustomize():
                 "bgenJetNoNu_1_pt := reg_bgenJetNoNu_1_pt()",
                 "bgenJetNoNu_2_pt := reg_bgenJetNoNu_2_pt()",
                 "SumPT_Nus := reg_SumPT_Nus_()",
+                "genmbb := genMbb()"
 
         ]
         if self.customize.doubleHReweight > 0: 
