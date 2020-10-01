@@ -80,6 +80,7 @@ class DoubleHCustomize():
                     'btagReshapeWeight := weight("JetBTagReshapeWeightCentral")',
                     "dipho_lead_prompt := diPhoton.leadingPhoton.genMatchType",
                     "dipho_sublead_prompt := diPhoton.subLeadingPhoton.genMatchType",
+                    "genmbb := genmbb()",
                 ]
             variables += [
                 "leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?

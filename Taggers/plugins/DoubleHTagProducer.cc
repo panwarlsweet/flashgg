@@ -376,10 +376,32 @@ namespace flashgg {
         TagTruthBase truth_obj;
         double genMhh=0.;
         double genCosThetaStar_CS=0.;
+        double genmbb=-999.;
         if( ! evt.isRealData() ) {
             Handle<View<reco::GenParticle> > genParticles;
             std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
             evt.getByToken( genParticleToken_, genParticles );
+            //// adding genmbb for NMSSM ////
+            TLorentzVector b1,b2;
+            for( size_t i = 0 ; i < genParticles->size() ; ++i ) {
+                const reco::GenParticle & p = (*genParticles)[i];
+                int id = p.pdgId();
+                if(id == 25 || id == 35){
+                    int n = p.numberOfDaughters();
+                    if(n < 2 ) continue;
+                    const reco::Candidate * d1 = p.daughter( 0 );
+                    const reco::Candidate * d2 = p.daughter( 1 );
+                    if (std::abs(d1->pdgId())==5 && std::abs(d2->pdgId())==5){
+                        b1.SetPtEtaPhiE(d1->pt(),d1->eta(),d1->phi(),d1->energy());
+                        b2.SetPtEtaPhiE(d2->pt(),d2->eta(),d2->phi(),d2->energy());
+                        genmbb=(b1+b2).M();
+                        //   std::cout << "testing.....Mbb = " << genMbb << endl;
+                    }
+                    else continue;
+                }
+            }
+            /// upto here //
+
             for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
                edm::Ptr<reco::GenParticle> genPar = genParticles->ptrAt(genLoop);
                if (selHiggses.size()>1) break;
@@ -545,6 +567,7 @@ namespace flashgg {
 
             // prepare tag object
             DoubleHTag tag_obj( dipho, leadJet, subleadJet );
+            tag_obj.genmbb_ = genmbb;
             if(doMassReg_){    
                 DoubleHTag tag_obj_temp2(  dipho, leadJet, subleadJet, METCorr, phiMETCorr, sum_jetET);
                 std::vector<float> mass_corr2 = xgbComputer_(tag_obj_temp2);
@@ -844,7 +867,7 @@ namespace flashgg {
                 std::sort(PL_VectorVar_.rbegin(), PL_VectorVar_.rend()); 
 
                 StandardizeParticleList();
-
+                
                 float ttHScore = EvaluateNN();
                 if (ttHScore < ttHScoreThreshold) continue;
                
