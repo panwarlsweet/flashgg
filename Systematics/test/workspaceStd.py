@@ -43,7 +43,7 @@ customize.options.register('doubleHTagsOnly',
                            'doubleHTagsOnly'
                            )
 customize.options.register('addVBFDoubleHTag',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'addVBFDoubleHTag'
@@ -67,7 +67,7 @@ customize.options.register('doubleHTagDumpMinVariables',
                            'doubleHTagDumpMinVariables'
                            )
 customize.options.register('ForceGenDiphotonProduction',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'ForceGenDiphotonProduction'
@@ -163,13 +163,13 @@ customize.options.register('ignoreNegR9',
                            'ignoreNegR9'
                            )
 customize.options.register('dumpTrees',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpTrees'
                            )
 customize.options.register('dumpWorkspace',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpWorkspace'
@@ -193,7 +193,7 @@ customize.options.register('analysisType',
                            'analysisType'
                            )
 customize.options.register('applyNNLOPSweight',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'applyNNLOPSweight'
