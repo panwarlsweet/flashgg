@@ -437,31 +437,28 @@ class DoubleHCustomize():
         genVariables = ["absCosThetaStar_CS := abs(getcosthetaHHgen())",
                         "mhh := getmHHgen()",
                         "ptH1 := getptH1gen()",
-                        "ptH2 := getptH2gen()"
-                       ]
-
-        if not self.customize.ForceGenDiphotonProduction:
-            genVariables += ["mgg := mass",
-                             "mbb := dijet.mass",
-                             
-                             "leadPho_px := leadingPhoton.px",
-                             "leadPho_py := leadingPhoton.py",
-                             "leadPho_pz := leadingPhoton.pz",
-                             "leadPho_e  := leadingPhoton.energy",
-                             "subleadPho_px := subLeadingPhoton.px",
-                             "subleadPho_py := subLeadingPhoton.py",
-                             "subleadPho_pz := subLeadingPhoton.pz",
-                             "subleadPho_e  := subLeadingPhoton.energy",
-                             
-                             "leadJet_px := leadingJet.px",
-                             "leadJet_py := leadingJet.py",
-                             "leadJet_pz := leadingJet.pz",
-                             "leadJet_e  := leadingJet.energy",
-                             "subleadJet_px := subLeadingJet.px",
-                             "subleadJet_py := subLeadingJet.py",
-                             "subleadJet_pz := subLeadingJet.pz",
-                             "subleadJet_e  := subLeadingJet.energy",
-                            ]
+                        "ptH2 := getptH2gen()",
+                        "mgg := mass",
+                        "mbb := dijet.mass",
+                        
+                        "leadPho_pt := leadingPhoton.pt",
+                        "leadPho_eta := leadingPhoton.eta",
+                        "leadPho_phi := leadingPhoton.phi",
+                        "leadPho_e  := leadingPhoton.energy",
+                        "subleadPho_pt := subLeadingPhoton.pt",
+                        "subleadPho_eta := subLeadingPhoton.eta",
+                        "subleadPho_phi := subLeadingPhoton.phi",
+                        "subleadPho_e  := subLeadingPhoton.energy",
+                        
+                        "leadJet_pt := leadingJet.pt",
+                        "leadJet_eta := leadingJet.eta",
+                        "leadJet_phi := leadingJet.phi",
+                        "leadJet_e  := leadingJet.energy",
+                        "subleadJet_pt := subLeadingJet.pt",
+                        "subleadJet_eta := subLeadingJet.eta",
+                        "subleadJet_phi := subLeadingJet.phi",
+                        "subleadJet_e  := subLeadingJet.energy",
+        ]
             
         if self.customize.doubleHReweight > 0: 
              for num in range(0,12):

@@ -46,7 +46,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
                                    MinJetPt   = cms.double(25.),
                                    MaxJetEta   = cms.double(MaxJetEta),
-                                   MJJBoundaries = cms.vdouble(70.,190.),
+                                   MJJBoundaries = cms.vdouble(70.,1200.),
                                    #BTagType = cms.vstring('pfDeepCSVJetTags:probb','pfDeepCSVJetTags:probbb'), #string for btag algorithm
                                    BTagType = cms.vstring('mini_pfDeepFlavourJetTags:probb','mini_pfDeepFlavourJetTags:probbb','mini_pfDeepFlavourJetTags:problepb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),

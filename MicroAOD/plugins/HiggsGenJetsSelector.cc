@@ -72,7 +72,7 @@ namespace flashgg {
             if( ipart->motherRefVector().size() == 0 ) { continue; }
             bool higgschild = false;
             for( auto mom : ipart->motherRefVector() ) {
-                if( mom->pdgId() == 25 ) { 
+                if( mom->pdgId() == 25  or mom->pdgId() == 35) { 
                     higgschild  = true;
                     break;
                 }

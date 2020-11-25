@@ -26,6 +26,9 @@
 #include <vector>
 #include <algorithm>
 #include "TGraph.h"
+#include "TTree.h"
+#include "TH1.h"
+#include "TFile.h"
 
 using namespace std;
 using namespace edm;
@@ -54,7 +57,21 @@ namespace flashgg {
         std::vector<std::string> inputDiPhotonSuffixes_;
        // EDGetTokenT<View<DiPhotonCandidate> > diPhotonToken_;
         std::vector<edm::EDGetTokenT<edm::View<DiPhotonCandidate> > > diPhotonTokens_;
-
+        TH1F* h_cutflow =new TH1F("h_cutflow","h_cutflow",8,0.5,8.5);
+        TH1F* h70_cutflow =new TH1F("h70_cutflow","h70_cutflow",8,0.5,8.5);
+        TH1F* h80_cutflow =new TH1F("h80_cutflow","h80_cutflow",8,0.5,8.5);
+        TH1F* h90_cutflow =new TH1F("h90_cutflow","h90_cutflow",8,0.5,8.5);
+        TH1F* h100_cutflow =new TH1F("h100_cutflow","h100_cutflow",8,0.5,8.5);
+        TH1F* h125_cutflow =new TH1F("h125_cutflow","h125_cutflow",8,0.5,8.5);
+        TH1F* h150_cutflow =new TH1F("h150_cutflow","h150_cutflow",8,0.5,8.5);
+        TH1F* h200_cutflow =new TH1F("h200_cutflow","h200_cutflow",8,0.5,8.5);
+        TH1F* h250_cutflow =new TH1F("h250_cutflow","h250_cutflow",8,0.5,8.5);
+        TH1F* h300_cutflow =new TH1F("h300_cutflow","h300_cutflow",8,0.5,8.5);
+        TH1F* h400_cutflow =new TH1F("h400_cutflow","h400_cutflow",8,0.5,8.5);
+        TH1F* h500_cutflow =new TH1F("h500_cutflow","h500_cutflow",8,0.5,8.5);
+        TH1F* h600_cutflow =new TH1F("h600_cutflow","h600_cutflow",8,0.5,8.5);
+        TH1F* h700_cutflow =new TH1F("h700_cutflow","h700_cutflow",8,0.5,8.5);
+        TH1F* h800_cutflow =new TH1F("h800_cutflow","h800_cutflow",8,0.5,8.5);
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
 
         std::map<std::string, float> MRegVars;
@@ -351,7 +368,6 @@ namespace flashgg {
         
     void DoubleHTagProducer::produce( Event &evt, const EventSetup & )
     {
-
         // update global variables
         globalVariablesComputer_.update(evt);
 
@@ -386,20 +402,26 @@ namespace flashgg {
             for( size_t i = 0 ; i < genParticles->size() ; ++i ) {
                 const reco::GenParticle & p = (*genParticles)[i];
                 int id = p.pdgId();
-                if(id == 25 || id == 35){
-                    int n = p.numberOfDaughters();
-                    if(n < 2 ) continue;
-                    const reco::Candidate * d1 = p.daughter( 0 );
-                    const reco::Candidate * d2 = p.daughter( 1 );
-                    if (std::abs(d1->pdgId())==5 && std::abs(d2->pdgId())==5){
-                        b1.SetPtEtaPhiE(d1->pt(),d1->eta(),d1->phi(),d1->energy());
-                        b2.SetPtEtaPhiE(d2->pt(),d2->eta(),d2->phi(),d2->energy());
-                        genmbb=(b1+b2).M();
-                        //   std::cout << "testing.....Mbb = " << genMbb << endl;
-                    }
-                    else continue;
+                if( id == 35 ){
+                    genmbb = p.mass();
+                    break;
                 }
             }
+            h_cutflow->Fill(1);
+            if(genmbb > 68 && genmbb < 72) h70_cutflow->Fill(1);
+            else if(genmbb > 78  && genmbb < 82 ) h80_cutflow->Fill(1);
+            else if(genmbb > 88  && genmbb < 92 ) h90_cutflow->Fill(1);
+            else if(genmbb > 98  && genmbb < 102) h100_cutflow->Fill(1);
+            else if(genmbb > 123 && genmbb < 127) h125_cutflow->Fill(1);
+            else if(genmbb > 148 && genmbb < 152) h150_cutflow->Fill(1);
+            else if(genmbb > 198 && genmbb < 202) h200_cutflow->Fill(1);
+            else if(genmbb > 248 && genmbb < 252) h250_cutflow->Fill(1);
+            else if(genmbb > 298 && genmbb < 302) h300_cutflow->Fill(1);
+            else if(genmbb > 398 && genmbb < 402) h400_cutflow->Fill(1);
+            else if(genmbb > 498 && genmbb < 502) h500_cutflow->Fill(1);
+            else if(genmbb > 598 && genmbb < 602) h600_cutflow->Fill(1);
+            else if(genmbb > 698 && genmbb < 702) h700_cutflow->Fill(1);
+            else if(genmbb > 798 && genmbb < 802) h800_cutflow->Fill(1);
             /// upto here //
 
             for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
@@ -419,6 +441,21 @@ namespace flashgg {
             truths->push_back( truth_obj );
         }
 
+        h_cutflow->Fill(0);
+        if(genmbb > 68 && genmbb < 72) h70_cutflow->Fill(0);
+        else if(genmbb > 78  && genmbb < 82 ) h80_cutflow->Fill(0);
+        else if(genmbb > 88  && genmbb < 92 ) h90_cutflow->Fill(0);
+        else if(genmbb > 98  && genmbb < 102) h100_cutflow->Fill(0);
+        else if(genmbb > 123 && genmbb < 127) h125_cutflow->Fill(0);
+        else if(genmbb > 148 && genmbb < 152) h150_cutflow->Fill(0);
+        else if(genmbb > 198 && genmbb < 202) h200_cutflow->Fill(0);
+        else if(genmbb > 248 && genmbb < 252) h250_cutflow->Fill(0);
+        else if(genmbb > 298 && genmbb < 302) h300_cutflow->Fill(0);
+        else if(genmbb > 398 && genmbb < 402) h400_cutflow->Fill(0);
+        else if(genmbb > 498 && genmbb < 502) h500_cutflow->Fill(0);
+        else if(genmbb > 598 && genmbb < 602) h600_cutflow->Fill(0);
+        else if(genmbb > 698 && genmbb < 702) h700_cutflow->Fill(0);
+        else if(genmbb > 798 && genmbb < 802) h800_cutflow->Fill(0);
       // read diphotons
       for (unsigned int diphoton_idx = 0; diphoton_idx < diPhotonTokens_.size(); diphoton_idx++) {//looping over all diphoton systematics
         Handle<View<flashgg::DiPhotonCandidate> > diPhotons;
@@ -444,6 +481,7 @@ namespace flashgg {
                 subleadPt /= dipho->mass();
             }
             if( leadPt <= minLeadPhoPt_ || subleadPt <= minSubleadPhoPt_ ) { continue; }
+
             //apply egm photon id with given working point
             if(doPhotonId_){
                 if(leadPho->userFloat("EGMPhotonMVA")<photonIDCut_ || subleadPho->userFloat("EGMPhotonMVA")<photonIDCut_){
@@ -454,7 +492,21 @@ namespace flashgg {
             if(leadPho->passElectronVeto()<photonElectronVeto_[0] || subleadPho->passElectronVeto()<photonElectronVeto_[1]){
                 continue;
             }
-
+            h_cutflow->Fill(2);
+            if(genmbb > 68 && genmbb < 72) h70_cutflow->Fill(2);
+            else if(genmbb > 78  && genmbb < 82 ) h80_cutflow->Fill(2);
+            else if(genmbb > 88  && genmbb < 92 ) h90_cutflow->Fill(2);
+            else if(genmbb > 98  && genmbb < 102) h100_cutflow->Fill(2);
+            else if(genmbb > 123 && genmbb < 127) h125_cutflow->Fill(2);
+            else if(genmbb > 148 && genmbb < 152) h150_cutflow->Fill(2);
+            else if(genmbb > 198 && genmbb < 202) h200_cutflow->Fill(2);
+            else if(genmbb > 248 && genmbb < 252) h250_cutflow->Fill(2);
+            else if(genmbb > 298 && genmbb < 302) h300_cutflow->Fill(2);
+            else if(genmbb > 398 && genmbb < 402) h400_cutflow->Fill(2);
+            else if(genmbb > 498 && genmbb < 502) h500_cutflow->Fill(2);
+            else if(genmbb > 598 && genmbb < 602) h600_cutflow->Fill(2);
+            else if(genmbb > 698 && genmbb < 702) h700_cutflow->Fill(2);
+            else if(genmbb > 798 && genmbb < 802) h800_cutflow->Fill(2);
             //lepton veto
             Handle<View<reco::Vertex> > vertices;
             evt.getByToken( vertexToken_, vertices );
@@ -503,7 +555,40 @@ namespace flashgg {
                     cleaned_jets.push_back( jet );
                 }
             }
+            h_cutflow->Fill(3);
+            if(genmbb > 68 && genmbb < 72) h70_cutflow->Fill(3);
+            else if(genmbb > 78  && genmbb < 82 ) h80_cutflow->Fill(3);
+            else if(genmbb > 88  && genmbb < 92 ) h90_cutflow->Fill(3);
+            else if(genmbb > 98  && genmbb < 102) h100_cutflow->Fill(3);
+            else if(genmbb > 123 && genmbb < 127) h125_cutflow->Fill(3);
+            else if(genmbb > 148 && genmbb < 152) h150_cutflow->Fill(3);
+            else if(genmbb > 198 && genmbb < 202) h200_cutflow->Fill(3);
+            else if(genmbb > 248 && genmbb < 252) h250_cutflow->Fill(3);
+            else if(genmbb > 298 && genmbb < 302) h300_cutflow->Fill(3);
+            else if(genmbb > 398 && genmbb < 402) h400_cutflow->Fill(3);
+            else if(genmbb > 498 && genmbb < 502) h500_cutflow->Fill(3);
+            else if(genmbb > 598 && genmbb < 602) h600_cutflow->Fill(3);
+            else if(genmbb > 698 && genmbb < 702) h700_cutflow->Fill(3);
+            else if(genmbb > 798 && genmbb < 802) h800_cutflow->Fill(3);
+
+
             if( cleaned_jets.size() < 2 ) { continue; }
+            h_cutflow->Fill(4);
+            if(genmbb > 68 && genmbb < 72) h70_cutflow->Fill(4);
+            else if(genmbb > 78  && genmbb < 82 ) h80_cutflow->Fill(4);
+            else if(genmbb > 88  && genmbb < 92 ) h90_cutflow->Fill(4);
+            else if(genmbb > 98  && genmbb < 102) h100_cutflow->Fill(4);
+            else if(genmbb > 123 && genmbb < 127) h125_cutflow->Fill(4);
+            else if(genmbb > 148 && genmbb < 152) h150_cutflow->Fill(4);
+            else if(genmbb > 198 && genmbb < 202) h200_cutflow->Fill(4);
+            else if(genmbb > 248 && genmbb < 252) h250_cutflow->Fill(4);
+            else if(genmbb > 298 && genmbb < 302) h300_cutflow->Fill(4);
+            else if(genmbb > 398 && genmbb < 402) h400_cutflow->Fill(4);
+            else if(genmbb > 498 && genmbb < 502) h500_cutflow->Fill(4);
+            else if(genmbb > 598 && genmbb < 602) h600_cutflow->Fill(4);
+            else if(genmbb > 698 && genmbb < 702) h700_cutflow->Fill(4);
+            else if(genmbb > 798 && genmbb < 802) h800_cutflow->Fill(4);
+            
             //dijet pair selection. Do pair according to pt and choose the pair with highest b-tag
             ////////// this MET is only for mass regresion ///////
             edm::Handle<View<flashgg::Met> > RegMETs;
@@ -561,10 +646,24 @@ namespace flashgg {
                 }
             }
             if (!hasDijet)  continue;             
-            
+            h_cutflow->Fill(5);
+            if(genmbb > 68 && genmbb < 72) h70_cutflow->Fill(5);
+            else if(genmbb > 78  && genmbb < 82 ) h80_cutflow->Fill(5);
+            else if(genmbb > 88  && genmbb < 92 ) h90_cutflow->Fill(5);
+            else if(genmbb > 98  && genmbb < 102) h100_cutflow->Fill(5);
+            else if(genmbb > 123 && genmbb < 127) h125_cutflow->Fill(5);
+            else if(genmbb > 148 && genmbb < 152) h150_cutflow->Fill(5);
+            else if(genmbb > 198 && genmbb < 202) h200_cutflow->Fill(5);
+            else if(genmbb > 248 && genmbb < 252) h250_cutflow->Fill(5);
+            else if(genmbb > 298 && genmbb < 302) h300_cutflow->Fill(5);
+            else if(genmbb > 398 && genmbb < 402) h400_cutflow->Fill(5);
+            else if(genmbb > 498 && genmbb < 502) h500_cutflow->Fill(5);
+            else if(genmbb > 598 && genmbb < 602) h600_cutflow->Fill(5);
+            else if(genmbb > 698 && genmbb < 702) h700_cutflow->Fill(5);
+            else if(genmbb > 798 && genmbb < 802) h800_cutflow->Fill(5);
+
             auto & leadJet = jet1; 
             auto & subleadJet = jet2;
-
             // prepare tag object
             DoubleHTag tag_obj( dipho, leadJet, subleadJet );
             tag_obj.genmbb_ = genmbb;
@@ -870,7 +969,22 @@ namespace flashgg {
                 
                 float ttHScore = EvaluateNN();
                 if (ttHScore < ttHScoreThreshold) continue;
-               
+                h_cutflow->Fill(6);
+                if(genmbb > 68 && genmbb < 72) h70_cutflow->Fill(6);
+                else if(genmbb > 78  && genmbb < 82 ) h80_cutflow->Fill(6);
+                else if(genmbb > 88  && genmbb < 92 ) h90_cutflow->Fill(6);
+                else if(genmbb > 98  && genmbb < 102) h100_cutflow->Fill(6);
+                else if(genmbb > 123 && genmbb < 127) h125_cutflow->Fill(6);
+                else if(genmbb > 148 && genmbb < 152) h150_cutflow->Fill(6);
+                else if(genmbb > 198 && genmbb < 202) h200_cutflow->Fill(6);
+                else if(genmbb > 248 && genmbb < 252) h250_cutflow->Fill(6);
+                else if(genmbb > 298 && genmbb < 302) h300_cutflow->Fill(6);
+                else if(genmbb > 398 && genmbb < 402) h400_cutflow->Fill(6);
+                else if(genmbb > 498 && genmbb < 502) h500_cutflow->Fill(6);
+                else if(genmbb > 598 && genmbb < 602) h600_cutflow->Fill(6);
+                else if(genmbb > 698 && genmbb < 702) h700_cutflow->Fill(6);
+                else if(genmbb > 798 && genmbb < 802) h800_cutflow->Fill(6);
+
                 tag_obj.ntagMuons_ = tagMuons.size();
                 tag_obj.ntagElectrons_ = tagElectrons.size();
 
@@ -909,8 +1023,29 @@ namespace flashgg {
         else  
             evt.put( std::move( tags ),inputJetsSuffixes_[jet_col_idx] );
         }
-        }   
+      }   
         evt.put( std::move( truths ) );
+        if( ! evt.isRealData() ) {
+            TFile* fout = new TFile("cutflow.root","RECREATE");
+            fout->cd();
+            h_cutflow->Write();
+            h70_cutflow->Write();
+            h80_cutflow->Write();
+            h90_cutflow->Write();
+            h100_cutflow->Write();
+            h125_cutflow->Write();
+            h150_cutflow->Write();
+            h200_cutflow->Write();
+            h250_cutflow->Write();
+            h300_cutflow->Write();
+            h400_cutflow->Write();
+            h500_cutflow->Write();
+            h600_cutflow->Write();
+            h700_cutflow->Write();
+            h800_cutflow->Write();
+            fout->Close();
+            delete fout;
+        }
     }
     
     void DoubleHTagProducer::StandardizeHLF()
