@@ -35,8 +35,6 @@ namespace flashgg {
     private:
         void produce( Event &, const EventSetup & ) override;
         float getWeight( int targetNode,float gen_mHH, float gen_cosTheta);
-        float getklScan( float kl, float gen_mHH, float gen_cosTheta);
-        float getc2Scan ( float c2, float gen_mHH, float gen_cosTheta);
         float getCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2);
         float functionGF(float kl, float kt, float c2, float cg, float c2g, vector<double> A);
         pair<int,int> find2DBin(TH2* h, float x, float y);
@@ -44,7 +42,7 @@ namespace flashgg {
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
         int doReweight_;
         edm::FileInPath weightsFile_;  // file with prepared histograms needed for reweighting
-        const unsigned int NUM_benchmarks = 177;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15, 81 kl scan points = [-6, 10] with spacing 0.2, 81 c2 scan points = [-6.2, 9.8] with spacing 0.2 
+        const unsigned int NUM_benchmarks = 15;  // number of becnhmarks for reweighting 12 +1 SM = 13, box=14, fake2017SM=15 
         const unsigned int numberSMbenchmark = 13;  // index of SM benchmark 
         const unsigned int numberBoxbenchmark = 14;  // index of SM benchmark 
         const unsigned int numberFakebenchmark = 15;  // index of SM benchmark 
@@ -77,20 +75,13 @@ namespace flashgg {
             if (!(hist_SM_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected SM histogram."<<std::endl;
             hist_inputMix_ = (TH2F*)f_weights_->Get("allHHNodeMap2D");
             if (!(hist_inputMix_)) throw cms::Exception( "Configuration" ) << "The file "<<weightsFile_.fullPath()<<" provided for reweighting benchmarks does not contain the expected input histogram for mix of nodes."<<std::endl;
-            for (unsigned int num=0;num<NUM_benchmarks;num++){
-                if(num < numberFakebenchmark){
-                    if (num==(numberSMbenchmark-1)) produces<float>("benchmarkSM");
-                    else if (num==(numberBoxbenchmark-1)) produces<float>("benchmarkBox");
-                    else if (num==(numberFakebenchmark-1)) produces<float>("benchmark2017fake");
-                    else produces<float>(Form("benchmark%i",num));
-                }
-                else if(num >= numberFakebenchmark && num < 96){
-                        produces<float>(Form("KL%i",(num-(numberFakebenchmark-1))));
-                    }
-                else produces<float>(Form("C2%i",(num-95))); 
-            }
-    }
-
+    
+        for (unsigned int num=0;num<NUM_benchmarks;num++)
+             if (num==(numberSMbenchmark-1)) produces<float>("benchmarkSM");
+             else if (num==(numberBoxbenchmark-1)) produces<float>("benchmarkBox");
+             else if (num==(numberFakebenchmark-1)) produces<float>("benchmark2017fake");
+             else produces<float>(Form("benchmark%i",num));
+    }   
     
 // return bin in 2D isto wihtout under/over flow (e.g. if ibin > ibinmax , ibin = ibinmax)
     pair<int,int> DoubleHReweighter::find2DBin(TH2* h, float x, float y)
@@ -135,53 +126,10 @@ namespace flashgg {
             return 0;
         } // In case of very small negative weights, which can happen
         w = (effBSM/denom);
-        return w;
+
+       return w;
     }
-
-    float DoubleHReweighter::getklScan( float kl, float gen_mHH, float gen_cosTheta)
-    {
-        float w = 0.;
-        pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, gen_cosTheta);
-        float denom = hist_inputMix_->GetBinContent(bins.first, bins.second);
-        if (denom == 0) {
-            return 0;
-        }
-        float nEvSM = hist_SM_->GetBinContent(bins.first, bins.second);
-        vector<double> Acoeffs;
-        for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic){
-            Acoeffs.push_back((hists_params_[ic])->GetBinContent(bins.first, bins.second));
-        }
-        double effBSM = (nEvSM * functionGF(kl,1.,0.,0.,0.,Acoeffs))/functionGF(kl,1.,0.,0.,0.,A_13TeV_SM_);
-
-        if (effBSM/denom < 0) {
-            return 0;
-        } // In case of very small negative weights, which can happen                                                                                                                                                                  
-       // w = ((effBSM/denom)/getNormalisation(kl, 1., 0., 0., 0., hist_inputMix_)) ;
-        w = (effBSM/denom);
-        return w;
-    }
-
-    float DoubleHReweighter::getc2Scan( float c2, float gen_mHH, float gen_cosTheta)
-    {
-        float w = 0.;
-        pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, gen_cosTheta);
-        float denom = hist_inputMix_->GetBinContent(bins.first, bins.second);
-        if (denom == 0) {
-            return 0;
-        }
-        float nEvSM = hist_SM_->GetBinContent(bins.first, bins.second);
-        vector<double> Acoeffs;
-        for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic){
-            Acoeffs.push_back((hists_params_[ic])->GetBinContent(bins.first, bins.second));
-        }
-        double effBSM = (nEvSM * functionGF(1.,1.,c2,0.,0.,Acoeffs))/functionGF(1.,1.,c2,0.,0.,A_13TeV_SM_);
-        if (effBSM/denom < 0) {
-            return 0;
-        } 
-        w = (effBSM/denom);
-        return w;
-    }
-
+        
     float DoubleHReweighter::getCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2)
     {
     // cos theta star angle in the Collins Soper frame
@@ -206,9 +154,6 @@ namespace flashgg {
         }
        
         std::vector<float> NRWeights; //we will use this in the future when we would like to save all weights
-        std::vector<float> klScanWeights;  // for KL-Scan
-        std::vector<float> c2ScanWeights;  // for C2-Scan
-
         if (selHiggses.size()==2){
             TLorentzVector H1,H2;
             H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
@@ -216,48 +161,26 @@ namespace flashgg {
             float gen_mHH  = (H1+H2).M();
             float gen_cosTheta = getCosThetaStar_CS(H1,H2);   
             // Now, lets fill in the weigts for the 12 benchmarks.
-            for (unsigned int n=0; n<numberFakebenchmark; n++){ 
+            for (unsigned int n=0; n<NUM_benchmarks; n++){ 
                 NRWeights.push_back(getWeight(n, gen_mHH, gen_cosTheta));
             }
-            // weights for KL-Scan
-            for (unsigned int kl=1; kl<82; kl++){
-                float kl_p = (1.0*(kl-31.))/5.;
-                klScanWeights.push_back(getklScan(kl_p, gen_mHH, gen_cosTheta));
-                //   std::cout << "KL=="<< kl_p << std::endl;
-            }
-            for (unsigned int c2=1; c2<82; c2++){
-                float c2_p = (1.0*(c2-31.))/5.;
-                c2ScanWeights.push_back(getc2Scan(c2_p, gen_mHH, gen_cosTheta));
-            }
-        }
+        } 
         for (unsigned int n=0; n<NUM_benchmarks; n++){
-            if(n < numberFakebenchmark){
-                std::string weight_number = "benchmark";
-                if (n==(numberSMbenchmark-1)) weight_number.append("SM");
-                else if (n==(numberBoxbenchmark-1)) weight_number.append("Box");
-                else if (n==(numberFakebenchmark-1)) weight_number.append("2017fake");
-                else weight_number.append(std::to_string(n));
-                std::unique_ptr<float>  final_weight( new float(NRWeights[n]) );
-                evt.put( std::move( final_weight) , weight_number);
-            }
-            else if(n >= numberFakebenchmark && n < 96){
-                std::string KL_Scan_w = "KL";
-                KL_Scan_w.append(std::to_string(n-(numberFakebenchmark-1)));
-                std::unique_ptr<float>  final_weight( new float(klScanWeights[n-numberFakebenchmark]) );
-                evt.put( std::move( final_weight) , KL_Scan_w);
-                }
-            else{
-                std::string C2_Scan_w = "C2";
-                // to have weights from [-6,10] change below (n-95) to (n-96) since by mistake it picks weights from 1 not 0 thus there is mismatch of the values with KL; KL36 = 1.0 and C236 = 1.2
-                C2_Scan_w.append(std::to_string(n-95));
-                std::unique_ptr<float>  final_weight( new float(c2ScanWeights[n-95]) );
-                evt.put( std::move( final_weight) , C2_Scan_w);
-            }
+            std::string weight_number = "benchmark";
+            if (n==(numberSMbenchmark-1)) weight_number.append("SM");
+            else if (n==(numberBoxbenchmark-1)) weight_number.append("Box");
+            else if (n==(numberFakebenchmark-1)) weight_number.append("2017fake");
+            else weight_number.append(std::to_string(n));
+            std::unique_ptr<float>  final_weight( new float(NRWeights[n]) );
+            evt.put( std::move( final_weight) , weight_number);
         }
-       
          // number is a string. Each collection is specified by 4 string :  type, name of producer, process_name(reco,flashggMicroAOD),last one  - if producer produces more than one object of the same type -> here : number
     }
 }
+
+
+
+
 typedef flashgg::DoubleHReweighter FlashggDoubleHReweighter;
 DEFINE_FWK_MODULE( FlashggDoubleHReweighter );
 // Local Variables:
