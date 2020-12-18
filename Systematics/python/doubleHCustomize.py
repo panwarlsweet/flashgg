@@ -55,6 +55,7 @@ class DoubleHCustomize():
             Lumi = 59.4
         var_workspace = []
         variables = []
+        Y_mass = [80, 90, 100, 125, 150, 200, 250, 300, 400, 500, 600, 700, 800]
         if(self.customize.doubleHTagsOnly):
             var_workspace += [
                 "Mjj := dijet().M()",
@@ -64,6 +65,8 @@ class DoubleHCustomize():
                 "subleadingJet_pt := subleadJet().pt",
                 "HHbbggMVA := MVA()"
             ]
+            for i in Y_mass:
+                var_workspace += ["MX_Y%i := MX() - 125 + %i"%(i,i)]
             if self.customize.processId != "Data":
                 var_workspace += [
                     "genMhh := genMhh()",
@@ -157,6 +160,8 @@ class DoubleHCustomize():
                 "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
                 "sigmaMJets := getSigmaMOverMJets()"
         ]     
+        for i in Y_mass:
+            variables += ["MX_Y%i := MX() - 125 + %i"%(i,i)]
         if self.customize.doMjjRegression: 
             variables += [
 		"mass_corr := mass_corr()",
