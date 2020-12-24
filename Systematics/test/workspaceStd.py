@@ -198,7 +198,24 @@ customize.options.register('applyNNLOPSweight',
                            VarParsing.VarParsing.varType.bool,
                            'applyNNLOPSweight'
                            )
-
+customize.options.register('doResonantDoubleHTag',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'doResonantDoubleHTag'
+                           )
+customize.options.register('ResonantDoubleHTagXRange',
+                           'low',
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.string,
+                           'ResonantDoubleHTagXRange'
+                           )
+customize.options.register('ResonantDoubleHTagYRange',
+                           'low',
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.string,
+                           'ResonantDoubleHTagYRange'
+                           )
 
 print "Printing defaults"
 print 'acceptance '+str(customize.acceptance)
@@ -359,6 +376,16 @@ if is_signal:
             variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := weight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions['MUON_ISO']),direction))
             variablesToUse.append("JetBTagCutWeight%s01sigma[1,-999999.,999999.] := weight(\"JetBTagCutWeight%s01sigma\")" % (direction,direction))
             variablesToUse.append("JetBTagReshapeWeight%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeight%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightJES%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightJES%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightLF%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightLF%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightHFstats1%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightHFstats1%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightHFstats2%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightHFstats2%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightCferr1%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightCferr1%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightCferr2%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightCferr2%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightHF%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightHF%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightLFstats1%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightLFstats1%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightLFstats2%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightLFstats2%s01sigma\")" % (direction,direction))
+            
             if applyL1Prefiring:
                 variablesToUse.append("prefireProbability%s01sigma[1,-999999.,999999.] := weight(\"prefireProbability%s01sigma\")" % (direction,direction))
             variablesToUse.append("THU_ggH_Mu%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mu%s01sigma\")" % (direction,direction))

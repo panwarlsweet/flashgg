@@ -25,7 +25,8 @@ ttHKiller_liststd = cms.vdouble()
 MaxJetEta = 2.5
 XYMETCorr_year = 2016
 MReg_weights=""
-
+ResonantXRange=""
+ResonantYRange=""
 flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    DiPhotonName = cms.string('flashggPreselectedDiPhotons'), # 
                                    DiPhotonSuffixes = cms.vstring(''), #nominal and systematic variations 
@@ -52,7 +53,8 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    UseJetID = cms.bool(True),
                                    JetIDLevel = cms.string(jetID),
                                    XYMETCorr_year = cms.uint32(XYMETCorr_year),
-
+                                   ResonantXRange=cms.string(ResonantXRange),
+                                   ResonantYRange=cms.string(ResonantYRange),
                                    #MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA w/o Mjj
                                    #MXBoundaries   = cms.vdouble(250., 354., 478., 560.), # .. and MX w/o Mjj
                                    #MJJBoundariesLower = cms.vdouble(98.0,95.0,97.0,96.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
@@ -123,34 +125,42 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    ttHKiller_listmean = ttHKiller_listmean, 
                                    ttHKiller_liststd = ttHKiller_liststd 
                                   ) 
+year=2016
+if flashggDoubleHTag.XYMETCorr_year == 2016:
+    year = 2016
+elif flashggDoubleHTag.XYMETCorr_year == 2017:
+    year = 2017
+elif flashggDoubleHTag.XYMETCorr_year == 2018:
+    year = 2018
 
 cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                       # here the syntax is VarNameInTMVA := expression
                       #### With or without Mjj is customized inside python doubleHCustomize and using options UseMjj
                       [
                        "Mjj := dijet().M()",
-                       "leadingJet_DeepFlavour := leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
-                       "subleadingJet_DeepFlavour := subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
                        "absCosThetaStar_CS := abs(getCosThetaStar_CS)",
                        "absCosTheta_bb := abs(CosThetaAngles()[1])",
                        "absCosTheta_gg := abs(CosThetaAngles()[0])",
-                       "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
-                       "dijetCandidatePtOverdiHiggsM := dijetPtOverM()",
+                       "PhoJetMinDr := getPhoJetMinDr()",
+                       "PhoJetOtherDr := getPhoJetOtherDr()",
                        "customLeadingPhotonIDMVA := diPhoton.leadingView.phoIdMvaWrtChosenVtx",
                        "customSubLeadingPhotonIDMVA := diPhoton.subLeadingView.phoIdMvaWrtChosenVtx",
+                       "leadingJet_DeepFlavour := leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
+                       "subleadingJet_DeepFlavour := subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
                        "leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE",
                        "subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE",
                        "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
-                       "(leadingPhoton_pt/CMS_hgg_mass) := diPhoton.leadingPhoton.pt/diPhoton().mass",
-                       "(subleadingPhoton_pt/CMS_hgg_mass) := diPhoton.subLeadingPhoton.pt/diPhoton().mass",
-                       "(leadingJet_pt/Mjj) := leadJet().pt/dijet().mass",
-                       "(subleadingJet_pt/Mjj) := subleadJet().pt/dijet().mass",
-                       "rho := global.rho",
+                       "diphotonCandidatePtOverdiHiggsM := diphotonPtOverM()",
+                       "dijetCandidatePtOverdiHiggsM := dijetPtOverM()", 
                        "(leadingJet_bRegNNResolution*1.4826) := leadJet().userFloat('bRegNNResolution')*1.4826",
                        "(subleadingJet_bRegNNResolution*1.4826) := subleadJet().userFloat('bRegNNResolution')*1.4826",
                        "(sigmaMJets*1.4826) := getSigmaMOverMJets()*1.4826",
-                       "PhoJetMinDr := getPhoJetMinDr()",
-                       "PhoJetOtherDr := getPhoJetOtherDr()" 
+                       "leadingPhoton_pt/CMS_hgg_mass := diPhoton.leadingPhoton.pt/diPhoton().mass",
+                       "subleadingPhoton_pt/CMS_hgg_mass := diPhoton.subLeadingPhoton.pt/diPhoton().mass",
+                       "leadingJet_pt/Mjj := leadJet().pt/dijet().mass",
+                       "subleadingJet_pt/Mjj := subleadJet().pt/dijet().mass",
+                       "rho := global.rho",
+                       "year := %i"%(year)
                        ]
                       )
 # for Mjj regression only

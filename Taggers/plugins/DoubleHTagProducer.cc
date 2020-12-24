@@ -93,6 +93,8 @@ namespace flashgg {
         double minJetPt_;
         double maxJetEta_;
         unsigned int XYMETCorr_year_;
+        string ResonantXRange_;
+        string ResonantYRange_;
         vector<double>mjjBoundaries_;
         vector<double>mjjBoundariesLower_;
         vector<double>mjjBoundariesUpper_;
@@ -170,6 +172,8 @@ namespace flashgg {
         minJetPt_( iConfig.getParameter<double> ( "MinJetPt" ) ),
         maxJetEta_( iConfig.getParameter<double> ( "MaxJetEta" ) ),
         XYMETCorr_year_( iConfig.getParameter<unsigned int> ( "XYMETCorr_year" ) ),
+        ResonantXRange_( iConfig.getParameter<string> ( "ResonantXRange" ) ),
+        ResonantYRange_( iConfig.getParameter<string> ( "ResonantYRange" ) ),
         bTagType_( iConfig.getParameter<vector<std::string>>( "BTagType") ),
         useJetID_( iConfig.getParameter<bool>   ( "UseJetID"     ) ),
         JetIDLevel_( iConfig.getParameter<string> ( "JetIDLevel"   ) ),
@@ -458,6 +462,8 @@ namespace flashgg {
         else if(genmbb > 798 && genmbb < 802) h800_cutflow->Fill(0);
       // read diphotons
       for (unsigned int diphoton_idx = 0; diphoton_idx < diPhotonTokens_.size(); diphoton_idx++) {//looping over all diphoton systematics
+        if ( (genmbb <= 252 && ResonantYRange_ != "low") || ( genmbb >= 298 && genmbb <= 502 && ResonantYRange_ != "mid" ) || ( genmbb >= 598 && ResonantYRange_ != "high" ) ) continue;
+ 
         Handle<View<flashgg::DiPhotonCandidate> > diPhotons;
         evt.getByToken( diPhotonTokens_[diphoton_idx], diPhotons );
         
@@ -1025,7 +1031,7 @@ namespace flashgg {
         }
       }   
         evt.put( std::move( truths ) );
-        if( ! evt.isRealData() ) {
+        /*if( ! evt.isRealData() ) {
             TFile* fout = new TFile("cutflow.root","RECREATE");
             fout->cd();
             h_cutflow->Write();
@@ -1045,7 +1051,7 @@ namespace flashgg {
             h800_cutflow->Write();
             fout->Close();
             delete fout;
-        }
+            }*/
     }
     
     void DoubleHTagProducer::StandardizeHLF()

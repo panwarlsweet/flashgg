@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 from  flashgg.Systematics.flashggJetSystematics_cfi import jetSystematicsCustomize
-
+Y_mass = [80, 90, 100, 125, 150, 200, 250, 300, 400, 500, 600, 700, 800]
 class DoubleHCustomize():
     """
     HH->bbgg process customizaton class
@@ -55,7 +55,7 @@ class DoubleHCustomize():
             Lumi = 59.4
         var_workspace = []
         variables = []
-        Y_mass = [80, 90, 100, 125, 150, 200, 250, 300, 400, 500, 600, 700, 800]
+        #Y_mass = [80, 90, 100, 125, 150, 200, 250, 300, 400, 500, 600, 700, 800]
         if(self.customize.doubleHTagsOnly):
             var_workspace += [
                 "Mjj := dijet().M()",
@@ -243,7 +243,8 @@ class DoubleHCustomize():
 
     def systematicVariables(self):
       systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()","Mjj_MReg[120,70,190]:=mass_corr()*dijet().M()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()","MX_MReg[300,250,5000] := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250","eventNumber[40,0.,1000000.]:=eventNumber()","genMhh[300,250,5000]:=genMhh()","genAbsCosThetaStar_CS[100,0,1]:=abs(genCosThetaStar_CS())",'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',"ntagMuons[100,0.,10] := ntagMuons()","ntagElectrons[100,0.,10] := ntagElectrons()","nMuons2018[100,0.,10] := nMuons2018()","nElectrons2018[100,0.,10] := nElectrons2018()","leadingJet_pt[100,0,1000] := leadJet().pt","subleadingJet_pt[100,0,1000] := subleadJet().pt"]
-      
+      for i in Y_mass:
+            systematicVariables += ["MX_Y%i[300,250,5000] := MX() - 125 + %i"%(i,i)]
       if self.customize.doubleHReweight > 0: 
          for num in range(0,12):  #12 benchmarks
             systematicVariables += ["benchmark_reweight_%d[100,0,200] := getBenchmarkReweight(%d)"%(num,num)]
@@ -287,10 +288,16 @@ class DoubleHCustomize():
             self.process.flashggDoubleHTag.MVABoundaries = cms.vdouble(0.37,0.62,0.78)
             self.process.flashggDoubleHTag.MXBoundaries = cms.vdouble(250., 385.,510.,600.,250.,330.,360.,540.,250.,330.,375.,585.)
             self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.0) #0.26
-
+            Resonant_training_type="still not in the loop"
+            if self.customize.doResonantDoubleHTag:
+                XRange=self.customize.ResonantDoubleHTagXRange
+                YRange=self.customize.ResonantDoubleHTagYRange
+                Resonant_training_type=training_type+"_X-"+str(XRange)+"_Y-"+str(YRange)
+                self.process.flashggDoubleHTag.MVAConfig.weights=cms.FileInPath(str(self.metaConditions["doubleHTag"]["weightsFile"]["Resonant"][Resonant_training_type]))
+                self.process.flashggDoubleHTag.MVAFlatteningFileName = cms.untracked.FileInPath(str(self.metaConditions["doubleHTag"]["MVAFlatteningFileName"]["Resonant"][Resonant_training_type]))
         # customizing training file (with/wo Mjj) 
         training_type = 'with_Mjj' if self.customize.doubleHTagsUseMjj else 'wo_Mjj'
-
+        
         #self.process.flashggVBFDoubleHTag.MVAConfig.weights=cms.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["weightsFile"][training_type]))
         #self.process.flashggVBFDoubleHTag.MVAFlatteningFileName = cms.untracked.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["MVAFlatteningFileName"][training_type]))
         self.process.flashggVBFDoubleHTag.MVAConfigCAT0.weights=cms.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["weightsFileCAT0"][training_type]))
@@ -339,9 +346,12 @@ class DoubleHCustomize():
         self.process.flashggDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
         self.process.flashggDoubleHTag.MRegConf.weights = cms.FileInPath(str(self.metaConditions["MjjRegression"]["weightFile"]))
         self.process.flashggDoubleHTag.XYMETCorr_year = cms.uint32(self.metaConditions["MjjRegression"]["XYMETCorr_year"])
+        self.process.flashggDoubleHTag.ResonantXRange = cms.string( str(self.customize.ResonantDoubleHTagXRange) )
+        self.process.flashggDoubleHTag.ResonantYRange = cms.string( str(self.customize.ResonantDoubleHTagYRange) )
         ## add double Higgs tag to the tag sequence
         #  self.process.flashggTagSequence.replace(self.process.flashggUntagged,(self.process.flashggDoubleHTag+self.process.flashggUntagged))
-
+        ## training files for resonant analysis ##########
+        print("picking training type==",training_type,Resonant_training_type)
         ## remove single Higgs tags
         if self.customize.doubleHTagsOnly:
             self.process.flashggTagSequence.remove(self.process.flashggVBFTag)

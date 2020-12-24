@@ -232,11 +232,27 @@
 	"jetID" : "Tight2018",
 	"weightsFile" : {
 	    "with_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_18_12_2019_training2.weights.xml",
-	    "wo_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_18_12_2019_wo_Mjj_training2.weights.xml"
+	    "wo_Mjj" : "flashgg/Taggers/data/HHTagger/training_with_18_12_2019_wo_Mjj_training2.weights.xml",
+	    "Resonant": {
+                "wo_Mjj_X-high_Y-high": "flashgg/Taggers/data/high-X_high-Mjj_XGB_training_file.weights.xml",
+                "wo_Mjj_X-high_Y-low": "flashgg/Taggers/data/high-X_low-Mjj_XGB_training_file.weights.xml",
+                "wo_Mjj_X-high_Y-mid": "flashgg/Taggers/data/high-X_mid-Mjj_XGB_training_file.weights.xml",
+                "wo_Mjj_X-low_Y-low": "flashgg/Taggers/data/low-X_low-Mjj_XGB_training_file.weights.xml",
+                "wo_Mjj_X-mid_Y-low": "flashgg/Taggers/data/mid-X_low-Mjj_XGB_training_file.weights.xml",
+                "wo_Mjj_X-mid_Y-mid": "flashgg/Taggers/data/mid-X_mid-Mjj_XGB_training_file.weights.xml"
+            }
 	},
 	"MVAFlatteningFileName" : {
 	    "with_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20191812_btag_upd_2018.root",
-	    "wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20192401_wo_Mjj_leptonveto_2018.root"
+	    "wo_Mjj" : "flashgg/Taggers/data/HHTagger/cumulativeTransformation_20192401_wo_Mjj_leptonveto_2018.root",
+	    "Resonant": {
+                "wo_Mjj_X-high_Y-high": "flashgg/Taggers/data/cumulativeTransformation_preselection_NMSSM_high-X_high-Mjj_Run2.root",
+                "wo_Mjj_X-high_Y-low": "flashgg/Taggers/data/cumulativeTransformation_preselection_NMSSM_high-X_low-Mjj_Run2.root",
+                "wo_Mjj_X-high_Y-mid": "flashgg/Taggers/data/cumulativeTransformation_preselection_NMSSM_high-X_mid-Mjj_Run2.root",
+                "wo_Mjj_X-low_Y-low": "flashgg/Taggers/data/cumulativeTransformation_preselection_NMSSM_low-X_low-Mjj_Run2.root",
+                "wo_Mjj_X-mid_Y-low": "flashgg/Taggers/data/cumulativeTransformation_preselection_NMSSM_mid-X_low-Mjj_Run2.root",
+                "wo_Mjj_X-mid_Y-mid": "flashgg/Taggers/data/cumulativeTransformation_preselection_NMSSM_mid-X_mid-Mjj_Run2.root"
+            }
 	},
 	"MVAscalingValue" : 1.0,
 	"NodesReweightingFileName" : "flashgg/Taggers/data/HHTagger/HHreweight_2018_15112019.root",
